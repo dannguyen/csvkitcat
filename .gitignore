@@ -3,7 +3,7 @@ ZUNK/
 *.swp
 .DS_Store
 build
-csvkit.egg-info
+*.egg-info
 reference
 dist
 *.swo

@@ -4,8 +4,8 @@ import sys
 from setuptools import setup
 
 install_requires = [
-    'csvkit'>='1.0.6',
-    # 'agate>=1.6.1',
+    'csvkit>=1.0.5',
+    'agate>=1.6.1',
     # 'agate-excel>=0.2.2',
     # 'agate-dbf>=0.2.0',
     # 'agate-sql>=0.5.3',

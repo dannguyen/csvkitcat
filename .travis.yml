@@ -1,0 +1,17 @@
+dist: xenial
+language: python
+cache: pip
+services:
+  - postgresql
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
+  - pip install coveralls
+script:
+  - nosetests --with-coverage --cover-package=csvkat
+after_success:
+  coveralls
