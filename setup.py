@@ -51,12 +51,10 @@ setup(
     ],
     packages=[
         'csvkat',
-        # 'csvkit.convert',
-        # 'csvkit.utilities'
     ],
     entry_points={
         'console_scripts': [
-            'csvflatten = csvkat.utilities.csvflatten:launch_new_instance',
+            'csvflatten = csvkat.csvkitplus.csvflatten:launch_new_instance',
         ]
     },
     install_requires=install_requires
