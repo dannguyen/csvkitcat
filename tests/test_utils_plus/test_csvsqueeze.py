@@ -10,7 +10,7 @@ try:
 except ImportError:
     from unittest.mock import patch
 
-from csvkat.csvkitplus.csvsqueeze import CSVSqueeze, launch_new_instance
+from csvkitcat.utils_plus.csvsqueeze import CSVSqueeze, launch_new_instance
 from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string, ColumnsTests, NamesTests
 
 
@@ -52,5 +52,19 @@ class TestCSVFormat(CSVKitTestCase, EmptyFileTests):
             "1,hello world",
             "2,good   bye",
             "3,a  ok"
+        ])
+
+
+    def test_kill_lines(self):
+        self.assertLines(['examples/linebreaks.csv',], [
+            "id,speech",
+            '''1,hey you folks whats up?''',
+        ])
+
+    def test_keep_lines(self):
+        self.assertLines(['examples/linebreaks.csv', '--keep-lines'], [
+            "id,speech",
+            '''1,"hey''',
+            'you','folks','whats up?"',
         ])
 

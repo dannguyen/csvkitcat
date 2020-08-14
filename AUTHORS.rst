@@ -1,4 +1,4 @@
-The following individuals have contributed code to csvkat:
+The following individuals have contributed code to csvkitcat:
 
 * Christopher Groskopf
 * all the contributors to wireservice/csvkit

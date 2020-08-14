@@ -1,8 +1,8 @@
 ======================
-Contributing to csvkat
+Contributing to csvkitcat
 ======================
 
-csvkat follows the `Python Community Code of Conduct <https://www.python.org/psf/codeofconduct/>`_.
+csvkitcat follows the `Python Community Code of Conduct <https://www.python.org/psf/codeofconduct/>`_.
 
 Report a bug
 ------------

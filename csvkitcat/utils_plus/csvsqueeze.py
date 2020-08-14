@@ -20,24 +20,23 @@ import agate
 from csvkit.cli import CSVKitUtility, parse_column_identifiers
 import regex as re
 
-
-
-
 class squeezefoo(object):
     ORDERED_OPTS = (
         'normalize_lines',
         'squeeze_lines',
+        'kill_lines',
         'normalize_spaces',
         'squeeze_spaces',
-        'strip',
-        'lstrip',
-        'rstrip',
+        # 'strip',
+        # 'lstrip',
+        # 'rstrip',
     )
 
+
     @staticmethod
-    def normalize_spaces(text):
-        """converts non-printable whitespace (i.e. horizontal characters) to plain whitespace"""
-        return re.sub(r'\h', ' ', text)
+    def kill_lines(text):
+        """converts all newlines to plain whitespace"""
+        return re.sub(r'\n', ' ', text)
 
     @staticmethod
     def normalize_lines(text):
@@ -45,26 +44,35 @@ class squeezefoo(object):
         return re.sub(r'\v', '\n', text)
 
     @staticmethod
-    def squeeze_spaces(text):
-        """removes consecutive whitespace"""
-        return re.sub(f' +', ' ', text)
+    def normalize_spaces(text):
+        """converts non-printable whitespace (i.e. horizontal characters) to plain whitespace"""
+        return re.sub(r'\h', ' ', text)
+
 
     @staticmethod
     def squeeze_lines(text):
-        """converts all newlines to plain whitespace"""
-        return re.sub(r'\n', ' ', text)
+        """removes consecutive whitespace"""
+        return re.sub(r'\n+', '\n', text)
 
     @staticmethod
-    def lstrip(text, *args):
-        return text.lstrip(*args)
+    def squeeze_spaces(text):
+        """removes consecutive whitespace"""
+        return re.sub(r' +', ' ', text)
 
-    @staticmethod
-    def rstrip(text, *args):
-        return text.rstrip(*args)
 
-    @staticmethod
-    def strip(text, *args):
-        return text.strip(*args)
+    # @staticmethod
+    # def strip(text, *args):
+    #     return text.strip(*args)
+
+
+    # @staticmethod
+    # def lstrip(text, *args):
+    #     return text.lstrip(*args)
+
+    # @staticmethod
+    # def rstrip(text, *args):
+    #     return text.rstrip(*args)
+
 
 
 
@@ -95,6 +103,14 @@ class CSVSqueeze(CSVKitUtility):
                                     action='store_true',
                                     help="""Do NOT squeeze consecutive whitespace characters into a single space""")
 
+        self.argparser.add_argument('--keep-lines', dest='keep_lines',
+                                    action='store_true',
+                                    help="""Do NOT convert line breaks into simple white space""")
+
+
+        # --keep-consecutive-ws
+        # --keep-raw lines,spaces
+        # --keep-lines
         # self.argparser.add_argument('--keep-newlines', dest='keep_newlines',
         #                             action='store_true',
         #                             help="""Do NOT convert newline characters into simple whitespace characters""")
@@ -151,7 +167,7 @@ class CSVSqueeze(CSVKitUtility):
         )
 
         self.squeeze_options = []
-        for key in ('consecutive_ws', ):
+        for key in ('consecutive_ws', 'lines',):
             argname = 'keep_%s' % key
             value = getattr(self.args, argname)
             if value:
@@ -172,6 +188,9 @@ class CSVSqueeze(CSVKitUtility):
         if 'keep_consecutive_ws' in self.squeeze_options:
             foos.remove('squeeze_spaces')
 
+        if 'keep_lines' in self.squeeze_options:
+            foos.remove('kill_lines')
+        print(foos)
         return foos
 
     def squeeze_table(self, table, parsed_opts):
@@ -205,7 +224,9 @@ def squeeze_text(text, methods=squeezefoo.ORDERED_OPTS):
         if mparams:
             foo = getattr(squeezefoo, key)
             newtext = foo(newtext) if mparams is True else foo(text, *mparams)
-    return newtext
+
+    # we always strip leading/trailing whitespace
+    return newtext.strip()
 
 
 
@@ -217,13 +238,3 @@ def launch_new_instance():
 
 if __name__ == '__main__':
     launch_new_instance()
-
-
-
-    # table = agate.Table.from_object(DATA['stuff'], column_types=[agate.Text(cast_nulls=False) for k in DATA['stuff'][0].keys()])
-
-    # mydata = []
-    # for row in table:
-    #     for col, val in row.items():
-    #         d = {col: val.strip()}
-    #         mydata.append(d)

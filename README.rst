@@ -1,17 +1,18 @@
-********************
-csvkat
-********************
+*********
+csvkitcat
+*********
 
 hello there.
 
-csvkat is a library that supplements (and depends on) the great `wireservice/csvkit <https://github.com/wireservice/csvkit>`_. It exists because csvkit is no longer adding new tools to its core functionality.
+csvkitcat is a library that supplements (and depends on) the great `wireservice/csvkit <https://github.com/wireservice/csvkit>`_. It exists because csvkit is no longer adding new tools to its core functionality.
 
 New tools and utilities:
 
+text utils
+----------
+
 - csvflatten
-- csvpad
 - csvsqueeze
-- csvslice
 
 
 CSVKit documentation

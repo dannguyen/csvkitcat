@@ -10,7 +10,7 @@ try:
 except ImportError:
     from unittest.mock import patch
 
-from csvkat.csvkitplus.csvflatten import CSVFlatten, launch_new_instance, DEFAULT_EOR_MARKER
+from csvkitcat.utils_plus.csvflatten import CSVFlatten, launch_new_instance, DEFAULT_EOR_MARKER
 from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string
 
 

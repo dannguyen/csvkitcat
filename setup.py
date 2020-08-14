@@ -19,13 +19,13 @@ if sys.version_info < (2, 7):
     install_requires.append('simplejson>=3.6.3')
 
 setup(
-    name='csvkat',
+    name='csvkitcat',
     version='0.0.2',
     description='The extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',
     author_email='dansonguyen@gmail.com',
-    url='https://github.com/dannguyen/csvkat',
+    url='https://github.com/dannguyen/csvkitcat',
     project_urls={
         'Documentation': 'https://csvkit.readthedocs.io/en/latest/',
     },
@@ -51,12 +51,12 @@ setup(
         'Topic :: Utilities'
     ],
     packages=[
-        'csvkat',
+        'csvkitcat',
     ],
     entry_points={
         'console_scripts': [
-            'csvflatten = csvkat.csvkitplus.csvflatten:launch_new_instance',
-            'csvsqueeze = csvkat.csvkitplus.csvsqueeze:launch_new_instance',
+            'csvflatten = csvkitcat.utils_plus.csvflatten:launch_new_instance',
+            'csvsqueeze = csvkitcat.utils_plus.csvsqueeze:launch_new_instance',
 
         ]
     },
