@@ -6,6 +6,7 @@ from setuptools import setup
 install_requires = [
     'csvkit>=1.0.5',
     'agate>=1.6.1',
+    'regex>=2020.7.14',
     # 'agate-excel>=0.2.2',
     # 'agate-dbf>=0.2.0',
     # 'agate-sql>=0.5.3',
@@ -19,7 +20,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name='csvkat',
-    version='0.0.1',
+    version='0.0.2',
     description='The extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',
@@ -30,7 +31,7 @@ setup(
     },
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Big Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
@@ -55,6 +56,8 @@ setup(
     entry_points={
         'console_scripts': [
             'csvflatten = csvkat.csvkitplus.csvflatten:launch_new_instance',
+            'csvsqueeze = csvkat.csvkitplus.csvsqueeze:launch_new_instance',
+
         ]
     },
     install_requires=install_requires

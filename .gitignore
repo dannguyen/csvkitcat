@@ -1,4 +1,5 @@
 ZUNK/
+sandbox.py
 *.pyc
 *.swp
 .DS_Store

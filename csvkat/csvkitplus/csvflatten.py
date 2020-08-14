@@ -69,6 +69,13 @@ class CSVFlatten(CSVKitUtility):
         self.argparser.add_argument('-M', '--out-lineterminator', dest='out_lineterminator',
                                     help='Character used to terminate lines in the output CSV file.')
 
+        # TODO
+        # self.argparser.add_argument('-y', '--snifflimit', dest='sniff_limit', type=int,
+        #                             help='Limit CSV dialect sniffing to the specified number of bytes. Specify "0" to disable sniffing entirely.')
+        # self.argparser.add_argument('-I', '--no-inference', dest='no_inference', action='store_true',
+        #                             help='Disable type inference when parsing the input.')
+
+
 
     def _extract_csv_writer_kwargs(self):
         kwargs = {}

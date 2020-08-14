@@ -9,6 +9,8 @@ csvkat is a library that supplements (and depends on) the great `wireservice/csv
 New tools and utilities:
 
 - csvflatten
+- csvpad
+- csvsqueeze
 - csvslice
 
 
