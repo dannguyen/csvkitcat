@@ -29,16 +29,14 @@ is equivalent to:
 """
 
 import agate
-from csvkit.cli import CSVKitUtility, parse_column_identifiers
+# from csvkit.cli import CSVKitUtility
+from csvkitcat.alltext import AllTextUtility
 import regex as re
 import warnings
 
 
 
-JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])
-
-
-class CSVSed(CSVKitUtility):
+class CSVSed(AllTextUtility):
     description = """Replaces all instances of [PATTERN] with [REPL]"""
 
     override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']
@@ -57,8 +55,6 @@ class CSVSed(CSVKitUtility):
                                     type=int,
                                     help='Max number of matches to replace PER FIELD. Default is 0, i.e. no limit')
 
-
-
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
                                     help='A regex pattern to find')
 
@@ -72,6 +68,9 @@ class CSVSed(CSVKitUtility):
         """
         A wrapper around the main loop of the utility which handles opening and
         closing files.
+
+        TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
+            a way to refactor this...
         """
         self.input_file = self._open_input_file(self.args.input_path)
 
@@ -88,17 +87,8 @@ class CSVSed(CSVKitUtility):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
+        myio = self.init_io()
 
-        self.args.sniff_limit = 0       # TK is needed??
-        self.args.no_inference = True   # TK is needed??
-
-        reader_kwargs = self.reader_kwargs
-        writer_kwargs = self.writer_kwargs
-
-        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
-
-        output = agate.csv.writer(self.output_file, **writer_kwargs)
-        output.writerow(column_names)
 
         max_match_count = self.args.max_match_count
         if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
@@ -107,15 +97,15 @@ class CSVSed(CSVKitUtility):
         pattern = fr'{self.args.pattern}' if self.args.literal_match else re.compile(fr'{self.args.pattern}')
         repl = fr'{self.args.repl}'
 
-        for row in rows:
+        for row in myio.rows:
             d = []
             for _x, val in enumerate(row):
-                if _x in column_ids:
+                if _x in myio.column_ids:
                     newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
                 else:
                     newval  = val
                 d.append(newval)
-            output.writerow(d)
+            myio.output.writerow(d)
 
 
 
