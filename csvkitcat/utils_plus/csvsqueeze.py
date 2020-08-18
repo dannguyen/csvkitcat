@@ -177,7 +177,7 @@ class CSVSqueeze(CSVKitUtility):
         parsed_sqopts = self.parse_squeeze_options()
         # table = self.squeeze_table(table, self.squeeze_options)
 
-        table = self.squeeze_table(table, parsed_sqopts)
+        table = self.squeeze_table(table, column_ids, parsed_sqopts)
         table.to_csv(self.output_file, **self.writer_kwargs)
 
 
@@ -193,10 +193,13 @@ class CSVSqueeze(CSVKitUtility):
         print(foos)
         return foos
 
-    def squeeze_table(self, table, parsed_opts):
+    def squeeze_table(self, table, column_ids, parsed_opts):
         xdata = []
         for row in table:
-            d = {col: squeeze_text(val, parsed_opts) for col, val in row.items()}
+            d = {}
+            for _x, (col, val) in enumerate(row.items()):
+                d[col] = squeeze_text(val, parsed_opts) if _x in column_ids else val
+                # d = {col: squeeze_text(val, parsed_opts) for col, val in row.items()}
             xdata.append(d)
 
         xtable = agate.Table.from_object(xdata, column_types=JUST_TEXT_COLUMNS)

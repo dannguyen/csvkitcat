@@ -1,9 +1,21 @@
 # TODOS
 
-## General
+## priority
 
-- rename library to `csvkitcat`, `csvkc` for short
 
+### csvsqueeze 
+
+- [X] csvsqueeze: implement by-column cleaning
+- [ ] break csvsqueeze into csvnorm and csvsqueeze??
+- [ ] refactor csvsqueeze because it looks like spaghetti barf
+
+
+## Just done
+
+
+- [x] rename library to `csvkitcat`, `csvkc` for short
+
+-----------------------
 
 ## csvflatten
 
@@ -22,9 +34,16 @@
 
 ## csvsqueeze
 
-- implement by-column cleaning
 - implement by character stripping
     - pass args to lstrip, rstrip
+
+
+## csvheaders
+
+- get list
+- create
+- rename
+- mute/omit
 
 
 ## csvpad
@@ -52,27 +71,82 @@ output record_id,record
 
 ```
 
-## csvrextract
+## csvtxtval newcol from regex
 
-(by column?)
+- create only one new column
+- requires `--output` pattern
+- ignores --max-matches
+- colname is srccolumn_extract
 
-```sh
---newcolname
---simple-pattern
---match-delimiter
+
+
+csvtxform: makes 1 column from one regex pattern:
+    - if no --output, then new column is what was matched
+    - if --output, then new column is that pattern
+    - if --by-groups, then make new columns; ignores --output
+
+csvtxract: makes new columns, or 1 column
+    - by delimiter
+    - by named capture
+
+
+
+## csvtxt
+
+
+```
+csvtxcap [subcommand] [pattern] --regex --xname
 
 --pattern
---output-replace
+--regex is pattern literal or regex
+--column column to target
+--output-header 
+--max-matches: number of extractions
+--match-delimiter: '\n» '
 ```
 
-### csvpcount
-
-- for every row, count number of matches with given patterns
-- more than one pattern can be sought
-- option to create column per pattern
-    pcount_01_slug
 
 
+- collect/serialize (as yaml?)
+    - provide a pattern
+        - create n columns, for the first n finds
+    - provide a pattern with named captured groups
+        - max-count is assumed to be 0
+        - create column for every group: "[src_column] _ [group_name]"
+
+
+- colsplit
+    - split by literal delimiter, create n columns
+    - split by regex pattern
+
+- split
+
+
+## csvtextsplit
+given a column and a delimiter, create n columns
+
+
+
+## csvreplace
+
+like `csvsed`, except replaces entire column
+
+```
+--columns
+--pattern
+--output '$1'
+```
+
+
+### csvfind
+
+- for every row, count number of matches with given pattern
+- create column with find_count
+- create column with find_extracts: line for every match
+
+### csvpick/csvfrak/csvxtract/csvrx
+
+#### csvgsplit/csvcapture
 
 
 ## other stuff

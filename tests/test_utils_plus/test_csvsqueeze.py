@@ -45,6 +45,14 @@ class TestCSVFormat(CSVKitTestCase, EmptyFileTests):
             "4,Mr. R obot",
         ])
 
+    def test_squeeze_does_not_affect_headers(self):
+          self.assertLines(['examples/mess_head.csv', '-u', '0'], [
+            ''' code   ," the  first''',
+            ''' name   "''',
+            "1,Dan",
+            "0 2,Billy Bob",
+        ])
+
 
     def test_keep_consecutive_whitespace(self):
         self.assertLines(['examples/consec_ws.csv', '--keep-consecutive-ws'], [
@@ -66,5 +74,25 @@ class TestCSVFormat(CSVKitTestCase, EmptyFileTests):
             "id,speech",
             '''1,"hey''',
             'you','folks','whats up?"',
+        ])
+
+
+######## test column choice
+    def test_selected_columns_squeezed(self):
+        self.assertLines(['examples/consec_ws.csv', '-c', 'id'], [
+            "id,phrase",
+            "1,hello world",
+            "2,good   bye",
+            "3,  a  ok",
+        ])
+
+    def test_selected_columns_squeezed_w_options(self):
+        """since Column 1 is not selected, no stripping of `id` is done"""
+
+        self.assertLines(['examples/consec_ws.csv', '-c', '2', '--keep-consecutive-ws'], [
+            "id,phrase",
+            "1,hello world",
+            "2,good   bye",
+            " 3  ,a  ok"
         ])
 
