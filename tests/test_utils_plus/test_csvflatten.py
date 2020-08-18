@@ -17,7 +17,7 @@ from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string
 
 
 
-class TestCSVFormat(CSVKitTestCase, EmptyFileTests):
+class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
     Utility = CSVFlatten
 
     def test_launch_new_instance(self):

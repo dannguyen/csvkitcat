@@ -15,7 +15,7 @@ from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string, Columns
 
 
 
-class TestCSVFormat(CSVKitTestCase, EmptyFileTests):
+class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
     Utility = CSVSqueeze
 
     def test_launch_new_instance(self):

@@ -2,20 +2,47 @@
 
 ## priority
 
+## csvsed
+
+- [ ] majorly slow as hell: 
+    ```
+    time cat osha_violation_event-001.csv \
+      |  csvsed '(\d{4})-(\d{2})-(\d{2})' '\2/\3/\1' \
+      > /dev/null
+    ```
+
+## csvpad
+
+```sh
+--left 5 '0'
+--right 
+```
+
 
 ### csvsqueeze 
 
-- [X] csvsqueeze: implement by-column cleaning
 - [ ] break csvsqueeze into csvnorm and csvsqueeze??
 - [ ] refactor csvsqueeze because it looks like spaghetti barf
 
 
-## Just done
+
+### Just done
+
+- csvsed
+  - [x] basic test and implementation
+  - [x] -m for literal match
 
 
-- [x] rename library to `csvkitcat`, `csvkc` for short
+- csvsqueeze
+  - [X] implement by-column cleaning
 
 -----------------------
+
+## in general
+
+- [ ] how should i deal with `override_flags`?
+- [x] rename library to `csvkitcat`, `csvkc` for short
+
 
 ## csvflatten
 
@@ -38,6 +65,21 @@
     - pass args to lstrip, rstrip
 
 
+
+
+
+
+
+
+
+
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+# DRAFT STUFF
+
 ## csvheaders
 
 - get list
@@ -46,12 +88,6 @@
 - mute/omit
 
 
-## csvpad
-
-```sh
---left 5 '0'
---right 
-```
 
 ## csvblob
 
@@ -158,11 +194,6 @@ like `csvsed`, except replaces entire column
     - csvhead
     - csvtail
 - csvrange
-
-- csvpad
-- csvsed
-
-
 
 - csvcompute
 - csvgroup

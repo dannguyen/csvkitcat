@@ -4,7 +4,7 @@
 """
 Example usage:
 
-    $ csvsqueeze -U1 examples/spaced.csv
+    $ csvsqueeze -U1 examples/mess.csv
 
 
 Output:
