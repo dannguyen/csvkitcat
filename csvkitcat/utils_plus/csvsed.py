@@ -51,6 +51,14 @@ class CSVSed(CSVKitUtility):
                                     default=False,
                                     help='By default, [PATTERN] is assumed to be a regex. Set this flag to make it a literal text find/replace',)
 
+
+        self.argparser.add_argument('--max', dest="max_match_count", action='store',
+                                    default=0,
+                                    type=int,
+                                    help='Max number of matches to replace PER FIELD. Default is 0, i.e. no limit')
+
+
+
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
                                     help='A regex pattern to find')
 
@@ -81,43 +89,33 @@ class CSVSed(CSVKitUtility):
             self.argparser.error('You must provide an input file or piped data.')
 
 
-        self.args.sniff_limit = 0
-        self.args.no_inference = True
+        self.args.sniff_limit = 0       # TK is needed??
+        self.args.no_inference = True   # TK is needed??
 
-        table = agate.Table.from_csv(
-            self.input_file,
-            skip_lines=self.args.skip_lines,
-            sniff_limit=self.args.sniff_limit,
-            column_types=JUST_TEXT_COLUMNS,
-            **self.reader_kwargs
-        )
+        reader_kwargs = self.reader_kwargs
+        writer_kwargs = self.writer_kwargs
 
-        column_ids = parse_column_identifiers(
-            self.args.columns,
-            table.column_names,
-            self.get_column_offset()
-        )
+        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
 
+        output = agate.csv.writer(self.output_file, **writer_kwargs)
+        output.writerow(column_names)
+
+        max_match_count = self.args.max_match_count
+        if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
+            max_match_count = -1 if self.args.literal_match else 0
 
         pattern = fr'{self.args.pattern}' if self.args.literal_match else re.compile(fr'{self.args.pattern}')
         repl = fr'{self.args.repl}'
 
-        xdata = []
-        for row in table:
-            d = {}
-            for _x, (col, val) in enumerate(row.items()):
+        for row in rows:
+            d = []
+            for _x, val in enumerate(row):
                 if _x in column_ids:
-                    d[col] = val.replace(pattern, repl)  if self.args.literal_match else pattern.sub(repl, val)
+                    newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
                 else:
-                    d[col] = val
-            xdata.append(d)
-
-        xtable = agate.Table.from_object(xdata, column_types=JUST_TEXT_COLUMNS)
-
-        xtable.to_csv(self.output_file, **self.writer_kwargs)
-
-
-
+                    newval  = val
+                d.append(newval)
+            output.writerow(d)
 
 
 

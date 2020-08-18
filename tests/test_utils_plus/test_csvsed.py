@@ -16,7 +16,7 @@ from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
 
 
-class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
+class TestCSVSed(CSVKitTestCase, EmptyFileTests):
     Utility = CSVSed
     default_args = ['hello', 'world']
 
@@ -45,6 +45,9 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
             "$,%",])
 
 
+
+
+
     def test_column_choice(self):
         self.assertLines(['-c', 'b,c',
                         r'(\w)', r'\1!',
@@ -68,6 +71,28 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
 
     def test_literal_match(self):
         self.assertLines(['-m',
+                        's.', 'x.',
+                        'examples/honorifics-fem.csv' ], [
+            "code,name",
+            "1,Mrx. Smith",
+            "2,Miss Daisy",
+            "3,Mx. Doe",
+            "4,Mrs Miller",
+            "5,Ms Lee",
+            "6,miss maam",
+        ])
+
+
+
+    def test_max_match_count(self):
+        self.assertLines(['--max', '2', r'(\w)', r'\1!', 'examples/dummy4.csv' ], [
+            "a,b,c",
+            "1!d!,2!e!,3!f!",
+            "1! t!x,4! t!y,5! t!z",
+       ])
+
+    def test_max_match_count_normalize_negative_val_to_default_catchall_val(self):
+        self.assertLines(['-m', '--max', '-99999',
                         's.', 'x.',
                         'examples/honorifics-fem.csv' ], [
             "code,name",

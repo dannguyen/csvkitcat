@@ -4,12 +4,53 @@
 
 ## csvsed
 
-- [ ] majorly slow as hell: 
+- [ ] benchmarking....majorly slow as hell: 
+
     ```
-    time cat osha_violation_event-001.csv \
-      |  csvsed '(\d{4})-(\d{2})-(\d{2})' '\2/\3/\1' \
+    time cat examples/realdata/osha-violation.csv \
+      | csvsed '(\d{4})-(\d{2})-(\d{2})' '\2/\3/\1' \
       > /dev/null
+
+    real  0m1.167s
+    user  0m0.973s
+    sys 0m0.148s
     ```
+
+
+    Or with just one column:
+
+    ```sh
+        time cat examples/realdata/osha-violation.csv \
+      | csvsed -c hist_date '(\d{4})-(\d{2})-(\d{2})' '\2/\3/\1' \
+      > /dev/null
+    real  0m0.799s
+    user  0m0.674s
+    sys 0m0.122s
+    ```
+
+
+    compared to:
+
+    ```
+    time cat examples/realdata/osha-violation.csv \
+      | perl -p -e 's#(\d{2})/(\d{2})/(\d{4})#$3-$1-$2#g' \
+      > /dev/null
+
+    real  0m0.020s
+    user  0m0.015s
+    sys 0m0.008s    
+    ```
+
+
+Before row iteration:
+
+```
+real  0m0.433s
+user  0m0.322s
+sys 0m0.105s
+```
+
+
 
 ## csvpad
 
@@ -31,7 +72,7 @@
 - csvsed
   - [x] basic test and implementation
   - [x] -m for literal match
-
+  - [x] --max for limiting number of matches per field
 
 - csvsqueeze
   - [X] implement by-column cleaning
