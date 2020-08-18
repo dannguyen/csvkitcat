@@ -1,5 +1,5 @@
 import agate
-from csvkit.cli import CSVKitUtility, parse_column_identifiers
+from csvkit.cli import CSVKitUtility
 from collections import namedtuple
 
 

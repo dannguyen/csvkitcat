@@ -76,13 +76,17 @@ sys 0m0.105s
 
 - csvsqueeze
   - [X] implement by-column cleaning
+  
+-- general
+  - [x] rename library to `csvkitcat`, `csvkc` for short
+  - [x] created alltextutil for common case of reading just text
+
 
 -----------------------
 
 ## in general
 
 - [ ] how should i deal with `override_flags`?
-- [x] rename library to `csvkitcat`, `csvkc` for short
 
 
 ## csvflatten

@@ -16,8 +16,7 @@ Output:
 "4", "Mr. Robot"
 """
 
-import agate
-from csvkit.cli import CSVKitUtility, parse_column_identifiers
+from csvkitcat.alltext import AllTextUtility
 import regex as re
 
 class squeezefoo(object):
@@ -77,11 +76,9 @@ class squeezefoo(object):
 
 
 
-JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])
 
 
-
-class CSVSqueeze(CSVKitUtility):
+class CSVSqueeze(AllTextUtility):
     description = """Converts all space characters to a simple whitespace.
                      Squeezes consecutive whitespace.
                      Strips leading and/or trailing whitespace,
@@ -147,25 +144,6 @@ class CSVSqueeze(CSVKitUtility):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
-        ## set arguments so that no_inference is forced
-        self.args.sniff_limit = 0
-        self.args.no_inference = True
-
-        table = agate.Table.from_csv(
-            self.input_file,
-            skip_lines=self.args.skip_lines,
-            sniff_limit=self.args.sniff_limit,
-            # column_types=self.get_column_types(),
-            column_types=JUST_TEXT_COLUMNS,
-            **self.reader_kwargs
-        )
-
-        column_ids = parse_column_identifiers(
-            self.args.columns,
-            table.column_names,
-            self.get_column_offset()
-        )
-
         self.squeeze_options = []
         for key in ('consecutive_ws', 'lines',):
             argname = 'keep_%s' % key
@@ -175,10 +153,10 @@ class CSVSqueeze(CSVKitUtility):
 
 
         parsed_sqopts = self.parse_squeeze_options()
-        # table = self.squeeze_table(table, self.squeeze_options)
 
-        table = self.squeeze_table(table, column_ids, parsed_sqopts)
-        table.to_csv(self.output_file, **self.writer_kwargs)
+        myio = self.init_io()
+
+        self.squeeze_table(myio.rows, myio.output, myio.column_ids, parsed_sqopts)
 
 
 
@@ -190,20 +168,16 @@ class CSVSqueeze(CSVKitUtility):
 
         if 'keep_lines' in self.squeeze_options:
             foos.remove('kill_lines')
-        print(foos)
+#        print(foos)
         return foos
 
-    def squeeze_table(self, table, column_ids, parsed_opts):
-        xdata = []
-        for row in table:
-            d = {}
-            for _x, (col, val) in enumerate(row.items()):
-                d[col] = squeeze_text(val, parsed_opts) if _x in column_ids else val
-                # d = {col: squeeze_text(val, parsed_opts) for col, val in row.items()}
-            xdata.append(d)
-
-        xtable = agate.Table.from_object(xdata, column_types=JUST_TEXT_COLUMNS)
-        return xtable
+    def squeeze_table(self, rows, output, column_ids, parsed_opts):
+        for row in rows:
+            d = []
+            for _x, val in enumerate(row):
+                newval = squeeze_text(val, parsed_opts) if _x in column_ids else val
+                d.append(newval)
+            output.writerow(d)
 
 
 def squeeze_text(text, methods=squeezefoo.ORDERED_OPTS):

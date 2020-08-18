@@ -15,8 +15,6 @@ from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string
 
 
 
-
-
 class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
     Utility = CSVFlatten
 

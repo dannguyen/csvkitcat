@@ -28,8 +28,6 @@ is equivalent to:
 
 """
 
-import agate
-# from csvkit.cli import CSVKitUtility
 from csvkitcat.alltext import AllTextUtility
 import regex as re
 import warnings
