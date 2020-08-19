@@ -11,7 +11,7 @@ except ImportError:
     from unittest.mock import patch
 
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
-from csvkitcat.utils_plus.csvcount import CSVCount, launch_new_instance, count_csv_rows
+from csvkitcat.moreutils.csvcount import CSVCount, launch_new_instance, count_csv_rows
 
 
 from unittest import skip as skiptest

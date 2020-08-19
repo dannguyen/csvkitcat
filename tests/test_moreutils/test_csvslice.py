@@ -12,7 +12,7 @@ except ImportError:
 
 from csvkit.exceptions import ColumnIdentifierError
 from csvkitcat.exceptions import ArgumentErrorTK
-from csvkitcat.utils_plus.csvslice import CSVSlice,  launch_new_instance
+from csvkitcat.moreutils.csvslice import CSVSlice,  launch_new_instance
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 from unittest import skip as skiptest
 

@@ -11,7 +11,7 @@ except ImportError:
     from unittest.mock import patch
 
 from csvkit.exceptions import ColumnIdentifierError
-from csvkitcat.utils_plus.csvsed import CSVSed,  launch_new_instance
+from csvkitcat.moreutils.csvsed import CSVSed,  launch_new_instance
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
 

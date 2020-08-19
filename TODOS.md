@@ -89,7 +89,7 @@ slice options:
 
 ## in general
 
-- [ ] rename csvkitcat.utils_plus to moreutils
+- [x] rename csvkitcat.utils_plus to moreutils
 - [ ] how should i deal with `override_flags`?
 - [ ] extract/abstract boilerplate csvwriter args stuff, via csvflatten and csvsed
 - [ ] add skip-line functionality to csvsqueeze, slice, etc

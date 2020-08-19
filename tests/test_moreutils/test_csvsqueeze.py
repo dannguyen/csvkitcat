@@ -10,7 +10,7 @@ try:
 except ImportError:
     from unittest.mock import patch
 
-from csvkitcat.utils_plus.csvsqueeze import CSVSqueeze, launch_new_instance
+from csvkitcat.moreutils.csvsqueeze import CSVSqueeze, launch_new_instance
 from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string, ColumnsTests, NamesTests
 
 
