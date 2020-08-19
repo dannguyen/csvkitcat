@@ -53,6 +53,12 @@ class CSVSed(AllTextUtility):
                                     type=int,
                                     help='Max number of matches to replace PER FIELD. Default is 0, i.e. no limit')
 
+
+
+        self.argparser.add_argument('--whole', dest="whole_field_mode", action='store_true',
+                                    default=False,
+                                    help='Match and replace whole field',)
+
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
                                     help='A regex pattern to find')
 
@@ -99,12 +105,19 @@ class CSVSed(AllTextUtility):
             d = []
             for _x, val in enumerate(row):
                 if _x in myio.column_ids:
-                    newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
+                    if self.args.whole_field_mode:
+                        mx = pattern.match(val)
+                        if mx:
+                            partial = mx.captures(0)[0]
+                            newval = pattern.sub(repl, partial)
+                        else:
+                            newval = val
+                    else:
+                        newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
                 else:
                     newval  = val
                 d.append(newval)
             myio.output.writerow(d)
-
 
 
 def launch_new_instance():

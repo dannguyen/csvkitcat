@@ -46,8 +46,6 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
 
 
 
-
-
     def test_column_choice(self):
         self.assertLines(['-c', 'b,c',
                         r'(\w)', r'\1!',
@@ -113,6 +111,31 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
             "2,good   bye",
             "3,a  ok",
         ])
+
+
+    def test_whole_option(self):
+        ############### replace
+
+        """
+        code,value
+        1,my money
+        2,"my stuff, my way"
+        3,your house has my car
+        """
+
+
+        self.assertLines(['--whole', r'my (\w+)', r'Your \1!', 'examples/myway.csv' ], [
+            'code,value',
+            '1,Your money!',
+            '2,Your stuff!',
+            '3,your house has my car',])
+
+
+
+
+
+
+
 
 # class ColumnsTests(object):
     def test_invalid_column(self):
