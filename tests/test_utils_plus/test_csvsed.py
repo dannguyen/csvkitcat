@@ -24,7 +24,6 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
         with patch.object(sys, 'argv', [self.Utility.__name__.lower(), 'hey', 'you', 'examples/dummy.csv']):
             launch_new_instance()
 
-
     def test_basic_dummy(self):
         """
         Shouldn't alter headers
@@ -83,7 +82,7 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
 
 
     def test_max_match_count(self):
-        self.assertLines(['--max', '2', r'(\w)', r'\1!', 'examples/dummy4.csv' ], [
+        self.assertLines(['--max', '2', r'(\w)', r'\1!', 'examples/dummy3x.csv' ], [
             "a,b,c",
             "1!d!,2!e!,3!f!",
             "1! t!x,4! t!y,5! t!z",

@@ -3,14 +3,37 @@
 # PRIORITY
 
 
+## csvslice
 
+```
+from xsv slice
+
+Returns the rows in the range specified (starting at 0, half-open interval).
+The range does not include headers.
+
+If the start of the range isn't specified, then the slice starts from the first
+record in the CSV data.
+
+If the end of the range isn't specified, then the slice continues to the last
+record in the CSV data.
+
+slice options:
+    -s, --start <arg>      The index of the record to slice from.
+    -e, --end <arg>        The index of the record to slice to.
+    -l, --len <arg>        The length of the slice (can be used instead
+                           of --end).
+    -i, --index <arg>      Slice a single record (shortcut for -s [start-index] -l 1).
+```
+
+
+- [ ] csvhead
+- [ ] csvtail
 
 ## csvsed
 
 - [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
 - [x] --whole option: match and replace entire field instead
   - [ ] unfortunately I did it brute force dumb way and it is slower than non--whole
-
 
 
 ## csvpad

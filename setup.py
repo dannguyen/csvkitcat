@@ -57,6 +57,7 @@ setup(
         'console_scripts': [
             'csvflatten = csvkitcat.utils_plus.csvflatten:launch_new_instance',
             'csvsed = csvkitcat.utils_plus.csvsed:launch_new_instance',
+            'csvslice = csvkitcat.utils_plus.csvslice:launch_new_instance',
             'csvsqueeze = csvkitcat.utils_plus.csvsqueeze:launch_new_instance',
 
 
