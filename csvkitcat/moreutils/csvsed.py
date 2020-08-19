@@ -141,6 +141,7 @@ class CSVSed(AllTextUtility):
         pattern = fr'{self.args.pattern}' if self.args.literal_match else re.compile(fr'{self.args.pattern}')
         repl = fr'{self.args.repl}'
 
+        # TK TODO THIS IS UGLY!!
         for row in myio.rows:
             d = []
             for _x, val in enumerate(row):

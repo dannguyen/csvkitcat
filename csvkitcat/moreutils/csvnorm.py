@@ -1,108 +1,36 @@
 #!/usr/bin/env python
 
-
 """
 Example usage:
 
-    $ csvsqueeze -U1 examples/mess.csv
+
+    $ csvnorm examples/consec_ws.csv
+
+    id,phrase
+    1,hello world
+    2,good bye
+    3,a ok
 
 
-Output:
 
-"code","name"
-"1","Dan"
-"02","Billy Bob"
-"0003","...Who..?"
-"4", "Mr. Robot"
+    $ csvnorm examples/multi1.csv
+
+    id,text
+    1,hey
+    2,hello world
+    3,"to be, or not to be?"
 """
-
-
-
-"""
-- normalize
-    - line-break/vertical
-    - whitespace/horizontal
-    - case
-
--- kill-lines
--- squeeze
-    - spaces
-
--- strip
-"""
-
-
 
 
 from csvkitcat.alltext import AllTextUtility
 import regex as re
 
-class squeezefoo(object):
-    ORDERED_OPTS = (
-        'normalize_lines',
-        'squeeze_lines',
-        'kill_lines',
-        'normalize_spaces',
-        'squeeze_spaces',
-        # 'strip',
-        # 'lstrip',
-        # 'rstrip',
-    )
-
-
-    @staticmethod
-    def kill_lines(text):
-        """converts all newlines to plain whitespace"""
-        return re.sub(r'\n', ' ', text)
-
-    @staticmethod
-    def normalize_lines(text):
-        """converts all vertical whitespace characters, i.e. linebreaks, to standard newline"""
-        return re.sub(r'\v', '\n', text)
-
-    @staticmethod
-    def normalize_spaces(text):
-        """converts non-printable whitespace (i.e. horizontal characters) to plain whitespace"""
-        return re.sub(r'\h', ' ', text)
-
-
-    @staticmethod
-    def squeeze_lines(text):
-        """removes consecutive whitespace"""
-        return re.sub(r'\n+', '\n', text)
-
-    @staticmethod
-    def squeeze_spaces(text):
-        """removes consecutive whitespace"""
-        return re.sub(r' +', ' ', text)
-
-
-    # @staticmethod
-    # def strip(text, *args):
-    #     return text.strip(*args)
-
-
-    # @staticmethod
-    # def lstrip(text, *args):
-    #     return text.lstrip(*args)
-
-    # @staticmethod
-    # def rstrip(text, *args):
-    #     return text.rstrip(*args)
-
-
-
-
-
-
-
 class CSVNorm(AllTextUtility):
-    description = """Converts all space characters to a simple whitespace.
-                     Norms consecutive whitespace.
-                     Strips leading and/or trailing whitespace,
-                        and/or characters of your choice"""
+    description = """Normalize non-printable characters, e.g. newlines, spaces, and other vertical and horizontal chars.
+                     Optionally, normalize letter case"""
 
-    override_flags = ['L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = [ 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+
 
 
     def add_arguments(self):
@@ -110,47 +38,50 @@ class CSVNorm(AllTextUtility):
                                     help='Display column names and indices from the input CSV and exit.')
         self.argparser.add_argument('-c', '--columns', dest='columns',
                                     help='A comma separated list of column indices, names or ranges to be extracted, e.g. "1,id,3-5". Defaults to all columns.')
-        self.argparser.add_argument('-C', '--not-columns', dest='not_columns',
-                                    help='A comma separated list of column indices, names or ranges to be excluded, e.g. "1,id,3-5". Defaults to no columns.')
+
+        self.argparser.add_argument('-T', '--translate-space', dest='space_actions', nargs='+',
+                    action='append',
+                    choices=Normy.SPACE_OPTS,
+                    default=Normy.SPACE_OPTS,
+                    help='''A list of "space" character translations. By default, all of the following are performed:
+
+                    "(h)orizontal" converts all line-break/newline, and other vertical characters to: "\n"
+
+                    "(v)ertical" converts all whitespace/tab/zero-width and other horizontal characters to simple whitespace, i.e. " "
+                    ''')
+
+        self.argparser.add_argument('--TX', '--no-translate-space', dest='space_actions_disabled',
+                    action='store_true',
+                    help='''Do no space character translations, i.e. ignore and override -T/--translate-space option''')
 
 
-        self.argparser.add_argument('--keep-consecutive-ws', dest='keep_consecutive_ws',
-                                    action='store_true',
-                                    help="""Do NOT squeeze consecutive whitespace characters into a single space""")
+        self.argparser.add_argument('-S', '--squeeze', dest='squeeze_actions', nargs='+', action='append',
+                   choices=Normy.SQUEEZE_OPTS,
+                   default=Normy.SQUEEZE_OPTS,
+                   help='''A list of consecutive space squeezing/collapsing actions. By default, all of the following are performed:
 
-        self.argparser.add_argument('--keep-lines', dest='keep_lines',
-                                    action='store_true',
-                                    help="""Do NOT convert line breaks into simple white space""")
+                    "(l)ines" squeezes consecutive '\n' characters
+                    "(s)paces" squeezes consecutive ' ' characters''')
 
-
-        # --keep-consecutive-ws
-        # --keep-raw lines,spaces
-        # --keep-lines
-        # self.argparser.add_argument('--keep-newlines', dest='keep_newlines',
-        #                             action='store_true',
-        #                             help="""Do NOT convert newline characters into simple whitespace characters""")
+        self.argparser.add_argument('--SX', '--no-squeeze', dest='squeeze_actions_disabled',
+                    action='store_true',
+                    help='''Do no consecutive space squeezing i.e. ignore and override -S/--squeeze''')
 
 
-        # self.argparser.add_argument('--keep-nonprintable-spaces', dest='keep_nonprintable_spaces',
-        #                             action='store_true',
-        #                             help="""Do NOT convert tabs, zero-width spaces and other such things to
-        #                                 a simple whitespace""")
+        self.argparser.add_argument('--keep-lines', dest='dont_convert_lines', action='store_true',
+                    help=r'''Disable the default behavior of converting all "\n" characters
+                    are converted to plain white space, i.e. " ".''')
 
 
-        # self.argparser.add_argument('-D', '--out-delimiter', dest='out_delimiter',
-        #                             help='Delimiting character of the output CSV file.')
-        # self.argparser.add_argument('-T', '--out-tabs', dest='out_tabs', action='store_true',
-        #                             help='Specify that the output CSV file is delimited with tabs. Overrides "-D".')
-        # self.argparser.add_argument('-Q', '--out-quotechar', dest='out_quotechar',
-        #                             help='Character used to quote strings in the output CSV file.')
+        self.argparser.add_argument('--no-strip', dest='dont_strip', action='store_true', default=False,
+            help=r'''Disable the default behavior of stripping leading and trailing "\s" characters from value fields''')
+
+
+        ### boilerplate
+
+        # defer to csvformat
         # self.argparser.add_argument('-U', '--out-quoting', dest='out_quoting', type=int, choices=[0, 1, 2, 3],
         #                             help='Quoting style used in the output CSV file. 0 = Quote Minimal, 1 = Quote All, 2 = Quote Non-numeric, 3 = Quote None.')
-        # self.argparser.add_argument('-B', '--out-no-doublequote', dest='out_doublequote', action='store_false',
-        #                             help='Whether or not double quotes are doubled in the output CSV file.')
-        # self.argparser.add_argument('-P', '--out-escapechar', dest='out_escapechar',
-        #                             help='Character used to escape the delimiter in the output CSV file if --quoting 3 ("Quote None") is specified and to escape the QUOTECHAR if --no-doublequote is specified.')
-        # self.argparser.add_argument('-M', '--out-lineterminator', dest='out_lineterminator',
-        #                             help='Character used to terminate lines in the output CSV file.')
 
 
 
@@ -162,66 +93,68 @@ class CSVNorm(AllTextUtility):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
-        self.squeeze_options = []
-        for key in ('consecutive_ws', 'lines',):
-            argname = 'keep_%s' % key
-            value = getattr(self.args, argname)
-            if value:
-                self.squeeze_options.append(argname)
+        # parse normalization options
+        self.normalization_opts = ops = {}
 
+         # TK whatever TODO fix later
+        ops['space_actions'] = None if self.args.space_actions_disabled else list(set(self.args.space_actions))
+        ops['squeeze_actions'] = None if self.args.squeeze_actions_disabled else list(set(self.args.squeeze_actions))
+        ops['convert_lines'] = False if self.args.dont_convert_lines else True
+        ops['strip'] = False if self.args.dont_strip else True
 
-        parsed_sqopts = self.parse_squeeze_options()
 
         myio = self.init_io()
 
-        self.squeeze_table(myio.rows, myio.output, myio.column_ids, parsed_sqopts)
+        for row in myio.rows:
+            for i, val in enumerate(row):
+                if i in myio.column_ids:
+                    row[i] = Normy.norm(val, self.normalization_opts)
+            myio.output.writerow(row)
 
 
 
+class Normy(object):
 
-    def parse_squeeze_options(self):
-        foos = list(squeezefoo.ORDERED_OPTS)
-        if 'keep_consecutive_ws' in self.squeeze_options:
-            foos.remove('squeeze_spaces')
+    SPACE_ACTIONS = {
+        'h': 'horizontal',
+        'v': 'vertical',
+    }
 
-        if 'keep_lines' in self.squeeze_options:
-            foos.remove('kill_lines')
-#        print(foos)
-        return foos
+    SQUEEZE_ACTIONS = {
+        'l': 'lines',
+        's': 'spaces',
+    }
 
-    def squeeze_table(self, rows, output, column_ids, parsed_opts):
-        for row in rows:
-            d = []
-            for _x, val in enumerate(row):
-                newval = squeeze_text(val, parsed_opts) if _x in column_ids else val
-                d.append(newval)
-            output.writerow(d)
+    SPACE_OPTS = list(SPACE_ACTIONS.keys())
+    SQUEEZE_OPTS = list(SQUEEZE_ACTIONS.keys())
 
 
-def squeeze_text(text, methods=squeezefoo.ORDERED_OPTS):
-    """cleans up a text string"""
-    def _org_method_list():
-        d = {}
-        for k in methods:
-            if type(k) is tuple:
-                d[k[0]] = k[1]
-            elif type(k) is str:
-                d[k] = True
-            else:
-                raise ValueError(f"`methods` param must be a list of tuples or str, not: {k} ({type(k)})")
-        return d
+    @staticmethod
+    def norm(txt, options):
+        # space actions
+        _ops = options.get('space_actions')
+        if _ops:
+            if 'v' in _ops:
+                txt =  re.sub(r'\v', '\n', txt)
+            if 'h' in _ops:
+                txt = re.sub(r'\h', ' ', txt)
 
-    newtext = text
-    methods = _org_method_list()
+        # convert lines
+        if options.get('convert_lines') is True:
+            txt = re.sub(r'\n', ' ', txt)
 
-    for key in squeezefoo.ORDERED_OPTS:
-        mparams = methods.get(key)
-        if mparams:
-            foo = getattr(squeezefoo, key)
-            newtext = foo(newtext) if mparams is True else foo(text, *mparams)
+        # squeeze actions
+        _ops = options.get('squeeze_actions')
+        if _ops:
+            if 'l' in _ops:
+                txt =  re.sub(r'\n+', '\n', txt)
+            if 's' in _ops:
+                txt = re.sub(r' +', ' ', txt)
 
-    # we always strip leading/trailing whitespace
-    return newtext.strip()
+        txt = txt.strip() if options.get('strip') is True else txt
+        return txt
+
+
 
 
 

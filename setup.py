@@ -20,7 +20,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name='csvkitcat',
-    version='1.0.0-alpha',
+    version='1.0.1-alpha',
     description='The extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',
@@ -31,7 +31,7 @@ setup(
     },
     license='MIT',
     classifiers=[
-        'Development Status :: 4 - Big Beta',
+        'Development Status :: 3 - Big Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
@@ -57,9 +57,9 @@ setup(
         'console_scripts': [
             'csvcount = csvkitcat.moreutils.csvcount:launch_new_instance',
             'csvflatten = csvkitcat.moreutils.csvflatten:launch_new_instance',
+            'csvnorm = csvkitcat.moreutils.csvnorm:launch_new_instance',
             'csvsed = csvkitcat.moreutils.csvsed:launch_new_instance',
             'csvslice = csvkitcat.moreutils.csvslice:launch_new_instance',
-            'csvsqueeze = csvkitcat.moreutils.csvsqueeze:launch_new_instance',
 
 
         ]

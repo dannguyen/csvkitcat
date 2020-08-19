@@ -7,6 +7,9 @@ csvsqueeze->csvnorm
 
 - [ ] pass newly refactored tests
 - [ ] refactor csvsqueeze because it looks like spaghetti barf
+- [ ] add norm-casing
+- add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
+
 
 csvcount
 
@@ -19,6 +22,7 @@ csvcount
 
 csvsed
 
+- [ ] remove boilerplate/unnecessary arguments. Should defer as much as possible to csvformat
 - [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
 - [x] --whole option: match and replace entire field instead
   - [?] unfortunately I did it brute force dumb way and it is substantially slower than non--whole
