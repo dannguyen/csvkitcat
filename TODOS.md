@@ -2,6 +2,11 @@
 
 # PRIORITY
 
+## csvcount
+
+- [x] basic implemention
+- [ ] kill all unnecessary args 
+
 
 ## csvslice
 
@@ -71,7 +76,8 @@ slice options:
 ## in general
 
 - [ ] how should i deal with `override_flags`?
-
+- [ ] extract/abstract boilerplate csvwriter args stuff, via csvflatten and csvsed
+- [ ] add skip-line functionality to csvsqueeze, slice, etc
 
 ## csvflatten
 

@@ -44,6 +44,13 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
             "$,%",])
 
 
+    def test_skip_lines(self):
+        self.assertLines(['--skip-lines', '3', '-D', '|',
+                r'\w', 'x',
+                'examples/test_skip_lines.csv'], [
+            'a|b|c',
+            'x|x|x',
+        ])
 
     def test_column_choice(self):
         self.assertLines(['-c', 'b,c',
