@@ -7,7 +7,6 @@
 - [x] basic implemention
 - [x] edge cases with negative start/end
 - [x] basic error cases
-- [ ] ==index option
 - [ ] kill all unnecessary args 
 - [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
     ```py
@@ -22,7 +21,14 @@
             return
     ```
 
+
+
+
 ## csvslice
+
+- [ ] --index option
+        Slice a single record (shortcut for --is N --len 1).
+- [ ] reconsider option names --is and --ie
 
 ```
 from xsv slice
@@ -93,6 +99,7 @@ slice options:
 - [ ] how should i deal with `override_flags`?
 - [ ] extract/abstract boilerplate csvwriter args stuff, via csvflatten and csvsed
 - [ ] add skip-line functionality to csvsqueeze, slice, etc
+- [ ] print out separate version number
 
 ## csvflatten
 

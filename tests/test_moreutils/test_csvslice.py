@@ -34,7 +34,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         7,8,9
         10,11,12
         """
-        self.assertLines(['--is', '2', 'examples/dummy4.csv' ], [
+        self.assertLines(['-S', '2', 'examples/dummy4.csv' ], [
             "a,b,c",
             "7,8,9",
             "10,11,12",
@@ -43,7 +43,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
     def test_start_negative_end(self):
         """basically like tail"""
-        self.assertLines(['--is', '-2', 'examples/dummy4.csv' ], [
+        self.assertLines(['-S', '-2', 'examples/dummy4.csv' ], [
             "a,b,c",
             "7,8,9",
             "10,11,12",
@@ -54,7 +54,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         """
         remember it is and_half_open_interval
         """
-        self.assertLines(['--ie', '2', 'examples/dummy4.csv' ], [
+        self.assertLines(['-E', '2', 'examples/dummy4.csv' ], [
             "a,b,c",
             "1,2,3",
             "4,5,6",
@@ -62,7 +62,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
     def test_basic_start_and_end(self):
-        self.assertLines(['--ie', '3', '--is', '1',
+        self.assertLines(['-E', '3', '-S', '1',
                             'examples/dummy4.csv' ], [
             "a,b,c",
             "4,5,6",
@@ -71,7 +71,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
     def test_basic_negative_end(self):
-        self.assertLines(['--ie', '-3',
+        self.assertLines(['-E', '-3',
                             'examples/dummy4.csv' ], [
             "a,b,c",
             "1,2,3",
@@ -79,7 +79,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
     def test_negative_start_and_end(self):
-        self.assertLines(['--is', '-3', '--ie', '-2',
+        self.assertLines(['-S', '-3', '-E', '-2',
                             'examples/dummy4.csv' ], [
             "a,b,c",
             "4,5,6",
@@ -88,14 +88,14 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
     def test_basic_length(self):
-        self.assertLines(['--len', '2', 'examples/dummy4.csv' ], [
+        self.assertLines(['-L', '2', 'examples/dummy4.csv' ], [
             "a,b,c",
             "1,2,3",
             "4,5,6",
         ])
 
     def test_basic_length_and_start(self):
-        self.assertLines([ '--is', '1', '--len', '2', 'examples/dummy4.csv' ], [
+        self.assertLines([ '-S', '1', '-L', '2', 'examples/dummy4.csv' ], [
             "a,b,c",
             "4,5,6",
             "7,8,9",
@@ -128,7 +128,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
     #### error stuff
     def test_error_when_both_length_and_end_provided(self):
         with self.assertRaises(ArgumentErrorTK):
-            u = self.get_output([ '--ie', '3', '--len', '2', 'examples/dummy4.csv' ])
+            u = self.get_output([ '-E', '3', '-L', '2', 'examples/dummy4.csv' ])
 
 
     @skiptest("Temporarily not implemented")
@@ -138,12 +138,12 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
     @skiptest("OBSOLETE")
     def test_error_when_start_bigger_than_end(self):
         with self.assertRaises(ArgumentErrorTK):
-            u = self.get_output([ '--is', '3', '--ie', '1', 'examples/dummy4.csv' ])
+            u = self.get_output([ '-S', '3', '-E', '1', 'examples/dummy4.csv' ])
 
     @skiptest("OBSOLETE")
     def test_error_when_start_equal_to_end(self):
         with self.assertRaises(ArgumentErrorTK):
-            u = self.get_output([ '--is', '1', '--ie', '1', 'examples/dummy4.csv' ])
+            u = self.get_output([ '-S', '1', '-E', '1', 'examples/dummy4.csv' ])
 
 
 """

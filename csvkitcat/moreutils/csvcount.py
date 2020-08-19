@@ -16,12 +16,10 @@ class CSVCount(AllTextUtility):
     description = """Returns count of rows, not counting header. Much much MUCH slower than `xsv count`
     It's even slower than `csvstat --count` ¯\\_(ツ)_/¯"""
 
-    override_flags = [] # 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['S', 'zero',  'l', 'L', 'blanks', 'date-format', 'datetime-format']
 
     def add_arguments(self):
-        self.argparser.add_argument('-D', '--out-delimiter', dest='out_delimiter',
-                                    help='Delimiting character of the output CSV file.')
-
+        pass
 
     def main(self):
         x = count_csv_rows(self.skip_lines(), no_headers=self.args.no_header_row)

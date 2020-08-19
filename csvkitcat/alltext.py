@@ -1,6 +1,7 @@
 import agate
 from csvkit.cli import CSVKitUtility
 from collections import namedtuple
+import six
 
 
 # JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])
@@ -23,3 +24,33 @@ class AllTextUtility(CSVKitUtility):
         output.writerow(column_names)
 
         return MyIO(rows=rows, column_names=column_names, column_ids=column_ids, output=output)
+
+
+    # copied from csvkit.cli.CSVKitUtility
+    # removes breakage at:
+    #    value = getattr(self.args, arg)
+    # by changing to:
+    #    value = getattr(self.args, arg, None)
+    def _extract_csv_reader_kwargs(self):
+        """
+        Extracts those from the command-line arguments those would should be passed through to the input CSV reader(s).
+        """
+        kwargs = {}
+
+        if self.args.tabs:
+            kwargs['delimiter'] = '\t'
+        elif self.args.delimiter:
+            kwargs['delimiter'] = self.args.delimiter
+
+        for arg in ('quotechar', 'quoting', 'doublequote', 'escapechar', 'field_size_limit', 'skipinitialspace'):
+            value = getattr(self.args, arg, None)
+            if value is not None:
+                kwargs[arg] = value
+
+        if six.PY2 and self.args.encoding:
+            kwargs['encoding'] = self.args.encoding
+
+        if getattr(self.args, 'no_header_row', None):
+            kwargs['header'] = not self.args.no_header_row
+
+        return kwargs

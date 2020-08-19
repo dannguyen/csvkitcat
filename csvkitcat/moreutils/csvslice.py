@@ -8,19 +8,19 @@ import warnings
 class CSVSlice(AllTextUtility):
     description = """Returns the header, plus rows in the specified 0-index range, half-open-interval"""
 
-    override_flags = [ 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = [ 'S', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
     def add_arguments(self):
-        self.argparser.add_argument('--is', '--start', dest='slice_start',
+        self.argparser.add_argument('-S', '--start', dest='slice_start',
                                     type=int,
                                     help="start",)
 
-        self.argparser.add_argument('--ie', '--end', dest="slice_end",
+        self.argparser.add_argument('-E', '--end', dest="slice_end",
                                     type=int,
                                     help="end",)
 
-        self.argparser.add_argument('--len', dest="slice_length",
+        self.argparser.add_argument('-L', dest="slice_length",
                                     type=int,
                                     help="length",)
 
