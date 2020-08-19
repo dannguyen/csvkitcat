@@ -18,10 +18,11 @@ from unittest import skip as skiptest
 
 class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
     Utility = CSVSlice
+    default_args = ['-S', '1']
 
 
     def test_launch_new_instance(self):
-        with patch.object(sys, 'argv', [self.Utility.__name__.lower(), 'examples/dummy.csv']):
+        with patch.object(sys, 'argv', [self.Utility.__name__.lower()] + self.default_args + ['examples/dummy.csv']):
             launch_new_instance()
 
 
@@ -104,15 +105,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
     ### index option
-    @skiptest("Temporarily not implemented")
     def test_basic_index(self):
-        """
-        a,b,c
-        1,2,3
-        4,5,6
-        7,8,9
-        10,11,12
-        """
         self.assertLines(['-i', '0', 'examples/dummy4.csv' ], [
             "a,b,c",
             "1,2,3",
@@ -125,25 +118,48 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
 
 
+    def test_index_is_equivalent_to_start_and_length_opts(self):
+        idx_rows= self.get_output_as_list(['--index', '2', 'examples/dummy4.csv'])
+        slen_rows = self.get_output_as_list(['--start', '2', '--len', '1' , 'examples/dummy4.csv'])
+
+        for i, idx_row in enumerate(idx_rows):
+            self.assertEqual(idx_row, slen_rows[i])
+
+
     #### error stuff
     def test_error_when_both_length_and_end_provided(self):
-        with self.assertRaises(ArgumentErrorTK):
+        with self.assertRaises(ArgumentErrorTK) as context:
             u = self.get_output([ '-E', '3', '-L', '2', 'examples/dummy4.csv' ])
+        assert 'Cannot set both' in str(context.exception)
 
 
-    @skiptest("Temporarily not implemented")
-    def test_error_when_index_and_start_end_or_len(self):
-        pass
+    def test_error_when_no_slice_options(self):
+        with self.assertRaises(ArgumentErrorTK) as context:
+            u = self.get_output([ 'examples/dummy4.csv' ])
+        assert 'At least 1 of' in str(context.exception)
 
-    @skiptest("OBSOLETE")
-    def test_error_when_start_bigger_than_end(self):
-        with self.assertRaises(ArgumentErrorTK):
-            u = self.get_output([ '-S', '3', '-E', '1', 'examples/dummy4.csv' ])
 
-    @skiptest("OBSOLETE")
-    def test_error_when_start_equal_to_end(self):
-        with self.assertRaises(ArgumentErrorTK):
-            u = self.get_output([ '-S', '1', '-E', '1', 'examples/dummy4.csv' ])
+    def test_error_when_index_and_other_slice_options_are_Set(self):
+        with self.assertRaises(ArgumentErrorTK) as c1:
+            self.get_output(['-i', '1', '-S', '1', 'examples/dummy4.csv'])
+
+        with self.assertRaises(ArgumentErrorTK) as c2:
+            self.get_output(['-i', '1', '-E', '2', 'examples/dummy4.csv'])
+
+        with self.assertRaises(ArgumentErrorTK) as c3:
+            self.get_output(['-i', '1', '-L', '1', 'examples/dummy4.csv'])
+
+
+        assert 'Slice index cannot be set if start/end/length are also defined' in str(c3.exception)
+    # @skiptest("OBSOLETE")
+    # def test_error_when_start_bigger_than_end(self):
+    #     with self.assertRaises(ArgumentErrorTK):
+    #         u = self.get_output([ '-S', '3', '-E', '1', 'examples/dummy4.csv' ])
+
+    # @skiptest("OBSOLETE")
+    # def test_error_when_start_equal_to_end(self):
+    #     with self.assertRaises(ArgumentErrorTK):
+    #         u = self.get_output([ '-S', '1', '-E', '1', 'examples/dummy4.csv' ])
 
 
 """

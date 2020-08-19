@@ -2,71 +2,15 @@
 
 # PRIORITY
 
-## csvcount
-
-- [x] basic implemention
-- [x] edge cases with negative start/end
-- [x] basic error cases
-- [ ] kill all unnecessary args 
-- [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
-    ```py
-            if self.args.count_only:
-            count = len(list(agate.csv.reader(self.skip_lines(), **self.reader_kwargs)))
-
-            if not self.args.no_header_row:
-                count -= 1
-
-            self.output_file.write('Row count: %i\n' % count)
-
-            return
-    ```
 
 
 
+## csvcount 
 
-## csvslice
+- [ ] kill unnecessary arguments
+  - [?] partially did this by looking at `csvkit.cli._init_common_parser(self)`
+  - [x] added custom `_extract_csv_reader_kwargs` to alltext.py, with a third argument to `getattr` to prevent error
 
-- [ ] --index option
-        Slice a single record (shortcut for --is N --len 1).
-- [ ] reconsider option names --is and --ie
-
-```
-from xsv slice
-
-Returns the rows in the range specified (starting at 0, half-open interval).
-The range does not include headers.
-
-If the start of the range isn't specified, then the slice starts from the first
-record in the CSV data.
-
-If the end of the range isn't specified, then the slice continues to the last
-record in the CSV data.
-
-slice options:
-    -s, --start <arg>      The index of the record to slice from.
-    -e, --end <arg>        The index of the record to slice to.
-    -l, --len <arg>        The length of the slice (can be used instead
-                           of --end).
-    -i, --index <arg>      Slice a single record (shortcut for -s [start-index] -l 1).
-```
-
-
-- [ ] csvhead
-- [ ] csvtail
-
-## csvsed
-
-- [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
-- [x] --whole option: match and replace entire field instead
-  - [ ] unfortunately I did it brute force dumb way and it is slower than non--whole
-
-
-## csvpad
-
-```sh
---left 5 '0'
---right 
-```
 
 
 ### csvsqueeze 
@@ -76,7 +20,39 @@ slice options:
 
 
 
+
+## Lesser priority/maybe deprioritize
+
+
+
+## csvpad
+
+- [ ] basic implementation and tests
+
+```sh
+--left 5 '0'
+--right 
+```
+
+
+
+## csvsed
+
+- [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
+- [x] --whole option: match and replace entire field instead
+  - [ ] unfortunately I did it brute force dumb way and it is slower than non--whole
+
+
+
+
+
 ### Just done
+
+- csvindex
+  - [X] `--index` option; Slice a single record (shortcut for --is N --len 1).
+  - [X] reconsider option names --is and --ie
+    - [x] changed to -S, -E, -L
+
 
 - csvsed
   - [x] basic test and implementation
@@ -93,6 +69,14 @@ slice options:
 
 -----------------------
 
+## on deck/non-priority
+
+## csvslice
+  - [ ] csvhead: basically a reskin of csvslice
+  - [ ] csvtail: not trivial, will need to research this
+
+
+
 ## in general
 
 - [x] rename csvkitcat.utils_plus to moreutils
@@ -100,6 +84,24 @@ slice options:
 - [ ] extract/abstract boilerplate csvwriter args stuff, via csvflatten and csvsed
 - [ ] add skip-line functionality to csvsqueeze, slice, etc
 - [ ] print out separate version number
+
+## csvcount
+
+- [x] basic implemention
+- [x] edge cases with negative start/end
+- [x] basic error cases
+- [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
+    ```py
+            if self.args.count_only:
+            count = len(list(agate.csv.reader(self.skip_lines(), **self.reader_kwargs)))
+
+            if not self.args.no_header_row:
+                count -= 1
+
+            self.output_file.write('Row count: %i\n' % count)
+
+            return
+    ```
 
 ## csvflatten
 
