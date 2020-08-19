@@ -6,7 +6,8 @@
 csvsqueeze->csvnorm
 
 - [ ] pass newly refactored tests
-- [ ] refactor csvsqueeze because it looks like spaghetti barf
+- [?] refactor csvsqueeze because it looks like spaghetti barf
+  - [ ] mostly did this
 - [ ] add norm-casing
 - add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
 

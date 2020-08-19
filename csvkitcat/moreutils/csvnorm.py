@@ -39,10 +39,10 @@ class CSVNorm(AllTextUtility):
         self.argparser.add_argument('-c', '--columns', dest='columns',
                                     help='A comma separated list of column indices, names or ranges to be extracted, e.g. "1,id,3-5". Defaults to all columns.')
 
-        self.argparser.add_argument('-T', '--translate-space', dest='space_actions', nargs='+',
+        self.argparser.add_argument('-T', '--translations', dest='tr_actions',
                     action='append',
-                    choices=Normy.SPACE_OPTS,
-                    default=Normy.SPACE_OPTS,
+                    choices=Normy.TR_ACTIONS.copy(),
+                    default=[],
                     help='''A list of "space" character translations. By default, all of the following are performed:
 
                     "(h)orizontal" converts all line-break/newline, and other vertical characters to: "\n"
@@ -50,14 +50,14 @@ class CSVNorm(AllTextUtility):
                     "(v)ertical" converts all whitespace/tab/zero-width and other horizontal characters to simple whitespace, i.e. " "
                     ''')
 
-        self.argparser.add_argument('--TX', '--no-translate-space', dest='space_actions_disabled',
+        self.argparser.add_argument('--TX', '--no-translate-space', dest='tr_actions_disabled',
                     action='store_true',
                     help='''Do no space character translations, i.e. ignore and override -T/--translate-space option''')
 
 
-        self.argparser.add_argument('-S', '--squeeze', dest='squeeze_actions', nargs='+', action='append',
-                   choices=Normy.SQUEEZE_OPTS,
-                   default=Normy.SQUEEZE_OPTS,
+        self.argparser.add_argument('-S', '--squeeze', dest='squeeze_actions',  action='append',
+                   choices=Normy.SQUEEZE_ACTIONS.copy(),
+                   default=[],
                    help='''A list of consecutive space squeezing/collapsing actions. By default, all of the following are performed:
 
                     "(l)ines" squeezes consecutive '\n' characters
@@ -86,6 +86,8 @@ class CSVNorm(AllTextUtility):
 
 
     def main(self):
+
+
         if self.args.names_only:
             self.print_column_names()
             return
@@ -97,8 +99,23 @@ class CSVNorm(AllTextUtility):
         self.normalization_opts = ops = {}
 
          # TK whatever TODO fix later
-        ops['space_actions'] = None if self.args.space_actions_disabled else list(set(self.args.space_actions))
-        ops['squeeze_actions'] = None if self.args.squeeze_actions_disabled else list(set(self.args.squeeze_actions))
+        if self.args.tr_actions_disabled:
+            ops['tr_actions'] = None
+        elif not self.args.tr_actions: # i.e. empty array
+            ops['tr_actions'] = Normy.TR_ACTIONS
+        else:
+            ops['tr_actions'] = list(set(self.args.tr_actions))
+
+
+        if self.args.squeeze_actions_disabled:
+            ops['squeeze_actions'] = None
+        elif not self.args.squeeze_actions: # i.e. empty array
+            ops['squeeze_actions'] = Normy.SQUEEZE_ACTIONS
+        else:
+            ops['squeeze_actions'] = list(set(self.args.squeeze_actions))
+
+
+
         ops['convert_lines'] = False if self.args.dont_convert_lines else True
         ops['strip'] = False if self.args.dont_strip else True
 
@@ -111,28 +128,31 @@ class CSVNorm(AllTextUtility):
                     row[i] = Normy.norm(val, self.normalization_opts)
             myio.output.writerow(row)
 
+        # import json
+        # print("normalize operations:", json.dumps(self.normalization_opts, indent=2))
+
 
 
 class Normy(object):
 
-    SPACE_ACTIONS = {
+    TR_ACTIONS_META = {
         'h': 'horizontal',
         'v': 'vertical',
     }
 
-    SQUEEZE_ACTIONS = {
+    SQUEEZE_ACTIONS_META = {
         'l': 'lines',
         's': 'spaces',
     }
 
-    SPACE_OPTS = list(SPACE_ACTIONS.keys())
-    SQUEEZE_OPTS = list(SQUEEZE_ACTIONS.keys())
+    TR_ACTIONS = list(TR_ACTIONS_META.keys())
+    SQUEEZE_ACTIONS = list(SQUEEZE_ACTIONS_META.keys())
 
 
     @staticmethod
     def norm(txt, options):
         # space actions
-        _ops = options.get('space_actions')
+        _ops = options.get('tr_actions')
         if _ops:
             if 'v' in _ops:
                 txt =  re.sub(r'\v', '\n', txt)
