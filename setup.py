@@ -20,7 +20,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name='csvkitcat',
-    version='0.0.5b1',
+    version='0.0.5b2',
     description='The extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',

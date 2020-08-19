@@ -13,7 +13,8 @@ def count_csv_rows(file, no_headers=False):
     return xc
 
 class CSVCount(AllTextUtility):
-    description = """Returns count of rows, not counting header. Much much MUCH slower than `xsv count` ¯\\_(ツ)_/¯"""
+    description = """Returns count of rows, not counting header. Much much MUCH slower than `xsv count`
+    It's even slower than `csvstat --count` ¯\\_(ツ)_/¯"""
 
     override_flags = [] # 'L', 'blanks', 'date-format', 'datetime-format']
 

@@ -5,8 +5,22 @@
 ## csvcount
 
 - [x] basic implemention
+- [x] edge cases with negative start/end
+- [x] basic error cases
+- [ ] ==index option
 - [ ] kill all unnecessary args 
+- [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
+    ```py
+            if self.args.count_only:
+            count = len(list(agate.csv.reader(self.skip_lines(), **self.reader_kwargs)))
 
+            if not self.args.no_header_row:
+                count -= 1
+
+            self.output_file.write('Row count: %i\n' % count)
+
+            return
+    ```
 
 ## csvslice
 
@@ -75,6 +89,7 @@ slice options:
 
 ## in general
 
+- [ ] rename csvkitcat.utils_plus to moreutils
 - [ ] how should i deal with `override_flags`?
 - [ ] extract/abstract boilerplate csvwriter args stuff, via csvflatten and csvsed
 - [ ] add skip-line functionality to csvsqueeze, slice, etc

@@ -134,7 +134,6 @@ class CSVSed(AllTextUtility):
 
         myio = self.init_io()
 
-
         max_match_count = self.args.max_match_count
         if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
             max_match_count = -1 if self.args.literal_match else 0

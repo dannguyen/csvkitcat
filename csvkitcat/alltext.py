@@ -14,7 +14,7 @@ class AllTextUtility(CSVKitUtility):
         self.args.sniff_limit = 0       # TK is needed??
         self.args.no_inference = True   # TK is needed??
 
-        if not self.args.columns:
+        if not hasattr(self.args, 'columns'):
             self.args.columns = []
 
         rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**self.reader_kwargs)
