@@ -3,29 +3,30 @@
 # PRIORITY
 
 
+csvsqueeze->csvnorm
 
-
-## csvcount 
-
-- [ ] kill unnecessary arguments
-  - [?] partially did this by looking at `csvkit.cli._init_common_parser(self)`
-  - [x] added custom `_extract_csv_reader_kwargs` to alltext.py, with a third argument to `getattr` to prevent error
-
-
-
-### csvsqueeze 
-
-- [ ] break csvsqueeze into csvnorm and csvsqueeze??
+- [ ] pass newly refactored tests
 - [ ] refactor csvsqueeze because it looks like spaghetti barf
 
+csvcount
 
+- [ ] count rows, cells with --pattern '[TERM]' --match-whole
 
 
 ## Lesser priority/maybe deprioritize
 
 
 
-## csvpad
+csvsed
+
+- [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
+- [x] --whole option: match and replace entire field instead
+  - [?] unfortunately I did it brute force dumb way and it is substantially slower than non--whole
+  - [ ] sketch out usecases for whole-cell match/replace, compare to Excel
+
+
+
+csvpad
 
 - [ ] basic implementation and tests
 
@@ -34,13 +35,6 @@
 --right 
 ```
 
-
-
-## csvsed
-
-- [ ] benchmarking....majorly slow as hell: tests/benchmark/rawsed.py
-- [x] --whole option: match and replace entire field instead
-  - [ ] unfortunately I did it brute force dumb way and it is slower than non--whole
 
 
 
@@ -87,9 +81,10 @@
 
 ## csvcount
 
-- [x] basic implemention
-- [x] edge cases with negative start/end
-- [x] basic error cases
+- [ ] kill unnecessary arguments
+  - [?] partially did this by looking at `csvkit.cli._init_common_parser(self)`
+  - [x] added custom `_extract_csv_reader_kwargs` to alltext.py, with a third argument to `getattr` to prevent error
+
 - [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
     ```py
             if self.args.count_only:
@@ -102,6 +97,9 @@
 
             return
     ```
+- [x] basic implemention
+- [x] edge cases with negative start/end
+- [x] basic error cases
 
 ## csvflatten
 

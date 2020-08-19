@@ -16,6 +16,24 @@ Output:
 "4", "Mr. Robot"
 """
 
+
+
+"""
+- normalize
+    - line-break/vertical
+    - whitespace/horizontal
+    - case
+
+-- kill-lines
+-- squeeze
+    - spaces
+
+-- strip
+"""
+
+
+
+
 from csvkitcat.alltext import AllTextUtility
 import regex as re
 
@@ -78,9 +96,9 @@ class squeezefoo(object):
 
 
 
-class CSVSqueeze(AllTextUtility):
+class CSVNorm(AllTextUtility):
     description = """Converts all space characters to a simple whitespace.
-                     Squeezes consecutive whitespace.
+                     Norms consecutive whitespace.
                      Strips leading and/or trailing whitespace,
                         and/or characters of your choice"""
 
@@ -209,7 +227,7 @@ def squeeze_text(text, methods=squeezefoo.ORDERED_OPTS):
 
 
 def launch_new_instance():
-    utility = CSVSqueeze()
+    utility = CSVNorm()
     utility.run()
 
 

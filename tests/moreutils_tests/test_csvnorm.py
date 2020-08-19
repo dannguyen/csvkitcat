@@ -10,13 +10,13 @@ try:
 except ImportError:
     from unittest.mock import patch
 
-from csvkitcat.moreutils.csvsqueeze import CSVSqueeze, launch_new_instance
+from csvkitcat.moreutils.csvnorm import CSVNorm, launch_new_instance
 from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string, ColumnsTests, NamesTests
 
 
 
-class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
-    Utility = CSVSqueeze
+class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
+    Utility = CSVNorm
 
     def test_launch_new_instance(self):
         with patch.object(sys, 'argv', [self.Utility.__name__.lower(), 'examples/dummy.csv']):
@@ -33,9 +33,9 @@ class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
         ])
 
 
-    def test_default_squeeze(self):
+    def test_default_norm(self):
         """
-        squeeze with all the works
+        norm with all the works
         """
         self.assertLines(['examples/mess.csv'], [
             "code,name",
@@ -45,7 +45,7 @@ class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
             "4,Mr. R obot",
         ])
 
-    def test_squeeze_does_not_affect_headers(self):
+    def test_norm_does_not_affect_headers(self):
           self.assertLines(['examples/mess_head.csv', '-u', '0'], [
             ''' code   ," the  first''',
             ''' name   "''',
@@ -78,7 +78,7 @@ class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
 
 
 ######## test column choice
-    def test_selected_columns_squeezed(self):
+    def test_selected_columns_normd(self):
         self.assertLines(['examples/consec_ws.csv', '-c', 'id'], [
             "id,phrase",
             "1,hello world",
@@ -86,7 +86,7 @@ class TestCSVSqueeze(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
             "3,  a  ok",
         ])
 
-    def test_selected_columns_squeezed_w_options(self):
+    def test_selected_columns_normd_w_options(self):
         """since Column 1 is not selected, no stripping of `id` is done"""
 
         self.assertLines(['examples/consec_ws.csv', '-c', '2', '--keep-consecutive-ws'], [
