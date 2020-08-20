@@ -8,11 +8,15 @@ csvkitcat is a library that supplements (and depends on) the great `wireservice/
 
 New tools and utilities:
 
-text utils
-----------
 
-- csvflatten
-- csvsqueeze
+- csvcount: just count records
+- csvflatten: transpose records in a format easier to view in text files
+- csvnorm: normalize whitespace/newlines and character casing
+- csvsed: like ``sed``, but done at the columnar level
+- csvslice: like ``xsv slice``
+
+
+See `CHANGELOG <CHANGELOG.rst>`_
 
 
 CSVKit documentation

@@ -3,14 +3,8 @@
 # PRIORITY
 
 
-csvsqueeze->csvnorm
-
-- [ ] pass newly refactored tests
-- [?] refactor csvsqueeze because it looks like spaghetti barf
-  - [ ] mostly did this
-- [ ] add norm-casing
-- add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
-
+csvxsplit
+- [ ] basic implementation and testing
 
 csvcount
 
@@ -47,7 +41,18 @@ csvpad
 
 ### Just done
 
-- csvindex
+csvsqueeze->csvnorm
+
+- [X] pass newly refactored tests
+- [?] refactor csvsqueeze because it looks like spaghetti barf
+    - [ ] mostly did this
+- [X] add norm-casing
+- add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
+
+
+
+
+- csvslice
   - [X] `--index` option; Slice a single record (shortcut for --is N --len 1).
   - [X] reconsider option names --is and --ie
     - [x] changed to -S, -E, -L

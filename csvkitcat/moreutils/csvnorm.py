@@ -73,8 +73,15 @@ class CSVNorm(AllTextUtility):
                     are converted to plain white space, i.e. " ".''')
 
 
+        self.argparser.add_argument('-C', '--change-case', dest='change_case',
+                    choices=('upper', 'lower', 'none'),
+                    default='none',
+                    help=r"""Apply "upper" or "lower" casing to values.""")
+
         self.argparser.add_argument('--no-strip', dest='dont_strip', action='store_true', default=False,
             help=r'''Disable the default behavior of stripping leading and trailing "\s" characters from value fields''')
+
+
 
 
         ### boilerplate
@@ -115,7 +122,7 @@ class CSVNorm(AllTextUtility):
             ops['squeeze_actions'] = list(set(self.args.squeeze_actions))
 
 
-
+        ops['change_case'] = False if self.args.change_case in ('none', None) else self.args.change_case
         ops['convert_lines'] = False if self.args.dont_convert_lines else True
         ops['strip'] = False if self.args.dont_strip else True
 
@@ -170,6 +177,10 @@ class Normy(object):
                 txt =  re.sub(r'\n+', '\n', txt)
             if 's' in _ops:
                 txt = re.sub(r' +', ' ', txt)
+
+        cc = options.get('change_case')
+        if cc:
+            txt = txt.lower() if cc == 'lower' else txt.upper()
 
         txt = txt.strip() if options.get('strip') is True else txt
         return txt

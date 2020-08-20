@@ -9,6 +9,8 @@ CHANGELOG
 
 * csvnorm: renamed and refactored from csvsqueeze
 
+    - csvnorm -C/--change-case for converting values to all upper or lower
+
 
 1.0.0-alpha
 -----------

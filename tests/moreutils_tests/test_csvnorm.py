@@ -44,8 +44,6 @@ class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
         ])
 
 
-
-
     def test_disable_strip(self):
         """
         id,text
@@ -90,41 +88,59 @@ class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
         ])
 
 
-#     def test_default_norm(self):
-#         """
-#         norm with all the works
-#         """
-#         self.assertLines(['examples/mess.csv'], [
-#             "code,name",
-#             "1,Dan",
-#             "0 2,Billy Bob",
-#             "0003,..Who..?",
-#             "4,Mr. R obot",
-#         ])
+    def test_default_norm(self):
+        """
+        norm with all the works
+        """
+        self.assertLines(['examples/mess.csv'], [
+            "code,name",
+            "1,Dan",
+            "0 2,Billy Bob",
+            "0003,..Who..?",
+            "4,Mr. R obot",
+        ])
 
-#     def test_norm_does_not_affect_headers(self):
-#           self.assertLines(['examples/mess_head.csv', '-u', '0'], [
-#             ''' code   ," the  first''',
-#             ''' name   "''',
-#             "1,Dan",
-#             "0 2,Billy Bob",
-#         ])
-
-
+    def test_norm_does_not_affect_headers(self):
+          self.assertLines(['examples/mess_head.csv', '-u', '0'], [
+            ''' code   ," the  first''',
+            ''' name   "''',
+            "1,Dan",
+            "0 2,Billy Bob",
+        ])
 
 
-#     def test_kill_lines(self):
-#         self.assertLines(['examples/linebreaks.csv',], [
-#             "id,speech",
-#             '''1,hey you folks whats up?''',
-#         ])
 
-#     def test_keep_lines(self):
-#         self.assertLines(['examples/linebreaks.csv', '--keep-lines'], [
-#             "id,speech",
-#             '''1,"hey''',
-#             'you','folks','whats up?"',
-#         ])
+
+    def test_kill_lines(self):
+        self.assertLines(['examples/linebreaks.csv',], [
+            "id,speech",
+            '''1,hey you folks whats up?''',
+        ])
+
+    def test_keep_lines(self):
+        self.assertLines(['examples/linebreaks.csv', '--keep-lines'], [
+            "id,speech",
+            '''1,"hey''',
+            'you','folks','whats up?"',
+        ])
+
+
+    def test_change_case_upper(self):
+        self.assertLines(['-C', 'upper', 'examples/statecodes.csv'], [
+            "code,name",
+            "IA,IOWA",
+            "RI,RHODE ISLAND",
+            "TN,TENNESSEE",
+        ])
+
+
+    def test_change_case_lower(self):
+        self.assertLines(['-C', 'lower', 'examples/statecodes.csv'], [
+            "code,name",
+            "ia,iowa",
+            "ri,rhode island",
+            "tn,tennessee",
+        ])
 
 
 ######## test column choice
