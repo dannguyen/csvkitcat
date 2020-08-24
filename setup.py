@@ -21,7 +21,7 @@ if sys.version_info < (2, 7):
 setup(
     name='csvkitcat',
     version='1.1.0-alpha',
-    description='The extended family of csvkit',
+    description='The unofficial extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',
     author_email='dansonguyen@gmail.com',
@@ -31,7 +31,7 @@ setup(
     },
     license='MIT',
     classifiers=[
-        'Development Status :: 3 - Big Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',

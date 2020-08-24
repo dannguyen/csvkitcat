@@ -14,7 +14,7 @@ New tools and utilities:
 - csvnorm: normalize whitespace/newlines and character casing
 - csvsed: like ``sed``, but done at the columnar level
 - csvslice: like ``xsv slice``
-
+- csvxplit: split a given column by a pattern into n new columns
 
 See `CHANGELOG <CHANGELOG.rst>`_
 
