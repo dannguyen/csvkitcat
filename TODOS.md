@@ -3,8 +3,8 @@
 # PRIORITY
 
 
-csvxcap
-- like csvxsplit, except creates columns based on captured groups
+csvxcap/csvxtract
+- like csvxplit, except creates columns based on captured groups
 
 
 csvcount
@@ -32,14 +32,14 @@ csvpad
     ```
 
 
-csvxsplit
+csvxplit
 - [ ] advanced feature: --max-split: make the number of new split columns based on the max number of splits found. Requires basically iterating through twice...
 
 
 
 ### Just done
 
-csvxsplit
+csvxplit
 - [X] basic implementation and testing
 
 

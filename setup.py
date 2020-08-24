@@ -60,7 +60,7 @@ setup(
             'csvnorm = csvkitcat.moreutils.csvnorm:launch_new_instance',
             'csvsed = csvkitcat.moreutils.csvsed:launch_new_instance',
             'csvslice = csvkitcat.moreutils.csvslice:launch_new_instance',
-            'csvxsplit=csvkitcat.moreutils.csvxsplit:launch_new_instance',
+            'csvxplit = csvkitcat.moreutils.csvxplit:launch_new_instance',
         ]
     },
     install_requires=install_requires

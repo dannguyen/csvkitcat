@@ -13,14 +13,14 @@ except ImportError:
 from csvkit.exceptions import ColumnIdentifierError
 
 from csvkitcat.exceptions import ArgumentErrorTK
-from csvkitcat.moreutils.csvxsplit import CSVXsplit,  launch_new_instance
+from csvkitcat.moreutils.csvxplit import CSVXplit,  launch_new_instance
 from tests.utils import CSVKitTestCase, stdin_as_string
 from unittest import skip as skiptest
 
 
 
-class TestCSVXsplit(CSVKitTestCase):
-    Utility = CSVXsplit
+class TestCSVXplit(CSVKitTestCase):
+    Utility = CSVXplit
     default_args = ['a', '|']
 
     def test_launch_new_instance(self):
@@ -32,14 +32,14 @@ class TestCSVXsplit(CSVKitTestCase):
         creates 2 split cols even when there's no match
         """
         self.assertLines(['2', ';', 'examples/dummy.csv' ], [
-            "a,b,c,b_0,b_1",
+            "a,b,c,b_xs_0,b_xs_1",
             "1,2,3,2,",
         ])
 
 
     def test_basic_pipes_no_match(self):
         self.assertLines(['-n', '2', 'items', '@', 'examples/pipes.csv'],
-            ["code,items,items_0,items_1,items_2",
+            ["code,items,items_xs_0,items_xs_1,items_xs_2",
             "0001,hey,hey,,",
             "0002,hello|world,hello|world,,",
             "0003,a|b|c|d|,a|b|c|d|,,",])
@@ -47,14 +47,14 @@ class TestCSVXsplit(CSVKitTestCase):
 
     def test_basic_pipes_match(self):
         self.assertLines(['items', '|', 'examples/pipes.csv'],
-            ["code,items,items_0,items_1",
+            ["code,items,items_xs_0,items_xs_1",
             "0001,hey,hey,",
             "0002,hello|world,hello,world",
             "0003,a|b|c|d|,a,b|c|d|",])
 
     def test_basic_pipes_match_n_cols_set(self):
         self.assertLines(['-n', '3', 'items', '|', 'examples/pipes.csv'],
-            ["code,items,items_0,items_1,items_2,items_3",
+            ["code,items,items_xs_0,items_xs_1,items_xs_2,items_xs_3",
             "0001,hey,hey,,,",
             "0002,hello|world,hello,world,,",
             "0003,a|b|c|d|,a,b,c,d|",])
@@ -64,7 +64,7 @@ class TestCSVXsplit(CSVKitTestCase):
         when splitting by regex pipe, the behavior from regex module is that newvals[0] is an empty string :shrug:
         """
         self.assertLines(['-r','items', '|', 'examples/pipes.csv'],
-            ["code,items,items_0,items_1",
+            ["code,items,items_xs_0,items_xs_1",
             "0001,hey,,hey",
             "0002,hello|world,,hello|world",
             "0003,a|b|c|d|,,a|b|c|d|",])

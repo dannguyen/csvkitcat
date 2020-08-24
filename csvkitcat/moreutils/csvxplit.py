@@ -4,7 +4,7 @@
 Example usage:
 
 
-    $ csvxsplit examples/pipes.csv -c items '|'
+    $ csvxplit examples/pipes.csv -c items '|'
 
     code,items,items_0,items_1
     0001,hey,hey,
@@ -20,8 +20,9 @@ from csvkitcat.exceptions import ArgumentErrorTK
 import regex as re
 import warnings
 
+DEFAULT_XSPLIT_PREFIX = 'xs'
 
-class CSVXsplit(AllTextUtility):
+class CSVXplit(AllTextUtility):
     description = """Split a [COLUMN] by [PATTERN]"""
 
     override_flags = ['f', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
@@ -97,9 +98,9 @@ class CSVXsplit(AllTextUtility):
         column_name_to_split = myio.column_names[column_id_to_split]
 
         n_cols = n_split_count + 1
-        split_columns = [f'{column_name_to_split}_{i}' for i in range(n_cols)]
+        split_column_names = [f'{column_name_to_split}_{DEFAULT_XSPLIT_PREFIX}_{i}' for i in range(n_cols)]
 
-        new_fieldnames = myio.column_names + split_columns
+        new_fieldnames = myio.column_names + split_column_names
 
         myio.output.writerow(new_fieldnames)
 
@@ -123,7 +124,7 @@ class CSVXsplit(AllTextUtility):
 
 
 def launch_new_instance():
-    utility = CSVXsplit()
+    utility = CSVXplit()
     utility.run()
 
 
