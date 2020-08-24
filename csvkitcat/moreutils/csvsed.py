@@ -1,32 +1,6 @@
 #!/usr/bin/env python
 
 
-r"""
-Example usage:
-
-    $ csvsed '(?i)(?:Miss|Mrs|Ms)\.? *(.+)' 'The Ms. \1' examples/honorifics-fem.csv
-
-
-Output:
-
-code,name
-1,Ms. Smith
-2,Ms. Daisy
-3,Ms. Doe
-4,Ms. Miller
-5.Ms. Lee
-6.Ms. maam
-
-
------------
-
-is equivalent to:
-
-    printf '%s\n' 'date' '04/05/1998' | perl -p -e 's#(\d{2})/(\d{2})/(\d{4})#$3-$1-$2#g'
-
-    printf '%s\n' 'date' '04/05/1998' | csvsed '(\d{2})/(\d{2})/(\d{4})' '\3-\1-\2'
-
-"""
 
 from csvkitcat.alltext import AllTextUtility
 import regex as re

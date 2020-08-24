@@ -47,7 +47,7 @@ release = '1.1.0-alpha'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -74,15 +74,14 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 htmlhelp_basename = 'csvkitcatdoc'
 
 
-man_pages = [
-]
+# man_pages = []
 
-for filename in os.listdir('moreutils'):
-    name = os.path.splitext(filename)[0]
-    man_pages.append((
-        os.path.join('moreutils', name),
-        name,
-        '%s Documentation' % name,
-        [u'Dan Nguyen'],
-        1
-    ))
+# for filename in os.listdir('moreutils'):
+#     name = os.path.splitext(filename)[0]
+#     man_pages.append((
+#         os.path.join('moreutils', name),
+#         name,
+#         '%s Documentation' % name,
+#         [u'Dan Nguyen'],
+#         1
+#     ))

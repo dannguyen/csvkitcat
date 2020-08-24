@@ -1,20 +1,5 @@
 #!/usr/bin/env python
 
-"""
-Example usage:
-
-
-    $ csvxplit examples/pipes.csv -c items '|'
-
-    code,items,items_0,items_1
-    0001,hey,hey,
-    0002,hello|world,hello,world
-    0003,a|b|c|d|,a,b|c|d|
-
-
-
-"""
-
 from csvkitcat.alltext import AllTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 import regex as re

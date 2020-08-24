@@ -1,26 +1,5 @@
 #!/usr/bin/env python
 
-
-"""
-Example usage:
-
-    $ csvflatten examples/longvals.csv --max-length 50 | csvlook
-
-
-Output:
-
-    | fieldname       | value                                              |
-    | ------------ | -------------------------------------------------- |
-    | title        | Raising Arizona                                    |
-    | release_date | March 13, 1987                                     |
-    | length       | 94                                                 |
-    | box_office   | 292000000                                          |
-    | description  | Repeat convict "Hi" and police officer "Ed" meet i |
-    |              | n prison, get married, and hope to raise a family. |
-    | url          | https://en.wikipedia.org/wiki/Raising_Arizona      |
-
-"""
-
 import agate
 from csvkit.cli import CSVKitUtility
 import re

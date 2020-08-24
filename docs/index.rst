@@ -4,10 +4,27 @@ csvkitcat
 
 
 
-Table of contents
-=================
+.. toctree::
+    :maxdepth: 1
+
+    CHANGELOG
+
+
+
+Utilities
+=========
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    moreutils/moreutils-index
+    /moreutils/csvflatten
+    /moreutils/csvcount
+    /moreutils/csvflatten
+    /moreutils/csvnorm
+    /moreutils/csvsed
+    /moreutils/csvslice
+    /moreutils/csvxsplit
+
+
+
+

@@ -2,12 +2,13 @@
 csvkitcat
 *********
 
-hello there.
 
 csvkitcat is a library that supplements (and depends on) the great `wireservice/csvkit <https://github.com/wireservice/csvkit>`_. It exists because csvkit is no longer adding new tools to its core functionality.
 
-New tools and utilities:
 
+
+
+New tools and utilities:
 
 - csvcount: just count records
 - csvflatten: transpose records in a format easier to view in text files
@@ -16,7 +17,12 @@ New tools and utilities:
 - csvslice: like ``xsv slice``
 - csvxplit: split a given column by a pattern into n new columns
 
-See `CHANGELOG <CHANGELOG.rst>`_
+
+See more docs at `Read The Docs <https://csvkitcat.readthedocs.io/>`_
+
+
+
+See `CHANGELOG <docs/CHANGELOG.rst>`_
 
 
 CSVKit documentation

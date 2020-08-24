@@ -2,6 +2,8 @@
 CHANGELOG
 *********
 
+.. contents:: :local:
+
 
 1.1.0-alpha
 -----------
