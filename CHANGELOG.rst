@@ -3,6 +3,11 @@ CHANGELOG
 *********
 
 
+1.1.0-alpha
+-----------
+
+* csvxsplit: create ``n`` new columns based on splitting a [COLUMN] by [PATTERN]
+
 1.0.1-alpha
 -----------
 

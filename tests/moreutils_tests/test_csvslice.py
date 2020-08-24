@@ -139,7 +139,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         assert 'At least 1 of' in str(context.exception)
 
 
-    def test_error_when_index_and_other_slice_options_are_Set(self):
+    def test_error_when_index_and_other_slice_options_are_set(self):
         with self.assertRaises(ArgumentErrorTK) as c1:
             self.get_output(['-i', '1', '-S', '1', 'examples/dummy4.csv'])
 

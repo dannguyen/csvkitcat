@@ -3,16 +3,15 @@
 # PRIORITY
 
 
-csvxsplit
-- [ ] basic implementation and testing
+csvxcap
+- like csvxsplit, except creates columns based on captured groups
+
 
 csvcount
-
 - [ ] count rows, cells with --pattern '[TERM]' --match-whole
 
 
 ## Lesser priority/maybe deprioritize
-
 
 
 csvsed
@@ -26,49 +25,22 @@ csvsed
 
 
 csvpad
-
 - [ ] basic implementation and tests
-
-```sh
---left 5 '0'
---right 
-```
-
+    ```sh
+    --left 5 '0'
+    --right 
+    ```
 
 
+csvxsplit
+- [ ] advanced feature: --max-split: make the number of new split columns based on the max number of splits found. Requires basically iterating through twice...
 
 
 
 ### Just done
 
-csvsqueeze->csvnorm
-
-- [X] pass newly refactored tests
-- [?] refactor csvsqueeze because it looks like spaghetti barf
-    - [ ] mostly did this
-- [X] add norm-casing
-- add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
-
-
-
-
-- csvslice
-  - [X] `--index` option; Slice a single record (shortcut for --is N --len 1).
-  - [X] reconsider option names --is and --ie
-    - [x] changed to -S, -E, -L
-
-
-- csvsed
-  - [x] basic test and implementation
-  - [x] -m for literal match
-  - [x] --max for limiting number of matches per field
-
-- csvsqueeze
-  - [X] implement by-column cleaning
-  
--- general
-  - [x] rename library to `csvkitcat`, `csvkc` for short
-  - [x] created alltextutil for common case of reading just text
+csvxsplit
+- [X] basic implementation and testing
 
 
 -----------------------
@@ -265,3 +237,36 @@ like `csvsed`, except replaces entire column
 - csvcompute
 - csvgroup
 
+
+
+## old todos
+
+
+csvsqueeze->csvnorm
+
+- [X] pass newly refactored tests
+- [?] refactor csvsqueeze because it looks like spaghetti barf
+    - [ ] mostly did this
+- [X] add norm-casing
+- add toggle type options? https://stackoverflow.com/questions/34735831/python-argparse-toggle-no-toggle-flag
+
+
+
+
+- csvslice
+  - [X] `--index` option; Slice a single record (shortcut for --is N --len 1).
+  - [X] reconsider option names --is and --ie
+    - [x] changed to -S, -E, -L
+
+
+- csvsed
+  - [x] basic test and implementation
+  - [x] -m for literal match
+  - [x] --max for limiting number of matches per field
+
+- csvsqueeze
+  - [X] implement by-column cleaning
+  
+-- general
+  - [x] rename library to `csvkitcat`, `csvkc` for short
+  - [x] created alltextutil for common case of reading just text
