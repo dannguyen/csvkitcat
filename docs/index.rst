@@ -23,7 +23,8 @@ Utilities
     /moreutils/csvsed
     /moreutils/csvslice
     /moreutils/csvxcap
-    /moreutils/csvxsplit
+    /moreutils/csvxfind
+    /moreutils/csvxplit
 
 
 

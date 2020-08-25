@@ -4,34 +4,41 @@ CHANGELOG
 
 .. contents:: :local:
 
-1.2.0-alpha
+1.3.0-alpha
+============
 
-* csvxcap: Extract captured group patterns from one column and create new columns
+* :doc:`csvxfind <moreutils/csvxfind>`: Findall regex matches in [COLUMN] and group concat them into a new column
+
+
+
+1.2.0-alpha
+===========
+
+* :doc:`csvxcap <moreutils/csvxcap>`: Extract captured group patterns from one column and create new columns
 
 
 1.1.0-alpha
------------
+===========
 
-* csvxplit: create ``n`` new columns based on splitting a [COLUMN] by [PATTERN]
+* :doc:`csvxplit <moreutils/csvxplit>`: create ``n`` new columns based on splitting a [COLUMN] by [PATTERN]
 
 1.0.1-alpha
------------
+===========
 
-
-* csvnorm: renamed and refactored from csvsqueeze
+* :doc:`csvnorm <moreutils/csvnorm>`: renamed and refactored from ``csvsqueeze``
 
     - csvnorm -C/--change-case for converting values to all upper or lower
 
 
 1.0.0-alpha
------------
+===========
 
 Basic functionality and testing for these tools:
 
-* csvcount
-* csvflatten
-* csvsed (missing ``--replace/--whole``)
-* csvslice
+* :doc:`csvcount <moreutils/csvcount>`
+* :doc:`csvflatten <moreutils/csvflatten>`
+* :doc:`csvsed <moreutils/csvflatten>`
+* :doc:`csvslice <moreutils/csvslice>`
 * csvsqueeze (likely to be refactored)
 
 
