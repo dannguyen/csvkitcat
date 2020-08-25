@@ -17,12 +17,12 @@ Utilities
 .. toctree::
     :maxdepth: 1
 
-    /moreutils/csvflatten
     /moreutils/csvcount
     /moreutils/csvflatten
     /moreutils/csvnorm
     /moreutils/csvsed
     /moreutils/csvslice
+    /moreutils/csvxcap
     /moreutils/csvxsplit
 
 

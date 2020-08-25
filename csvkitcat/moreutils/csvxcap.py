@@ -5,26 +5,16 @@ from csvkitcat.exceptions import ArgumentErrorTK
 import regex as re
 import warnings
 
-DEFAULT_COL_PREFIX = 'xp'
+DEFAULT_COL_PREFIX = 'xcap'
 
-class CSVXplit(AllTextUtility):
-    description = """Split a [COLUMN] by [PATTERN]"""
+class CSVXcap(AllTextUtility):
+    description = """Capture regex groups in [COLUMN] with [PATTERN] and create new columns"""
 
     override_flags = ['f', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
 
     def add_arguments(self):
-
-        self.argparser.add_argument('-r', '--regex', dest="regex_match", action='store_true',
-                                    default=False,
-                                    help='By default, [PATTERN] is assumed to be a regex. Set this flag to make it a literal text find/replace',)
-
-
-        self.argparser.add_argument('-n', dest="n_split_count", action='store',
-                                    default=1,
-                                    type=int,
-                                    help='Max number of splits to make')
 
 
         self.argparser.add_argument(metavar='COLUMN', dest='target_column',
@@ -65,45 +55,54 @@ class CSVXplit(AllTextUtility):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
-
-        n_split_count = self.args.n_split_count
-        pattern = self.args.pattern
-
-        if self.args.n_split_count < 1:
-            raise ArgumentErrorTK(f"The number of splits must be greater or equal to 1, not: {n_split_count}")
-
-
         self.args.columns = self.args.target_column
         myio = self.init_io(write_header=False)
 
         if len(myio.column_ids) != 1:
             raise ArgumentErrorTK(f"[COLUMN] argument expects exactly one column identifier, not {len(myio.column_ids)} columns: {myio.column_names}")
 
-        column_id_to_split = myio.column_ids[0]
-        column_name_to_split = myio.column_names[column_id_to_split]
+        x_cid = myio.column_ids[0]
+        x_cname = myio.column_names[x_cid]
 
-        n_cols = n_split_count + 1
-        split_column_names = [f'{column_name_to_split}_{DEFAULT_COL_PREFIX}{i}' for i in range(n_cols)]
+        pattern = re.compile(self.args.pattern)
 
-        new_fieldnames = myio.column_names + split_column_names
+        if pattern.groups == 0:
+            # regex contains no capturing groups, so just one new column
+            # is created with a generic name
+            n_xcols = 1
+            xcol_names = [f'{x_cname}_{DEFAULT_COL_PREFIX}']
+        elif pattern.groupindex:
+            # i.e. has named  captured groups
+            n_xcols = len(pattern.groupindex)
+            xcol_names = [f'{x_cname}_{k}' for k in pattern.groupindex.keys()]
+        else:
+            # just regular captured groups
+            n_xcols = pattern.groups
+            xcol_names = [f'{x_cname}_{DEFAULT_COL_PREFIX}{i+1}' for i in range(n_xcols)]
+
+
+        new_fieldnames = myio.column_names + xcol_names
 
         myio.output.writerow(new_fieldnames)
 
         for row in myio.rows:
-            xval = row[column_id_to_split]
+            xval = row[x_cid]
             # print('xval', xval)
-            newvals = re.split(pattern, xval, n_split_count) if self.args.regex_match else xval.split(pattern, n_split_count)
-            _lenvals = len(newvals)
-            newvals = [newvals[i] if i < _lenvals else None for i in range(n_cols)]
-            # print("Row:", row)
-            # print("Newvals:", newvals)
-            row.extend(newvals)
+            rxmatch = pattern.search(xval)
+            if not rxmatch:
+                newvals = [None for i in range(n_xcols)]
+            elif not rxmatch.groups():
+                # just a single pattern match, no capture group
+                newvals = [rxmatch.group()]
+            else:
+                newvals = rxmatch.groups()
 
+            row.extend(newvals)
             myio.output.writerow(row)
 
 
 def launch_new_instance():
-    utility = CSVXplit()
+    utility = CSVXcap()
     utility.run()
 
 

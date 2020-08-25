@@ -20,7 +20,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name='csvkitcat',
-    version='1.1.0-alpha',
+    version='1.2.0-alpha',
     description='The unofficial extended family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',
@@ -60,7 +60,9 @@ setup(
             'csvnorm = csvkitcat.moreutils.csvnorm:launch_new_instance',
             'csvsed = csvkitcat.moreutils.csvsed:launch_new_instance',
             'csvslice = csvkitcat.moreutils.csvslice:launch_new_instance',
+            'csvxcap = csvkitcat.moreutils.csvxcap:launch_new_instance',
             'csvxplit = csvkitcat.moreutils.csvxplit:launch_new_instance',
+
         ]
     },
     install_requires=install_requires

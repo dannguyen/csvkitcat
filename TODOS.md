@@ -3,8 +3,12 @@
 # PRIORITY
 
 
-csvxcap/csvxtract
+csvxcap
 - like csvxplit, except creates columns based on captured groups
+- [x] basic implementation
+
+csvxtract/xfind
+- ???: does a regex.findall, and group concats them into a column?
 
 
 csvcount

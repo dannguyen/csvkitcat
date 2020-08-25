@@ -4,6 +4,10 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.2.0-alpha
+
+* csvxcap: Extract captured group patterns from one column and create new columns
+
 
 1.1.0-alpha
 -----------
