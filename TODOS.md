@@ -1,15 +1,11 @@
 # TODOS
 
-# PRIORITY
+# PRIORITY NEXT
 
 
-csvxcap
-- like csvxplit, except creates columns based on captured groups
-- [x] basic implementation
-
-csvxtract/xfind
-- ???: does a regex.findall, and group concats them into a column?
-
+- [ ] clean up code with Black
+  - [x] tests blacked
+- [ ] refactor tests, add tests to validate specific examples in documentation
 
 csvcount
 - [ ] count rows, cells with --pattern '[TERM]' --match-whole
@@ -46,6 +42,13 @@ csvxplit
 csvxplit
 - [X] basic implementation and testing
 
+csvxcap
+- like csvxplit, except creates columns based on captured groups
+- [x] basic implementation
+
+csvxtract/xfind
+- ???: does a regex.findall, and group concats them into a column?
+- [x] basic implementation
 
 -----------------------
 
