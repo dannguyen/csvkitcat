@@ -54,11 +54,23 @@ class TestCSVCount(CSVKitTestCase, EmptyFileTests):
             [r'[a-z]','0','0'],
         ])
 
-    @skiptest('need to design')
     def test_only_regexes(self):
-        pass
+        self.assertLines(['-P', r'w|o', 'examples/pipes.csv'], [
+            'pattern,rows,cells',
+            'w|o,1,1'
+        ])
+
+
+    def test_takes_multiple_patterns(self):
+        self.assertRows(['-P', '1', '-P', '2', '-P', 'Y', 'examples/dummy.csv'], [
+            ['pattern','rows','cells'],
+            ['1','1','1'],
+            ['2','1','1'],
+            ['Y','0','0'],
+
+        ])
 
 
     @skiptest('need to design')
-    def test_takes_multiple_patterns(self):
+    def test_count_specific_cols(self):
         pass

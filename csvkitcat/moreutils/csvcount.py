@@ -62,15 +62,15 @@ class CSVCount(AllTextUtility):
             tally = _keydict(lambda x: {'pattern': x.pattern, 'rows': 0, 'cells': 0})
 
             for i, row in enumerate(myio.rows):
-                is_row_matched = False
-                for cell in row:
-                    for p in patterns:
+                for p in patterns:
+                    is_row_matched = False
+                    for cell in row:
                         matches = p.search(cell)
                         if matches:
                             is_row_matched = True
                             tally[p]['cells'] += 1
-                if is_row_matched:
-                    tally[p]['rows'] += 1
+                    if is_row_matched:
+                        tally[p]['rows'] += 1
 #            print(tally.items())
             for p in patterns:
                 t = tally[p]
