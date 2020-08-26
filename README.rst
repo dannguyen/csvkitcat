@@ -20,11 +20,18 @@ New tools and utilities:
 ...and more random tools!
 
 
-See more docs at `Read The Docs <https://csvkitcat.readthedocs.io/>`_
+See more tools and explanation at csvkitcat's `Read The Docs <https://csvkitcat.readthedocs.io/>`_
 
 
 
-See `CHANGELOG <docs/CHANGELOG.rst>`_
+Important links
+===============
+
+
+* Documentation: https://csvkitcat.readthedocs.io/
+* Repository:    https://github.com/dannguyen/csvkitcat
+* Issues:        https://github.com/dannguyen/csvkitcat/issues
+* CHANGELOG:     `<docs/CHANGELOG.rst>`_
 
 
 CSVKit documentation

@@ -5,7 +5,14 @@
 
 
 
-- csvpivot
+csvpivot
+
+- [ ] basic implementation and tests
+- [x] default counting behavior
+  - [ ] add support for other aggregations
+- [ ] option to sort? But is that even useful when doing just a column pivot? How about ordering columns alphabetically/numerically too? `--sort-row` `--sort-col` `a,z,n,0`
+- [ ] grand total column and row?
+
 - csvchart
 - csvround
 
@@ -55,6 +62,9 @@ csvxplit
 - [ ] advanced feature: --max-split: make the number of new split columns based on the max number of splits found. Requires basically iterating through twice...
 
 
+
+csvflatten, csvcount
+- [ ] Major revamps were done, need to come up with more robust tests to make sure all weird edgecases are covered.
 
 ### Just done
 
