@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import six
+from subprocess import Popen, PIPE
 import sys
 
-import six
 
 try:
     from mock import patch
@@ -34,6 +35,13 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         """
         self.assertLines(
             ["examples/dummy.csv"], ["fieldname,value", "a,1", "b,2", "c,3",]
+        )
+
+    def test_newline_handling(self):
+        """newlines are stripped, including leading/trailing striplines"""
+        self.assertLines(
+            ["examples/linebreaks.csv",],
+            ["fieldname,value", "id,1", "speech,hey", ",you", ",folks", ",whats up? ",],
         )
 
     def test_skip_lines(self):
@@ -150,4 +158,74 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
                 """alpha,$""",
                 """omega,%""",
             ],
+        )
+
+    #################################
+    ### Tests that verify my examples
+
+    def test_regular_hamlet_w_csvlook(self):
+        p1 = Popen(["csvflatten", "examples/hamlet.csv"], stdout=PIPE)
+        p2 = Popen(["csvlook"], stdin=p1.stdout, stdout=PIPE)
+        p1.stdout.close()
+        p1.wait()
+        txt = p2.communicate()[0].decode("utf-8")
+        p2.wait()
+
+        assert (
+            txt.strip()
+            == """
+| fieldname | value                                          |
+| --------- | ---------------------------------------------- |
+| act       | 1                                              |
+| scene     | 5                                              |
+| speaker   | Horatio                                        |
+| lines     | Propose the oath, my lord.                     |
+| ~~~~~~~~~ |                                                |
+| act       | 1                                              |
+| scene     | 5                                              |
+| speaker   | Hamlet                                         |
+| lines     | Never to speak of this that you have seen,     |
+|           | Swear by my sword.                             |
+| ~~~~~~~~~ |                                                |
+| act       | 1                                              |
+| scene     | 5                                              |
+| speaker   | Ghost                                          |
+| lines     | [Beneath] Swear.                               |
+| ~~~~~~~~~ |                                                |
+| act       | 3                                              |
+| scene     | 4                                              |
+| speaker   | Gertrude                                       |
+| lines     | O, speak to me no more;                        |
+|           | These words, like daggers, enter in mine ears; |
+|           | No more, sweet Hamlet!                         |
+| ~~~~~~~~~ |                                                |
+| act       | 4                                              |
+| scene     | 7                                              |
+| speaker   | Laertes                                        |
+| lines     | Know you the hand?                             |""".strip()
+        )
+
+    def test_chopped_hamlet_w_csvlook(self):
+        p1 = Popen(["csvflatten", "-X", "20", "examples/hamlet.csv"], stdout=PIPE)
+        p2 = Popen(["csvlook"], stdin=p1.stdout, stdout=PIPE)
+        p1.stdout.close()
+        p1.wait()
+        txt = p2.communicate()[0].decode("utf-8")
+        p2.wait()
+
+        assert (
+            txt.splitlines()[-12:]
+            == """
+| lines     | O, speak to me no mo |
+|           | re;                  |
+|           | These words, like da |
+|           | ggers, enter in mine |
+|           |  ears;               |
+|           | No more, sweet Hamle |
+|           | t!                   |
+| ~~~~~~~~~ |                      |
+| act       | 4                    |
+| scene     | 7                    |
+| speaker   | Laertes              |
+| lines     | Know you the hand?   |""".strip().splitlines()
         )

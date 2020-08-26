@@ -1,6 +1,6 @@
-*********
-csvkitcat
-*********
+****************************************************************
+csvkitcat: the unofficial, extended and awkward family of csvkit
+****************************************************************
 
 
 csvkitcat is a library that supplements (and depends on) the great `wireservice/csvkit <https://github.com/wireservice/csvkit>`_. It exists because csvkit is no longer adding new tools to its core functionality.
@@ -16,6 +16,8 @@ New tools and utilities:
 - csvsed: like ``sed``, but done at the columnar level
 - csvslice: like ``xsv slice``
 - csvxplit: split a given column by a pattern into n new columns
+
+...and more random tools!
 
 
 See more docs at `Read The Docs <https://csvkitcat.readthedocs.io/>`_

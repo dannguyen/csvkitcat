@@ -3,16 +3,7 @@
 # PRIORITY NEXT
 
 
-csvcount
-- [X] change basic behavior to output rows,cells,empty_rows,empty_cells
-  - [ ] Refactor the resulting spaghetti code and nested logic
--  pattern matching `-p [pattern]`
-  - [X] given a list of [PATTERN], return row and column count that contain [PATTERN]
-  - [X] return list of total matches, as some cells have more than one cell
 
-
-csvflatten
-- [ ] Independently handle newlines
 
 - csvpivot
 - csvchart
@@ -32,6 +23,15 @@ In general:
 
 
 ## Lesser priority/maybe deprioritize
+
+
+
+csvcount
+- [X] change basic behavior to output rows,cells,empty_rows,empty_cells
+  - [ ] Refactor the resulting spaghetti code and nested logic
+-  pattern matching `-p [pattern]`
+  - [X] given a list of [PATTERN], return row and column count that contain [PATTERN]
+  - [X] return list of total matches, as some cells have more than one cell
 
 
 csvsed
@@ -57,6 +57,9 @@ csvxplit
 
 
 ### Just done
+
+csvflatten
+- [X] Independently handle newlines
 
 csvxplit
 - [X] basic implementation and testing

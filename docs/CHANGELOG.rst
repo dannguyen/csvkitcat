@@ -4,6 +4,12 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.3.7-alpha
+===========
+
+:doc:`csvflatten <moreutils/csvflatten>` tweaked:
+- If a value contains newlines, then csvflatten will print newlines/rows; this is independent of whether the chop-length has been set.
+
 
 1.3.5-alpha
 ===========

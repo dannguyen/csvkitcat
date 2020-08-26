@@ -2,7 +2,7 @@
 
 import agate
 from csvkit.cli import CSVKitUtility
-import re
+import regex as re
 import sys
 
 OUTPUT_COLUMNS = {'names': ['fieldname', 'value',], 'types': (agate.Text(), agate.Text())}
@@ -102,6 +102,11 @@ class CSVFlatten(CSVKitUtility):
         writer = agate.csv.writer(self.output_file, **self.writer_kwargs)
         writer.writerow(OUTPUT_COLUMNS['names'])
         maxvallength = self.args.chop_length
+        if maxvallength:
+            valpattern = re.compile(fr'[^\n]{{{maxvallength}}}|.+?(?=\n|$)')
+        else:
+            valpattern = re.compile(r'.+?(?=\n|$)')
+
 
         for y, row in enumerate(raw_rows):
             if self.end_of_record_marker and y > 0:
@@ -111,21 +116,32 @@ class CSVFlatten(CSVKitUtility):
             for x, fieldname in enumerate(raw_column_names):
                 value = row[x]
                 lenval = len(value)
-                if not maxvallength or maxvallength >= lenval:
-                    writer.writerow([fieldname, value])
-                else:
+                # if not maxvallength or maxvallength >= lenval:
+                #     writer.writerow([fieldname, value])
+                # else:
                     # if value is longer than chop_length,
                     # we split the value into chunks of chop_length
                     # and output a new row for each chunk as the value, and None for the fieldname
-                    for _n, z in enumerate(range(0, lenval, maxvallength)):
-                        chunk = value[z:z+maxvallength]
-                        if _n == 0:
-                            fname = fieldname
-                        elif self.args.label_chopped_values is True:
-                            fname = f'{fieldname}~{_n}'
-                        else:
-                            fname = None
-                        writer.writerow([fname, chunk])
+                chunks = valpattern.findall(value)
+                for i, chunk in enumerate(chunks):
+                    if i == 0:
+                        fname = fieldname
+                    elif self.args.label_chopped_values is True:
+                        fname = f'{fieldname}~{i}'
+                    else:
+                        fname = None
+                    writer.writerow([fname, chunk])
+
+
+                    # for _n, z in enumerate(range(0, lenval, maxvallength)):
+                    #     chunk = value[z:z+maxvallength]
+                    #     if _n == 0:
+                    #         fname = fieldname
+                    #     elif self.args.label_chopped_values is True:
+                    #         fname = f'{fieldname}~{_n}'
+                    #     else:
+                    #         fname = None
+                    #     writer.writerow([fname, chunk])
 
 
 
