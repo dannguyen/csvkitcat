@@ -3,13 +3,39 @@
 # PRIORITY NEXT
 
 
+csvcount
+- change basic behavior to output rows,cells?
+-  `-p [pattern]`
+  - given a list of [PATTERN], return row and column count that contain [PATTERN]:
+  
+      ```
+      pattern,rows,cells,instances,row_idx_min,row_idx_max,most_common,cardinality
+      "\d{6}",10,30,42,0,9
+      "(?i)hello",4,4,3,8
+      ```
+
+
+
+  
+  - `--blanks`
+    - include count of blank columns
+
+- count rows, cells with --pattern '[TERM]' --match-whole
+
+
 - [ ] clean up code with Black
   - [x] tests blacked
 - [ ] refactor tests, add tests to validate specific examples in documentation
 
-csvcount
-- [ ] count rows, cells with --pattern '[TERM]' --match-whole
+csvflatten
+- [ ] Independently handle newlines
 
+
+
+
+
+csvxfind/xcap
+- Provide option to specify prefix? 
 
 ## Lesser priority/maybe deprioritize
 
@@ -21,7 +47,6 @@ csvsed
 - [x] --whole option: match and replace entire field instead
   - [?] unfortunately I did it brute force dumb way and it is substantially slower than non--whole
   - [ ] sketch out usecases for whole-cell match/replace, compare to Excel
-
 
 
 csvpad

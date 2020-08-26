@@ -39,3 +39,14 @@ Important links:
 * Repository:    https://github.com/wireservice/csvkit
 * Issues:        https://github.com/wireservice/csvkit/issues
 * Schemas:       https://github.com/wireservice/ffs
+
+
+Dev notes
+=========
+
+How to publish: https://realpython.com/pypi-publish-python-package/
+
+.. code-block:: shell
+
+    python setup.py sdist bdist_wheel
+    twine upload dist/*

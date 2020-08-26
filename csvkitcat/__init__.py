@@ -19,3 +19,17 @@ writer = agate.csv.writer
 DictReader = agate.csv.DictReader
 DictWriter = agate.csv.DictWriter
 
+from csvkit.cli import CSVKitUtility
+
+
+class CSVKitcatUtil(CSVKitUtility):
+
+    def get_column_offset(self):
+        if getattr(self.args, 'zero_based', None):
+            if self.args.zero_based:
+                return 0
+            else:
+                return 1
+        else:
+            return 1
+    # dumb hack

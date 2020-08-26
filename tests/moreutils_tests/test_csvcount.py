@@ -39,3 +39,26 @@ class TestCSVCount(CSVKitTestCase, EmptyFileTests):
         """to do: is there a reason for this method to work with a string/Path object?"""
         with open("examples/dummy4.csv") as src:
             assert count_csv_rows(src) == 4
+
+
+    ### pattern count
+    def test_basic_pattern_count(self):
+        self.assertRows(['-P', r'\d', 'examples/dummy.csv'], [
+            ['pattern','rows','cells'],
+            [r'\d','1','3'],
+        ])
+
+    def test_basic_pattern_count_no_match(self):
+        self.assertRows(['-P', r'[a-z]', 'examples/dummy.csv'], [
+            ['pattern','rows','cells'],
+            [r'[a-z]','0','0'],
+        ])
+
+    @skiptest('need to design')
+    def test_only_regexes(self):
+        pass
+
+
+    @skiptest('need to design')
+    def test_takes_multiple_patterns(self):
+        pass

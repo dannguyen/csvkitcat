@@ -62,15 +62,6 @@ class CSVNorm(AllTextUtility):
 
 
 
-
-        ### boilerplate
-
-        # defer to csvformat
-        # self.argparser.add_argument('-U', '--out-quoting', dest='out_quoting', type=int, choices=[0, 1, 2, 3],
-        #                             help='Quoting style used in the output CSV file. 0 = Quote Minimal, 1 = Quote All, 2 = Quote Non-numeric, 3 = Quote None.')
-
-
-
     def main(self):
 
 

@@ -1,7 +1,8 @@
 import agate
-from csvkit.cli import CSVKitUtility
 from collections import namedtuple
 import six
+
+from csvkitcat import CSVKitcatUtil
 
 
 # JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])
@@ -9,7 +10,7 @@ import six
 
 MyIO = namedtuple('MyIO', ['rows', 'column_names', 'column_ids', 'output',])
 
-class AllTextUtility(CSVKitUtility):
+class AllTextUtility(CSVKitcatUtil):
 
     def init_io(self, write_header=True):
         self.args.sniff_limit = 0       # TK is needed??
