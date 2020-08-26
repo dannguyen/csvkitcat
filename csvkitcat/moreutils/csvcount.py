@@ -48,27 +48,52 @@ class CSVCount(AllTextUtility):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
+        myio = self.init_io(write_header=False)
 
+
+        # TODO: refactor this spaghetti ass code
         if not self.args.patterns:
-            # do basic count
-            x = count_csv_rows(self.skip_lines(), no_headers=self.args.no_header_row)
-            self.output_file.write("{}\n".format(x))
+            header = ['rows', 'cells', 'empty_rows', 'empty_cells', 'blank_lines']
+            myio.output.writerow(header)
+            # iterate through each row, since we need to count cells
+            dd = {k: 0 for k in header}
+            ncols = len(myio.column_ids)
+            for i, row in enumerate(myio.rows):
+                if not row: # i.e. a blank line
+                    dd['blank_lines'] += 1
+                else:
+                    dd['rows'] += 1
+                    row_empty_cell_count = 0
+                    for j, cell in enumerate(row):
+                        if j in myio.column_ids:
+                            dd['cells'] += 1
+                            if cell == '':
+                                row_empty_cell_count += 1
+
+                    dd['empty_cells'] += row_empty_cell_count
+                    if row_empty_cell_count == ncols: # consider the row a blank
+                        dd['empty_rows'] += 1
+
+            myio.output.writerow(dd.values())
+
+
         else:
             patterns = [re.compile(p) for p in self.args.patterns]
-            myio = self.init_io(write_header=False)
-            header = ['pattern', 'rows', 'cells']
+            header = ['pattern', 'rows', 'cells', 'matches']
             myio.output.writerow(header)
 
-            tally = _keydict(lambda x: {'pattern': x.pattern, 'rows': 0, 'cells': 0})
+            tally = _keydict(lambda x: {'pattern': x.pattern, 'rows': 0, 'cells': 0, 'matches': 0})
 
             for i, row in enumerate(myio.rows):
                 for p in patterns:
                     is_row_matched = False
-                    for cell in row:
-                        matches = p.search(cell)
-                        if matches:
-                            is_row_matched = True
-                            tally[p]['cells'] += 1
+                    for j, cell in enumerate(row):
+                        if j in myio.column_ids:
+                            matches = p.findall(cell)
+                            if matches:
+                                is_row_matched = True
+                                tally[p]['cells'] += 1
+                                tally[p]['matches'] += len(matches)
                     if is_row_matched:
                         tally[p]['rows'] += 1
 #            print(tally.items())

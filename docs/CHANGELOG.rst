@@ -4,6 +4,16 @@ CHANGELOG
 
 .. contents:: :local:
 
+
+1.3.5-alpha
+===========
+
+:doc:`csvcount <moreutils/csvcount>` has been overhauled:
+
+- Basic functionality returns not just number of rows, but cells, empty rows+cells, and blank lines
+- Restrict columns to search with``-c/--column``
+
+
 1.3.0-alpha
 ============
 

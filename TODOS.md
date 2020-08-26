@@ -4,38 +4,32 @@
 
 
 csvcount
-- change basic behavior to output rows,cells?
--  `-p [pattern]`
-  - given a list of [PATTERN], return row and column count that contain [PATTERN]:
-  
-      ```
-      pattern,rows,cells,instances,row_idx_min,row_idx_max,most_common,cardinality
-      "\d{6}",10,30,42,0,9
-      "(?i)hello",4,4,3,8
-      ```
+- [X] change basic behavior to output rows,cells,empty_rows,empty_cells
+  - [ ] Refactor the resulting spaghetti code and nested logic
+-  pattern matching `-p [pattern]`
+  - [X] given a list of [PATTERN], return row and column count that contain [PATTERN]
+  - [X] return list of total matches, as some cells have more than one cell
 
 
+csvflatten
+- [ ] Independently handle newlines
 
-  
-  - `--blanks`
-    - include count of blank columns
+- csvpivot
+- csvchart
+- csvround
 
-- count rows, cells with --pattern '[TERM]' --match-whole
 
+csvxfind/xcap
+- Provide option to specify prefix? 
+
+
+In general:
 
 - [ ] clean up code with Black
   - [x] tests blacked
 - [ ] refactor tests, add tests to validate specific examples in documentation
 
-csvflatten
-- [ ] Independently handle newlines
 
-
-
-
-
-csvxfind/xcap
-- Provide option to specify prefix? 
 
 ## Lesser priority/maybe deprioritize
 
