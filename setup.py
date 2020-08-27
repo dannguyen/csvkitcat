@@ -64,7 +64,6 @@ setup(
             'csvxcap = csvkitcat.moreutils.csvxcap:launch_new_instance',
             'csvxfind = csvkitcat.moreutils.csvxfind:launch_new_instance',
             'csvxplit = csvkitcat.moreutils.csvxplit:launch_new_instance',
-
         ]
     },
     install_requires=install_requires

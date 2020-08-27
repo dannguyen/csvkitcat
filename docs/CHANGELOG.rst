@@ -4,6 +4,12 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.4.0-alpha
+===========
+
+* :doc:`csvpivot <moreutils/csvpivot>`_: Pivot a table on rows and columns (TK better label)
+
+
 1.3.7-alpha
 ===========
 

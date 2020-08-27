@@ -19,7 +19,7 @@ writer = agate.csv.writer
 DictReader = agate.csv.DictReader
 DictWriter = agate.csv.DictWriter
 
-from csvkit.cli import CSVKitUtility
+from csvkit.cli import CSVKitUtility, parse_column_identifiers
 
 
 class CSVKitcatUtil(CSVKitUtility):

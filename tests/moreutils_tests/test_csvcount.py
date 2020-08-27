@@ -12,8 +12,6 @@ except ImportError:
 
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 from csvkitcat.moreutils.csvcount import CSVCount, launch_new_instance, count_csv_rows
-
-
 from unittest import skip as skiptest
 
 
