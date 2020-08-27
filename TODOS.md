@@ -2,25 +2,65 @@
 
 # PRIORITY NEXT
 
-
-
-
-
-
 - csvchart
+  - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
+  - default: terminal bar chart
+    - takes x-col and y-col
+    - prints to terminal
+  - SVG mode
+    - bar_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-bar-chart
+    - column_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-column-chart
+    - line_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-line-chart
+    - scatterplot: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-dots-chart
+    - lattice: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-lattice-chart
+      - tricky because it expects a group_by aggregation to be specified 
+  - use https://github.com/mkaz/termgraph?
+
+
+  - external libs
+    - line chart: https://github.com/kroitor/asciichart
+    - stacked chart, histogram, multi-variable: https://github.com/mkaz/termgraph
+    - render images as ascii: https://github.com/jart/hiptext
+
+
+
+- csvgroupby:
+  - csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
+
+- csvuniq:
+  - utility to calculate ordinality
+  - shortcut for `csvcut -c category | sort | uniq -c | sort -rn`
+  - look at how `csvstat` and `xsv frequency` does it
+
 - csvround
+  - for numbers, round by integer and precision
+  - for dates, perform strftime
+  - for text, truncate
+
+- Content and guides
+  - Real-world scenarios
+    - for babynames, do a trend: csvstack, csvchart, csvpivot
+    - Count crime types by year: csvround, csvpivot
+    - Extract mentions from tweets by date: csvround, csvxtract (requires a util to denormalize?)
+  - Tool page
+    - [ ] Each description section should have a h3:Example subsection
 
 
-csvxfind/xcap
-- Provide option to specify prefix? 
+- Categorize utils:
+    - inspection: csvcount, csvflatten
+    - transformation: csvnorm, csvsed, csvpad?
+    - augmentation, csvxcap/xfind/xsplit, 
+    - computation: csvpivot, csvchart, csvround?
+    - filtering: csvslice, csvrange?
+
 
 
 In general:
 
 - [ ] clean up code with Black
-  - [x] tests blacked
+  - [x] some tests blacked
 - [ ] refactor tests, add tests to validate specific examples in documentation
-
+  
 
 
 ## Lesser priority/maybe deprioritize
@@ -60,6 +100,8 @@ csvflatten, csvcount
 - [ ] Major revamps were done, need to come up with more robust tests to make sure all weird edgecases are covered.
 
 
+csvxfind, csvxcap
+- Provide option to specify prefix? 
 
 
 csvpivot
@@ -172,7 +214,7 @@ csvxtract/xfind
 ------------------------------
 ------------------------------
 ------------------------------
-# DRAFT STUFF
+# DRAFT STUFF/dumb ideas
 
 ## csvheaders
 
@@ -201,59 +243,6 @@ output record_id,record
 
 ```
 
-## csvtxtval newcol from regex
-
-- create only one new column
-- requires `--output` pattern
-- ignores --max-matches
-- colname is srccolumn_extract
-
-
-
-csvtxform: makes 1 column from one regex pattern:
-    - if no --output, then new column is what was matched
-    - if --output, then new column is that pattern
-    - if --by-groups, then make new columns; ignores --output
-
-csvtxract: makes new columns, or 1 column
-    - by delimiter
-    - by named capture
-
-
-
-## csvtxt
-
-
-```
-csvtxcap [subcommand] [pattern] --regex --xname
-
---pattern
---regex is pattern literal or regex
---column column to target
---output-header 
---max-matches: number of extractions
---match-delimiter: '\n» '
-```
-
-
-
-- collect/serialize (as yaml?)
-    - provide a pattern
-        - create n columns, for the first n finds
-    - provide a pattern with named captured groups
-        - max-count is assumed to be 0
-        - create column for every group: "[src_column] _ [group_name]"
-
-
-- colsplit
-    - split by literal delimiter, create n columns
-    - split by regex pattern
-
-- split
-
-
-## csvtextsplit
-given a column and a delimiter, create n columns
 
 
 
@@ -268,29 +257,12 @@ like `csvsed`, except replaces entire column
 ```
 
 
-### csvfind
+### csvfind (already done by csvcount)
 
 - for every row, count number of matches with given pattern
 - create column with find_count
 - create column with find_extracts: line for every match
 
-### csvpick/csvfrak/csvxtract/csvrx
-
-#### csvgsplit/csvcapture
-
-
-## other stuff
-
-- csvfreq/csvcount
-
-
-- csvslice
-    - csvhead
-    - csvtail
-- csvrange
-
-- csvcompute
-- csvgroup
 
 
 

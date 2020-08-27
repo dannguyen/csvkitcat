@@ -17,6 +17,7 @@ Utilities
 .. toctree::
     :maxdepth: 1
 
+    /moreutils/csvchart
     /moreutils/csvcount
     /moreutils/csvflatten
     /moreutils/csvnorm
