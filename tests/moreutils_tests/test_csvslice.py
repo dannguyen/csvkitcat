@@ -44,7 +44,11 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         )
 
     def test_start_negative_end(self):
-        """basically like tail"""
+        """basically like tail
+
+        TODO: wait is it really?
+        """
+
         self.assertLines(
             ["-S", "-2", "examples/dummy4.csv"], ["a,b,c", "7,8,9", "10,11,12",]
         )

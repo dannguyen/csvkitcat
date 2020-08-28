@@ -8,7 +8,8 @@ CHANGELOG
 1.5.0-alpha (in progress)
 =========================
 
-* csvchart, for making charts!
+* csvchart: for making charts!
+* csvgroupby: for doing the equivalent of SQL ``GROUP BY [columns]``
 
 1.4.0-alpha
 ===========

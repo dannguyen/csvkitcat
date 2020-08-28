@@ -2,36 +2,44 @@
 
 # PRIORITY NEXT
 
+
+- csvgroupby: csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
+  - https://agate.readthedocs.io/en/1.6.1/api/table.html#agate.Table.group_by
+  - Right now defaults to Count(); `-a/--aggs` needs to parse multiple functions
+    - `-a` needs to be a `append` action, not a comma delimited list:
+      - `-a 'count' -a 'sum,age|summed age'`
+  - --agg arguments need to be check against columns
 - csvchart
   - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
   - default: terminal bar chart
     - takes x-col and y-col
     - prints to terminal
   - SVG mode
-    - bar_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-bar-chart
-    - column_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-column-chart
-    - line_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-line-chart
-    - scatterplot: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-dots-chart
-    - lattice: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-lattice-chart
-      - tricky because it expects a group_by aggregation to be specified 
-  - use https://github.com/mkaz/termgraph?
-
+    - [ ] write to file and open immediately
+    - charts
+      - bar_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-bar-chart
+      - column_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-column-chart
+      - line_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-line-chart
+      - scatterplot: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-dots-chart
+      - lattice: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-lattice-chart
+        - tricky because it expects a group_by aggregation to be specified 
+  
 
   - external libs
-    - line chart: https://github.com/kroitor/asciichart
     - stacked chart, histogram, multi-variable: https://github.com/mkaz/termgraph
-    - render images as ascii: https://github.com/jart/hiptext
 
+- csvslice
+  - wtf is this terrible and inefficient code? `rowslice = list(myio.rows)[slice_start:slice_end]`
+`  
 
-
-- csvgroupby:
-  - csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
+- csvbin: https://agate.readthedocs.io/en/1.3.1/api/table.html#agate.Table.bins
 
 - csvuniq:
   - utility to calculate ordinality
   - shortcut for `csvcut -c category | sort | uniq -c | sort -rn`
   - look at how `csvstat` and `xsv frequency` does it
-
+  - https://agate.readthedocs.io/en/1.6.1/cookbook/filter.html#distinct-values
+  
 - csvround
   - for numbers, round by integer and precision
   - for dates, perform strftime
@@ -45,6 +53,12 @@
   - Tool page
     - [ ] Each description section should have a h3:Example subsection
 
+
+- csvnorm
+  - need flag for just minimal space-fixing, e.g. `--min/--lite`, for translit stuff
+
+- csvrange
+  - use builtin Agate examples: https://agate.readthedocs.io/en/1.6.1/cookbook/filter.html#values-within-a-range
 
 - Categorize utils:
     - inspection: csvcount, csvflatten
@@ -66,6 +80,7 @@ In general:
 ## Lesser priority/maybe deprioritize
 
 
+consider usecase for integrating clevercsv: https://github.com/alan-turing-institute/CleverCSV
 
 csvcount
 - [X] change basic behavior to output rows,cells,empty_rows,empty_cells
@@ -147,7 +162,7 @@ csvxtract/xfind
 ## csvslice
   - [ ] csvhead: basically a reskin of csvslice
   - [ ] csvtail: not trivial, will need to research this
-
+  - read up on csvkit followup issue: https://github.com/wireservice/csvkit/issues/669
 
 
 ## in general
