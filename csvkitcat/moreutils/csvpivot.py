@@ -1,33 +1,27 @@
-import csv
-from io import StringIO
+
 import regex as re
 from sys import stderr
+from typing import NoReturn
 import warnings
 
-from agate.aggregations import Count, Min, Max, MaxLength, Mean, Median, Mode, StDev, Sum
 
 
 from csvkitcat import agate, parse_column_identifiers
-from csvkitcat.agatable import AgatableUtil
+from csvkitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
 from csvkitcat.exceptions import ArgumentErrorTK
 
 
-PivotAggs = (Count, Max, MaxLength, Min, Mean, Median, Mode, StDev, Sum)
 
 
-def get_agg(name: str) -> [type, bool]:
-    return next((a for a in PivotAggs if a.__name__.lower() == name.lower()), False)
 
-def parse_csv_line(line:str) -> list:
-    """cmon, this must already be implemented in csvkit/agate somewhere..."""
-    src = StringIO(line)
-    return next(csv.reader(src), [])
+
 
 
 class CSVPivot(AgatableUtil):
     description = """Do a simple pivot table, by row, column, or row and column"""
 
     override_flags = [ 'L', 'blanks', 'date-format', 'datetime-format']
+
 
 
     def add_arguments(self):
@@ -42,9 +36,11 @@ class CSVPivot(AgatableUtil):
         self.argparser.add_argument('-a', '--agg', dest='pivot_agg', type=str,
                                     default='count',
                                     help="""The name of an aggregation to perform on each group of data in the pivot table.
-                                    For aggregations that require an argument (i.e. a column name), pass in a comma-delimited
-                                    string, e.g. `-a "sum,age"
+                                    For aggregations that require an argument (i.e. a column name), pass in the aggregation name,
+                                    followed by a colon, followed by comma-delimited arguments,
+                                     e.g. `-a "sum:age"` and `-a "count:name,hello"
 
+                                    To see a list, pass: '-a list'
                                     """)
 
         self.argparser.add_argument('-c', '--pivot-column', dest='pivot_column',
@@ -70,21 +66,20 @@ class CSVPivot(AgatableUtil):
             raise ArgumentErrorTK('At least either --row-pivot or --column-pivot must be specified. Both cannot be empty' )
 
 
+
+
+
     def main(self):
 
-        if not self.args.pivot_agg:
-            # then print list of aggregates
-            self.output_file.write(f"List of aggregate functions:\n")
-            for a in PivotAggs:
-                self.output_file.write(f"- {a.__name__.lower()}\n")
+        if not self.args.pivot_agg or self.args.pivot_agg == 'list':
+            print_available_aggregates(self.output_file)
             return
         else:
-            agg_name, *agg_args = parse_csv_line(self.args.pivot_agg)
-            pivot_agg = get_agg(agg_name)
-            if pivot_agg is False:
+            _a = parse_aggregate_string_arg(self.args.pivot_agg)
+            if _a.foo is False:
                 raise ArgumentErrorTK(f'Invalid aggregation: "{self.args.pivot_agg}". Call -a/--agg without a value to get a list of available aggregations')
             else:
-                pivot_agg = pivot_agg(*agg_args)
+                pivot_agg = _a.foo(*_a.args)
 
 
         self.handle_standard_args()

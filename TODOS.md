@@ -3,12 +3,19 @@
 # PRIORITY NEXT
 
 
+- csvpivot: fixing how --agg works and is delimited:
+  - [x] `--agg sum:age` instead of `--agg sum,age`
+  - [x] `--agg list` to get list of stuff
+
 - csvgroupby: csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
   - https://agate.readthedocs.io/en/1.6.1/api/table.html#agate.Table.group_by
-  - Right now defaults to Count(); `-a/--aggs` needs to parse multiple functions
-    - `-a` needs to be a `append` action, not a comma delimited list:
-      - `-a 'count' -a 'sum,age|summed age'`
+  - basic implementation
+    - [ ] needs more tests
+    - [X] defaults to `Count()`; `-a/--aggs` needs to parse multiple functions, e.g. `--agg "Optional column name|sum:age`
   - --agg arguments need to be check against columns
+
+
+
 - csvchart
   - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
   - default: terminal bar chart

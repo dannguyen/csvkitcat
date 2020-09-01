@@ -20,6 +20,7 @@ Utilities
     /moreutils/csvchart
     /moreutils/csvcount
     /moreutils/csvflatten
+    /moreutils/csvgroupby
     /moreutils/csvnorm
     /moreutils/csvpivot
     /moreutils/csvsed

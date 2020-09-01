@@ -10,7 +10,8 @@ except ImportError:
     from unittest.mock import patch
 
 
-from csvkitcat.moreutils.csvgroupby import CSVGroupby, GroupbyAggs, launch_new_instance
+from csvkitcat.agatable import Aggregates
+from csvkitcat.moreutils.csvgroupby import CSVGroupby, launch_new_instance
 from csvkitcat.exceptions import *
 from unittest import skip as skiptest
 
@@ -35,33 +36,80 @@ class TestCSVGroupby(CSVKitTestCase):
         ):
             launch_new_instance()
 
+    def test_group_count(self):
+        """same as csvpivot"""
+        self.assertRows(
+            ["-c", "gender", "examples/peeps.csv"],
+            [["gender", "Count"], ["female", "4"], ["male", "2"],],
+        )
 
-    #################################
-    ### Tests that verify my examples
 
-    """
-    name,race,gender,age
-    Joe,white,female,20
-    Jane,asian,male,20
-    Jill,black,female,20
-    Jim,latino,male,25
-    Julia,black,female,25
-    Joan,asian,female,25
-    """
-
-    @skiptest('TODO')
-    def test_examples_count_and_sum(self):
-        self.assertLines(
-            ["-c", "race,gender", '-a', 'count', '-a', 'sum,age' "examples/peeps.csv"],
+    def test_group_count_multi_cols(self):
+        """same as csvpivot"""
+        self.assertRows(
+            ["-c", "gender,race", "examples/peeps.csv"],
             [
-                "race,gender,Count,Sum_age",
-                "white,female,1,20",
-                "asian,male,1,20",
-                "asian,female,1,25",
-                "black,female,2,45",
-                "latino,male,1,25",
+                ["gender", "race", "Count"],
+                ["female", "white", "1"],
+                ["female", "black", "2"],
+                ["female", "asian", "1"],
+                ["male", "asian", "1"],
+                ["male", "latino", "1"],
             ],
         )
+
+    def test_group_count_named(self):
+        """same as csvpivot"""
+        self.assertRows(
+            ["-c", "gender", "-a", "count:name", "examples/peeps.csv"],
+            [["gender", "Count_of_name"], ["female", "4"], ["male", "2"],],
+        )
+
+
+    def test_group_sum(self):
+        """similar as csvpivot"""
+        self.assertRows(
+            ["-c", "gender", "-a", "sum:age", "examples/peeps.csv"],
+            [["gender", "Sum_of_age"], ["female", "90"], ["male", "45"],],
+        )
+
+
+
+
+    def test_print_list_of_aggs(self):
+        self.assertLines(
+            ["-a", "list", "examples/dummy.csv"],
+            ["List of aggregate functions:"]
+            + [f"- {a.__name__.lower()}" for a in Aggregates],
+        )
+
+    # #################################
+    # ### Tests that verify my examples
+
+    # """
+    # name,race,gender,age
+    # Joe,white,female,20
+    # Jane,asian,male,20
+    # Jill,black,female,20
+    # Jim,latino,male,25
+    # Julia,black,female,25
+    # Joan,asian,female,25
+    # """
+
+    def test_examples_count_and_mean(self):
+        self.assertLines(
+            ["-c", "gender,race", '-a', 'count', '-a', 'mean:age', "examples/peeps.csv"],
+            [
+"gender,race,Count,Mean_of_age",
+"female,white,1,20",
+"female,black,2,22.5",
+"female,asian,1,25",
+"male,asian,1,20",
+"male,latino,1,25",
+],
+        )
+
+
 
 
     ###############################

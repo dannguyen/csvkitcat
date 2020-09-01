@@ -6,19 +6,21 @@ from sys import stderr
 from typing import NoReturn
 import warnings
 
-from agate.aggregations import Count, Min, Max, MaxLength, Mean, Median, Mode, StDev, Sum
 
 
 from csvkitcat import agate, parse_column_identifiers
-from csvkitcat.agatable import AgatableUtil
+from csvkitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
 from csvkitcat.exceptions import ArgumentErrorTK
 
 
-GroupbyAggs = (Count, Max, MaxLength, Min, Mean, Median, Mode, StDev, Sum)
 
 
 def get_agg(name: str) -> [type, bool]:
     return next((a for a in GroupbyAggs if a.__name__.lower() == name.lower()), False)
+            # if pivot_agg is False:
+            #     raise ArgumentErrorTK(f'Invalid aggregation: "{self.args.aggregates}". Call -a/--agg without a value to get a list of available aggregations')
+
+
 
 def parse_csv_line(line:str) -> list:
     """cmon, this must already be implemented in csvkit/agate somewhere..."""
@@ -42,8 +44,8 @@ class CSVGroupby(AgatableUtil):
                                     help="The column/list of columns (comma-separated) to group by",
                                     )
 
-        self.argparser.add_argument('-a', '--aggs', dest='aggregates', type=str,
-                                    default='count',
+        self.argparser.add_argument('-a', '--aggs', dest='aggregates',
+                                    action='append',
                                     help="""
                                       The aggregate function/list of agg functions (comma-separated) to use on the grouped columns.
                                       Invoke `-a/--aggs` without an argument to see list of supported aggregate functions.
@@ -67,26 +69,26 @@ class CSVGroupby(AgatableUtil):
         if not self.args.columns:
             raise ArgumentErrorTK('At least one column must be specified with -c/--columns' )
 
-    def handle_aggregate_args(self) -> [type, NoReturn]:
+    def handle_aggregate_args(self) -> [list, NoReturn]:
+        """
+        returns list of tuples, each tuple is: (Aggregate(*args), agg_column_name)
+        """
         if not self.args.aggregates:
-            # then print list of aggregates
-            self.output_file.write(f"List of aggregate functions:\n")
-            for a in GroupbyAggs:
-                self.output_file.write(f"- {a.__name__.lower()}\n")
-            return
-        else:
-            return Count
-            # agg_name, *agg_args = parse_csv_line(self.args.aggregates)
-            # pivot_agg = get_agg(agg_name)
-            # if pivot_agg is False:
-            #     raise ArgumentErrorTK(f'Invalid aggregation: "{self.args.aggregates}". Call -a/--agg without a value to get a list of available aggregations')
-            # else:
-            #     pivot_agg = pivot_agg(*agg_args)
-            #     return pivot_agg
+            # because we can't set default list in append action
+            # https://bugs.python.org/issue16399
+            self.args.aggregates = ['count']
+
+
+        aggs = [parse_aggregate_string_arg(a) for a in self.args.aggregates]
+        return aggs
 
 
 
     def main(self):
+        if self.args.aggregates == ['list'] or self.args.aggregates == ['']:
+            print_available_aggregates(self.output_file)
+            return
+
         self.handle_standard_args()
         self.aggregates = self.handle_aggregate_args()
 
@@ -112,11 +114,21 @@ class CSVGroupby(AgatableUtil):
         for col in group_colnames:
             gtable = gtable.group_by(key=col)
 
+        g_aggs = []
+        for a in self.aggregates:
+            if a.colname:
+                colname = a.colname
+            else:
+                if a.args:
+                    colname = f'{a.foo.__name__}_of_{"_".join(a.args)}'
+                else:
+                    colname = a.foo.__name__
+            agg = a.foo(*a.args)
+            g_aggs.append((colname, agg))
 
-        gtable = gtable.aggregate([('Count', Count()),])
 
-        gtable.to_csv(self.output_file, **self.writer_kwargs)
-
+        xtable = gtable.aggregate(g_aggs)
+        xtable.to_csv(self.output_file, **self.writer_kwargs)
 
 def launch_new_instance():
     utility = CSVGroupby()

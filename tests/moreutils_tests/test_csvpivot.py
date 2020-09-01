@@ -10,7 +10,9 @@ except ImportError:
     from unittest.mock import patch
 
 
-from csvkitcat.moreutils.csvpivot import CSVPivot, PivotAggs, launch_new_instance
+from csvkitcat.agatable import Aggregates
+
+from csvkitcat.moreutils.csvpivot import CSVPivot, launch_new_instance
 from csvkitcat.exceptions import *
 from unittest import skip as skiptest
 
@@ -92,11 +94,11 @@ class TestCSVPivot(CSVKitTestCase):
     # test -a/--agg aggregations
     # Count, Max, MaxLength, Min, Mean, Median, Mode, StDev, Sum
 
-    def test_list_of_aggs(self):
+    def test_print_list_of_aggs(self):
         self.assertLines(
-            ["-a", "", "examples/dummy.csv"],
+            ["-a", "list", "examples/dummy.csv"],
             ["List of aggregate functions:"]
-            + [f"- {a.__name__.lower()}" for a in PivotAggs],
+            + [f"- {a.__name__.lower()}" for a in Aggregates],
         )
 
     def test_explicit_aggregation_of_count(self):
@@ -108,7 +110,7 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_sum(self):
         self.assertRows(
-            ["-r", "gender", "-a", "sum,age", "examples/peeps.csv"],
+            ["-r", "gender", "-a", "sum:age", "examples/peeps.csv"],
             [["gender", "Sum"], ["female", "90"], ["male", "45"],],
         )
 
@@ -123,7 +125,7 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_max(self):
         self.assertRows(
-            ["-r", "race", "-a", "max,age", "examples/peeps2.csv"],
+            ["-r", "race", "-a", "max:age", "examples/peeps2.csv"],
             [
                 ["race", "Max"],
                 ["white", "40"],
@@ -135,25 +137,25 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_mean(self):
         self.assertRows(
-            ["-r", "gender", "-a", "mean,age", "examples/peeps2.csv"],
+            ["-r", "gender", "-a", "mean:age", "examples/peeps2.csv"],
             [["gender", "Mean"], ["female", "42.5"], ["male", "40"],],
         )
 
     def test_agg_median(self):
         self.assertRows(
-            ["-r", "gender", "-a", "median,age", "examples/peeps2.csv"],
+            ["-r", "gender", "-a", "median:age", "examples/peeps2.csv"],
             [["gender", "Median"], ["female", "40"], ["male", "40"],],
         )
 
     def test_agg_mode(self):
         self.assertRows(
-            ["-r", "gender", "-a", "mode,age", "examples/peeps2.csv"],
+            ["-r", "gender", "-a", "mode:age", "examples/peeps2.csv"],
             [["gender", "Mode"], ["female", "40"], ["male", "30"],],
         )
 
     def test_agg_min(self):
         self.assertRows(
-            ["-r", "race", "-a", "min,age", "examples/peeps2.csv"],
+            ["-r", "race", "-a", "min:age", "examples/peeps2.csv"],
             [
                 ["race", "Min"],
                 ["white", "40"],
@@ -165,7 +167,7 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_max_length(self):
         self.assertRows(
-            ["-r", "race", "-a", "maxlength,name", "examples/peeps2.csv"],
+            ["-r", "race", "-a", "maxlength:name", "examples/peeps2.csv"],
             [
                 ["race", "MaxLength"],
                 ["white", "5"],
@@ -177,7 +179,7 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_stdev(self):
         self.assertRows(
-            ["-r", "gender", "-a", "stdev,age", "examples/peeps2.csv"],
+            ["-r", "gender", "-a", "stdev:age", "examples/peeps2.csv"],
             [
                 ["gender", "StDev"],
                 ["female", "12.58305739211791616206114134"],
@@ -199,7 +201,7 @@ class TestCSVPivot(CSVKitTestCase):
     )
     def test_agg_max_w_null_col(self):
         self.assertRows(
-            ["-r", "name", "-a", "max,items", "examples/p-items.csv"],
+            ["-r", "name", "-a", "max:items", "examples/p-items.csv"],
             [["name", "Max"], ["Alice", "7"], ["Bob", "2"], ["Chaz", ""],],
         )
 
@@ -208,13 +210,13 @@ class TestCSVPivot(CSVKitTestCase):
 
     def test_agg_count_non_nulls(self):
         self.assertRows(
-            ["-r", "name", "-a", "count,items", "examples/p-items.csv"],
+            ["-r", "name", "-a", "count:items", "examples/p-items.csv"],
             [["name", "Count"], ["Alice", "2"], ["Bob", "2"], ["Chaz", "0"],],
         )
 
     def test_agg_count_value_matches(self):
         self.assertRows(
-            ["-r", "name", "-a", 'count,greet,"hey, you"', "examples/greets.csv"],
+            ["-r", "name", "-a", 'count:greet,"hey, you"', "examples/greets.csv"],
             [
                 ["name", "Count"],
                 ["Alice", "1"],
@@ -306,14 +308,14 @@ class TestCSVPivot(CSVKitTestCase):
     def test_error_when_aggregating_on_null_column(self):
         with self.assertRaises(ValueError) as e:
             u = self.get_output(
-                ["-r", "name", "-a", "max,items", "examples/p-items.csv"]
+                ["-r", "name", "-a", "max:items", "examples/p-items.csv"]
             )
         assert "max() arg is an empty sequence" in str(e.exception)
 
     def test_error_when_aggregating_non_numer_column(self):
         with self.assertRaises(DataTypeError) as e:
             u = self.get_output(
-                ["-r", "gender", "--agg", "sum,name", "examples/peeps.csv"]
+                ["-r", "gender", "--agg", "sum:name", "examples/peeps.csv"]
             )
 
         assert "Sum can only be applied to columns containing Number data" in str(
