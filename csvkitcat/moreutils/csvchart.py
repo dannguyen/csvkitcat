@@ -1,13 +1,21 @@
 import csv
 from io import StringIO
+from pathlib import Path
 import regex as re
 from sys import stderr
+import tempfile
 import warnings
-
 
 from csvkitcat import agate, parse_column_identifiers
 from csvkitcat.agatable import AgatableUtil
 from csvkitcat.exceptions import ArgumentErrorTK
+from csvkitcat.pandashelper import agate_to_df
+
+
+import altair_viewer as altview
+import altair as alt
+
+
 
 
 
@@ -73,13 +81,11 @@ class CSVChart(AgatableUtil):
         ycol = column_names[_yid[0]]
 
 
-        agtable.print_bars(
-            label_column_name=xcol,
-            value_column_name=ycol,
-            width=self.args.chart_width,
-            output=self.output_file,
-            printable=self.args.printable_chars_only,
-        )
+        df = agate_to_df(agtable)
+        # altair horizontal charts switch up how x and y are encoded
+        # https://altair-viz.github.io/gallery/bar_chart_horizontal.html
+        chart = alt.Chart(df).mark_bar().encode(y=xcol, x=ycol)
+        altview.show(chart)
 
 
 def launch_new_instance():

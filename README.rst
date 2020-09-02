@@ -57,5 +57,4 @@ How to publish: https://realpython.com/pypi-publish-python-package/
 
 .. code-block:: shell
 
-    python setup.py sdist bdist_wheel
-    twine upload dist/*
+    python setup.py sdist bdist_wheel && twine upload dist/*

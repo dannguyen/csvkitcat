@@ -10,22 +10,33 @@
 
 - csvchart
   - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
-  - default: terminal bar chart
-    - takes x-col and y-col
-    - prints to terminal
-  - SVG mode
-    - [ ] write to file and open immediately
-    - charts
-      - bar_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-bar-chart
-      - column_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-column-chart
-      - line_chart: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-line-chart
-      - scatterplot: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-dots-chart
-      - lattice: https://agate.readthedocs.io/en/1.6.1/cookbook/charting.html#svg-lattice-chart
-        - tricky because it expects a group_by aggregation to be specified 
-  
+  - break up csvchart into subcommands for each char tmode
+  - use altair (since leather is in maintenance mode)
+    - by default, we use altair_viewer to open the chart -- user has choice to interactively save as png
+      - https://github.com/altair-viz/altair_viewer
+      - import altair_viewer; altair_viewer.show(chart)
+      - make option to export altair JSON, e.g. `chart.save('something.json', format="json")`
+      - can't use altair_saver because of `ValueError: No enabled saver found that supports format='svg'`
 
-  - external libs
-    - stacked chart, histogram, multi-variable: https://github.com/mkaz/termgraph
+
+    - charts
+      - bar_chart: https://altair-viz.github.io/gallery/bar_chart_horizontal.html
+      - column_chart: https://altair-viz.github.io/gallery/simple_bar_chart.html
+      - histogram: https://altair-viz.github.io/gallery/simple_histogram.html (or do binning as csvbin?)
+      - line_chart: https://altair-viz.github.io/gallery/simple_line_chart.html
+        - https://altair-viz.github.io/gallery/multi_series_line.html
+      - scatterplot: 
+
+
+  - DEPRECATE
+    - default: terminal bar chart
+      - takes x-col and y-col
+      - prints to terminal
+    - SVG mode
+      - [ ] by default, write to temp file and open immediately
+      - [ ] if `-o` provided, write SVG to it and open immediately
+      - [ ] if `-O` write to stdout, no browser
+      - [ ] if `-q` be quiet, no browser
 
 - csvslice
   - wtf is this terrible and inefficient code? `rowslice = list(myio.rows)[slice_start:slice_end]`
