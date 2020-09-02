@@ -5,11 +5,10 @@ CHANGELOG
 .. contents:: :local:
 
 
-1.5.0-alpha (in progress)
-=========================
+1.5.0-alpha
+===========
 
-* csvchart: for making charts!
-* csvgroupby: for doing the equivalent of SQL ``GROUP BY [columns]``
+:doc:`moreutils/csvgroupby`: for doing the equivalent of SQL ``GROUP BY [columns]``
 
 1.4.0-alpha
 ===========

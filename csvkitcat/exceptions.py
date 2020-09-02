@@ -1,5 +1,5 @@
 
-from csvkit.exceptions import CustomException
+from csvkit.exceptions import ColumnIdentifierError, CustomException
 from agate import DataTypeError
 
 
@@ -10,3 +10,6 @@ class ArgumentErrorTK(CustomException):
     """
     pass
 
+
+class InvalidAggregation(CustomException):
+    pass

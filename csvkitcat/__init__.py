@@ -21,9 +21,18 @@ DictWriter = agate.csv.DictWriter
 
 from csvkit.cli import CSVKitUtility, parse_column_identifiers
 
+from slugify import slugify as pyslugify
+from typing import Union as tyUnion, Sequence as tySequence
+
+
+
+def slugify(txt:tyUnion[str, tySequence]):
+    if not isinstance(txt, str):
+        txt = ' '.join(txt)
+    return pyslugify(txt, separator='_')
+
 
 class CSVKitcatUtil(CSVKitUtility):
-
     def get_column_offset(self):
         if getattr(self.args, 'zero_based', None):
             if self.args.zero_based:

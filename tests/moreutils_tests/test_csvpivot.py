@@ -298,11 +298,11 @@ class TestCSVPivot(CSVKitTestCase):
         assert "Only one --pivot-column is allowed, not 2:" in str(e.exception)
 
     def test_error_when_invalid_aggregation_specified(self):
-        with self.assertRaises(ArgumentErrorTK) as e:
-            u = self.get_output(["-a", "just magic!", "examples/dummy4.csv"])
-        assert (
-            'Invalid aggregation: "just magic!". Call -a/--agg without a value to get a list of available aggregations'
-            in str(e.exception)
+        with self.assertRaises(InvalidAggregation) as e:
+            u = self.get_output(["-c", "b", "-a", "just magic!", "examples/dummy4.csv"])
+        self.assertIn(
+            'Invalid aggregation: "just magic!". Call `-a/--agg list` to get a list of available aggregations',
+            str(e.exception),
         )
 
     def test_error_when_aggregating_on_null_column(self):
@@ -320,4 +320,13 @@ class TestCSVPivot(CSVKitTestCase):
 
         assert "Sum can only be applied to columns containing Number data" in str(
             e.exception
+        )
+
+    def test_error_when_aggregation_has_invalid_column_name(self):
+        with self.assertRaises(ColumnIdentifierError) as e:
+            u = self.get_output(["-c", "a", "--agg", "sum:WRONG", "examples/dummy.csv"])
+
+        self.assertIn(
+            f"Expected column name 'WRONG' to refer to a column for Sum aggregation, but did not find it in table's list of column names:",
+            str(e.exception),
         )

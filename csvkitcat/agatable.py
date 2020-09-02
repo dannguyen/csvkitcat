@@ -1,6 +1,6 @@
 from agate.aggregations import Count, Min, Max, MaxLength, Mean, Median, Mode, StDev, Sum
 from csvkitcat import CSVKitcatUtil
-
+from csvkitcat.exceptions import *
 
 from collections import namedtuple
 import csv
@@ -15,16 +15,21 @@ class AgatableUtil(CSVKitcatUtil):
     pass
 
 
-
 Aggregates = (Count, Max, MaxLength, Min, Mean, Median, Mode, StDev, Sum)
 
 
 AggArg = namedtuple('AggArg', ['foo', 'args', 'colname'], defaults=(None, None, None))
 
-def get_agg(name: str) -> [type, bool]:
-    return next((a for a in Aggregates if a.__name__.lower() == name.lower()), False)
 
-def parse_aggregate_string_arg(line:str) -> AggArg:
+def get_agg(name: str) -> [type, bool]:
+    try:
+        x = next((a for a in Aggregates if a.__name__.lower() == name.lower()))
+    except StopIteration as err:
+        raise InvalidAggregation(f'Invalid aggregation: "{name}". Call `-a/--agg list` to get a list of available aggregations')
+    else:
+        return x
+
+def parse_aggregate_string_arg(line:str, valid_columns:list = []) -> AggArg:
     """
     line looks like:
         - 'count'
@@ -42,8 +47,13 @@ def parse_aggregate_string_arg(line:str) -> AggArg:
 
     args = next(csv.reader(StringIO(_y[0]))) if _y else []
 
-    return AggArg(foo=foo, args=args, colname=colname)
+    # if args[0] exists, assume it is a column identifier and
+    # validate it
+    if args and valid_columns:
+        if args[0] not in valid_columns:
+            raise ColumnIdentifierError(f"Expected column name '{args[0]}' to refer to a column for {foo.__name__} aggregation, but did not find it in table's list of column names: {valid_columns}")
 
+    return AggArg(foo=foo, args=args, colname=colname)
 
 
 def print_available_aggregates(outs):

@@ -8,17 +8,9 @@ import warnings
 
 
 
-from csvkitcat import agate, parse_column_identifiers
+from csvkitcat import agate, parse_column_identifiers, slugify
 from csvkitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
 from csvkitcat.exceptions import ArgumentErrorTK
-
-
-
-
-def get_agg(name: str) -> [type, bool]:
-    return next((a for a in GroupbyAggs if a.__name__.lower() == name.lower()), False)
-            # if pivot_agg is False:
-            #     raise ArgumentErrorTK(f'Invalid aggregation: "{self.args.aggregates}". Call -a/--agg without a value to get a list of available aggregations')
 
 
 
@@ -69,7 +61,7 @@ class CSVGroupby(AgatableUtil):
         if not self.args.columns:
             raise ArgumentErrorTK('At least one column must be specified with -c/--columns' )
 
-    def handle_aggregate_args(self) -> [list, NoReturn]:
+    def handle_aggregate_args(self, valid_columns) -> [list, NoReturn]:
         """
         returns list of tuples, each tuple is: (Aggregate(*args), agg_column_name)
         """
@@ -79,7 +71,7 @@ class CSVGroupby(AgatableUtil):
             self.args.aggregates = ['count']
 
 
-        aggs = [parse_aggregate_string_arg(a) for a in self.args.aggregates]
+        aggs = [parse_aggregate_string_arg(a, valid_columns) for a in self.args.aggregates]
         return aggs
 
 
@@ -90,7 +82,6 @@ class CSVGroupby(AgatableUtil):
             return
 
         self.handle_standard_args()
-        self.aggregates = self.handle_aggregate_args()
 
         rawtable = agate.Table.from_csv(
             self.input_file,
@@ -99,6 +90,9 @@ class CSVGroupby(AgatableUtil):
             **self.reader_kwargs
         )
         column_names = rawtable.column_names
+
+        self.aggregates = self.handle_aggregate_args(valid_columns=column_names)
+
 
         _gcol_ids = parse_column_identifiers(
             self.args.columns,
@@ -120,7 +114,7 @@ class CSVGroupby(AgatableUtil):
                 colname = a.colname
             else:
                 if a.args:
-                    colname = f'{a.foo.__name__}_of_{"_".join(a.args)}'
+                    colname = f'{a.foo.__name__}_of_{slugify(a.args)}'
                 else:
                     colname = a.foo.__name__
             agg = a.foo(*a.args)

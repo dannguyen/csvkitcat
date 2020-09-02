@@ -8,7 +8,7 @@ import warnings
 
 from csvkitcat import agate, parse_column_identifiers
 from csvkitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
-from csvkitcat.exceptions import ArgumentErrorTK
+from csvkitcat.exceptions import *
 
 
 
@@ -74,13 +74,6 @@ class CSVPivot(AgatableUtil):
         if not self.args.pivot_agg or self.args.pivot_agg == 'list':
             print_available_aggregates(self.output_file)
             return
-        else:
-            _a = parse_aggregate_string_arg(self.args.pivot_agg)
-            if _a.foo is False:
-                raise ArgumentErrorTK(f'Invalid aggregation: "{self.args.pivot_agg}". Call -a/--agg without a value to get a list of available aggregations')
-            else:
-                pivot_agg = _a.foo(*_a.args)
-
 
         self.handle_standard_args()
 
@@ -91,6 +84,11 @@ class CSVPivot(AgatableUtil):
             **self.reader_kwargs
         )
         column_names = agtable.column_names
+
+        _a = parse_aggregate_string_arg(self.args.pivot_agg, valid_columns=column_names)
+        pivot_agg = _a.foo(*_a.args)
+
+
 
         _prow_ids = parse_column_identifiers(
             self.args.pivot_rows,

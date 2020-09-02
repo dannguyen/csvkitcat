@@ -3,16 +3,8 @@
 # PRIORITY NEXT
 
 
-- csvpivot: fixing how --agg works and is delimited:
-  - [x] `--agg sum:age` instead of `--agg sum,age`
-  - [x] `--agg list` to get list of stuff
-
-- csvgroupby: csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
-  - https://agate.readthedocs.io/en/1.6.1/api/table.html#agate.Table.group_by
-  - basic implementation
-    - [ ] needs more tests
-    - [X] defaults to `Count()`; `-a/--aggs` needs to parse multiple functions, e.g. `--agg "Optional column name|sum:age`
-  - --agg arguments need to be check against columns
+- csvgroupby 
+  - needs more documentation
 
 
 
@@ -140,6 +132,18 @@ csvpivot
 
 
 ### Just done
+
+
+- csvgroupby: csvpivot doesn't allow for multiple value calculations, e.g `SELECT country, MAX(age), MEAN(age) FROM data GROUP BY country`
+  - https://agate.readthedocs.io/en/1.6.1/api/table.html#agate.Table.group_by
+  - basic implementation
+    - [X] needs more tests
+    - [X] defaults to `Count()`; `-a/--aggs` needs to parse multiple functions, e.g. `--agg "Optional column name|sum:age`
+    - [X] do ColumnIdentifierError when attempting to aggregate invalid column name
+
+- csvpivot: fixing how --agg works and is delimited:
+  - [x] `--agg sum:age` instead of `--agg sum,age`
+  - [x] `--agg list` to get list of stuff
 
 csvpivot
 - [x] basic implementation and tests
