@@ -14,6 +14,7 @@ from csvkit.exceptions import ColumnIdentifierError
 from csvkitcat.moreutils.csvsed import CSVSed, launch_new_instance
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
+from io import StringIO
 
 class TestCSVSed(CSVKitTestCase, EmptyFileTests):
     Utility = CSVSed
@@ -114,7 +115,22 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
             ["id,phrase", "1,hello world", "2,good   bye", "3,a  ok",],
         )
 
-    def test_whole_option(self):
+
+    def test_replace_value(self):
+        self.assertLines(
+            ['-R', '(?i)^y', 'Yeah', 'examples/yes.csv'],
+            [
+                'code,value',
+                '1,Yeah',
+                '2,no',
+                '3,Yeah',
+                '4,Yeah',
+                '5,Yeah',
+            ]
+
+            )
+
+    def test_replace_value_w_cap_group(self):
         ############### replace
 
         """
@@ -123,17 +139,32 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
         2,"my stuff, my way"
         3,your house has my car
         """
-
         self.assertLines(
-            ["--whole", r"my (\w+)", r"Your \1!", "examples/myway.csv"],
+            ["--replace", r"my (\w+)", r"Your \1!", "examples/myway.csv"],
             [
                 "code,value",
                 "1,Your money!",
                 "2,Your stuff!",
-                "3,your house has my car",
+                "3,Your car!",
             ],
         )
 
+
+    def test_exclude_unmatched(self):
+        self.assertLines(
+            ['-R', '-X', '(?i)^y', 'Yeah', 'examples/yes.csv'],
+            [
+                'code,value',
+                '1,Yeah',
+                '3,Yeah',
+                '4,Yeah',
+                '5,Yeah',
+            ]
+            )
+
+
+
+##################### errors
     # class ColumnsTests(object):
     def test_invalid_column(self):
         args = ["-c", "0",] + self.default_args + ["examples/dummy.csv"]

@@ -3,21 +3,60 @@
 # PRIORITY NEXT
 
 
+In general:
+
+- [ ] clean up code with Black
+  - [x] some tests blacked
+- [ ] consider implementing custom `_init_common_parser` common to all csvkitcat utils  
+
+
+- csvsed:
+  - [X] `--replace` replace entire field, e.g. 'Hello world'
+  - performance:
+    why is:
+
+    ```
+    time cat ZUNK/mass-fec.csv \
+      | csvgrep -ac 1-77 -r 'BIDEN|TRUMP' \
+      | csvsed -XR '(TRUMP|BIDEN)' '\1'  | wc -l
+
+    real  0m3.976s
+    user  0m5.033s
+    sys 0m0.387s
+
+    time cat ZUNK/mass-fec.csv \
+      | csvsed -XR '(TRUMP|BIDEN)' '\1'  | wc -l
+
+    real  0m9.146s
+    user  0m7.508s
+    sys 0m1.675s
+
+    time cat ZUNK/mass-fec.csv \
+      | csvsed -R '(TRUMP|BIDEN)' '\1'  | wc -l
+
+    real  0m10.383s
+    user  0m8.793s
+    sys 0m1.683s
+    ```
+
+
 - csvgroupby 
   - needs more documentation
 
-
-
 - csvchart
+  - [ ] assume -X/Y/C are column names. Unless `--alt` is passed in
   - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
-  - break up csvchart into subcommands for each char tmode
+  - [ ] decide whether -X, -Y, -C should take in existing column names for simplicity sake. Or should allow full altair syntax
+  - [ ] -X,-Y,-C should accept things in 'Custom Axis Name|col_name:args1,args2'
+  - [ ] maybe write my own extract_column_identifier function
+  - [ ] labels parameter https://altair-viz.github.io/gallery/bar_chart_with_labels.html
+  - [ ] add default tooltip https://altair-viz.github.io/gallery/scatter_href.html
   - use altair (since leather is in maintenance mode)
     - by default, we use altair_viewer to open the chart -- user has choice to interactively save as png
       - https://github.com/altair-viz/altair_viewer
       - import altair_viewer; altair_viewer.show(chart)
       - make option to export altair JSON, e.g. `chart.save('something.json', format="json")`
       - can't use altair_saver because of `ValueError: No enabled saver found that supports format='svg'`
-
 
     - charts
       - bar_chart: https://altair-viz.github.io/gallery/bar_chart_horizontal.html
@@ -28,15 +67,15 @@
       - scatterplot: 
 
 
-  - DEPRECATE
-    - default: terminal bar chart
-      - takes x-col and y-col
-      - prints to terminal
-    - SVG mode
-      - [ ] by default, write to temp file and open immediately
-      - [ ] if `-o` provided, write SVG to it and open immediately
-      - [ ] if `-O` write to stdout, no browser
-      - [ ] if `-q` be quiet, no browser
+    - chartDEPRECATE
+      - default: terminal bar chart
+        - takes x-col and y-col
+        - prints to terminal
+      - SVG mode
+        - [ ] by default, write to temp file and open immediately
+        - [ ] if `-o` provided, write SVG to it and open immediately
+        - [ ] if `-O` write to stdout, no browser
+        - [ ] if `-q` be quiet, no browser
 
 - csvslice
   - wtf is this terrible and inefficient code? `rowslice = list(myio.rows)[slice_start:slice_end]`
@@ -79,12 +118,6 @@
 
 
 
-In general:
-
-- [ ] clean up code with Black
-  - [x] some tests blacked
-- [ ] refactor tests, add tests to validate specific examples in documentation
-  
 
 
 ## Lesser priority/maybe deprioritize

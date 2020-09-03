@@ -3,7 +3,7 @@ from collections import namedtuple
 import six
 
 from csvkitcat import CSVKitcatUtil
-
+from sys import stdout
 
 # JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])
 
@@ -13,6 +13,7 @@ MyIO = namedtuple('MyIO', ['rows', 'column_names', 'column_ids', 'output',])
 class AllTextUtility(CSVKitcatUtil):
 
     def init_io(self, write_header=True):
+
         self.args.sniff_limit = 0       # TK is needed??
         self.args.no_inference = True   # TK is needed??
 

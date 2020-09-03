@@ -50,3 +50,13 @@ Make a bar chart of the 10 most frequently occurring crime incidents::
     NARCOTICS              35 ▓░░░░░░
                               +------------+------------+-------------+------------+
                               0           75           150           225         300
+
+
+
+FEC Independent expenditures::
+
+
+    $  csvgrep -c candidate_last_name -r 'TRUMP|BIDEN' examples/realdata/fec-independent-exp.csv \
+        | csvsed -R '(TRUMP|BIDEN)' '\1' \
+        | csvpivot -r candidate_last_name,support_oppose_indicator -a sum:expenditure_amount \
+        |  csvchart bar -X candidate_last_name -Y Sum  -C support_oppose_indicator

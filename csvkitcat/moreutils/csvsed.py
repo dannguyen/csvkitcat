@@ -3,9 +3,13 @@
 
 
 from csvkitcat.alltext import AllTextUtility
+from csvkit.grep import FilteringCSVReader
+
+import agate
 import regex as re
 import warnings
 
+from sys import stderr
 
 
 class CSVSed(AllTextUtility):
@@ -29,9 +33,13 @@ class CSVSed(AllTextUtility):
 
 
 
-        self.argparser.add_argument('--whole', dest="whole_field_mode", action='store_true',
+        self.argparser.add_argument('-R', '--replace', dest="replace_value", action='store_true',
                                     default=False,
-                                    help='Match and replace whole field',)
+                                    help='Replace entire field with [REPL], instead of just the substring matched by [PATTERN]',)
+
+        self.argparser.add_argument('-X', '--exclude-unmatched', dest='exclude_unmatched', action='store_true',
+                                    default=False,
+                                    help='Only return rows in which [PATTERN] was matched')
 
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
                                     help='A regex pattern to find')
@@ -76,64 +84,104 @@ class CSVSed(AllTextUtility):
             if value is not None:
                 kwargs[arg] = value
 
-
         return kwargs
 
 
+    # def run(self):
+    #     """
+    #     A wrapper around the main loop of the utility which handles opening and
+    #     closing files.
 
+    #     TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
+    #         a way to refactor this...
+    #     """
+    #     self.input_file = self._open_input_file(self.args.input_path)
 
+    #     try:
+    #         with warnings.catch_warnings():
+    #             if getattr(self.args, 'no_header_row', None):
+    #                 warnings.filterwarnings(action='ignore', message='Column names not specified', module='agate')
 
-    def run(self):
-        """
-        A wrapper around the main loop of the utility which handles opening and
-        closing files.
-
-        TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
-            a way to refactor this...
-        """
-        self.input_file = self._open_input_file(self.args.input_path)
-
-        try:
-            with warnings.catch_warnings():
-                if getattr(self.args, 'no_header_row', None):
-                    warnings.filterwarnings(action='ignore', message='Column names not specified', module='agate')
-
-                self.main()
-        finally:
-            self.input_file.close()
+    #             self.main()
+    #     finally:
+    #         self.input_file.close()
 
     def main(self):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
-        myio = self.init_io()
+        self.input_file = self._open_input_file(self.args.input_path)
+        # myio = self.init_io()
 
         max_match_count = self.args.max_match_count
         if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
             max_match_count = -1 if self.args.literal_match else 0
 
-        pattern = fr'{self.args.pattern}' if self.args.literal_match else re.compile(fr'{self.args.pattern}')
+        pattern = self.args.pattern if self.args.literal_match else re.compile(fr'{self.args.pattern}')
         repl = fr'{self.args.repl}'
 
+        ### copied straight from csvkit.csvgrep
+        reader_kwargs = self.reader_kwargs
+        writer_kwargs = self.writer_kwargs
+
+        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+
+        patterns = dict((column_id, pattern) for column_id in column_ids)
+
+        if self.args.exclude_unmatched:
+            stderr.write(f"FILTERING\n")
+            xreader = FilteringCSVReader(rows, header=False, patterns=patterns, inverse=False, any_match=True)
+        else:
+            xreader = rows
+
+
+        output = agate.csv.writer(self.output_file, **writer_kwargs)
+        output.writerow(column_names)
+        ####
+
+
         # TK TODO THIS IS UGLY!!
-        for row in myio.rows:
+        z = 0
+        xreader = list(xreader)
+        stderr.write(f"How many rows: {len(xreader)}\n")
+
+        for z, row in enumerate(xreader):
+            # the exclude_unmatched flag basically does csvgrep, all in one here
+
+            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
+            #     if self.args.literal_match:
+            #         if not any(pattern in val for i, val in enumerate(row) if i in myio.column_ids):
+            #             continue
+            #     else:
+            #         if not any(pattern.search(val) for i, val in enumerate(row) if i in myio.column_ids):
+            #             continue
+            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
+            #     keep_row = False
+            #     if self.args.literal_match:
+            #         keep_row = any(pattern in val for i, val in enumerate(row) if i in column_ids)
+            #     else:
+            #         keep_row = any(pattern.search(val) for i, val in enumerate(row) if i in column_ids)
+
+            #     if not keep_row:
+            #         continue
+
+            # if z > 10:
+            #     continue
+
             d = []
             for _x, val in enumerate(row):
-                if _x in myio.column_ids:
-                    if self.args.whole_field_mode:
-                        mx = pattern.match(val)
+                newval = val
+                if _x in column_ids:
+                    if self.args.replace_value:
+                        mx = pattern.search(val)
                         if mx:
-                            partial = mx.captures(0)[0]
-                            newval = pattern.sub(repl, partial)
-                        else:
-                            newval = val
+                            newval = pattern.sub(repl, mx.captures(0)[0])
                     else:
                         newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
-                else:
-                    newval  = val
                 d.append(newval)
-            myio.output.writerow(d)
+            output.writerow(d)
 
+        stderr.write(f"Z count: {z}\n")
 
 def launch_new_instance():
     utility = CSVSed()
