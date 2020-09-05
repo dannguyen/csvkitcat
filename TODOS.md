@@ -1,7 +1,15 @@
 # TODOS
 
-# PRIORITY NEXT
 
+## Priority
+
+ONGOING: created benchmark-testing branch to figure out wtf is going on with csvsed
+- [X] learned that regex module is very slow compared to re, for some reason...
+- [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
+
+
+- [ ] add library version info; implement similar to dannguyen/pgark https://github.com/dannguyen/pgark/blob/master/setup.py
+- [ ] makes changes to `setup.py` as per above
 
 In general:
 
@@ -13,30 +21,11 @@ In general:
 - csvsed:
   - [X] `--replace` replace entire field, e.g. 'Hello world'
   - performance:
+    - debug by copying FilteredCSVReader and rewriting csvgrep
     why is:
 
     ```
-    time cat ZUNK/mass-fec.csv \
-      | csvgrep -ac 1-77 -r 'BIDEN|TRUMP' \
-      | csvsed -XR '(TRUMP|BIDEN)' '\1'  | wc -l
 
-    real  0m3.976s
-    user  0m5.033s
-    sys 0m0.387s
-
-    time cat ZUNK/mass-fec.csv \
-      | csvsed -XR '(TRUMP|BIDEN)' '\1'  | wc -l
-
-    real  0m9.146s
-    user  0m7.508s
-    sys 0m1.675s
-
-    time cat ZUNK/mass-fec.csv \
-      | csvsed -R '(TRUMP|BIDEN)' '\1'  | wc -l
-
-    real  0m10.383s
-    user  0m8.793s
-    sys 0m1.683s
     ```
 
 

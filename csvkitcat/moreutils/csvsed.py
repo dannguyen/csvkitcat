@@ -4,9 +4,9 @@
 
 from csvkitcat.alltext import AllTextUtility
 from csvkit.grep import FilteringCSVReader
+from csvkitcat import rxlib as re
 
 import agate
-import regex as re
 import warnings
 
 from sys import stderr
@@ -50,7 +50,7 @@ class CSVSed(AllTextUtility):
         self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
                                     help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')
 
-        ###########boilerplate
+    #     ###########boilerplate
         self.argparser.add_argument('-D', '--out-delimiter', dest='out_delimiter',
                                     help='Delimiting character of the output CSV file.')
         self.argparser.add_argument('-T', '--out-tabs', dest='out_tabs', action='store_true',
@@ -87,24 +87,24 @@ class CSVSed(AllTextUtility):
         return kwargs
 
 
-    # def run(self):
-    #     """
-    #     A wrapper around the main loop of the utility which handles opening and
-    #     closing files.
+    def run(self):
+        """
+        A wrapper around the main loop of the utility which handles opening and
+        closing files.
 
-    #     TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
-    #         a way to refactor this...
-    #     """
-    #     self.input_file = self._open_input_file(self.args.input_path)
+        TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
+            a way to refactor this...
+        """
+        self.input_file = self._open_input_file(self.args.input_path)
 
-    #     try:
-    #         with warnings.catch_warnings():
-    #             if getattr(self.args, 'no_header_row', None):
-    #                 warnings.filterwarnings(action='ignore', message='Column names not specified', module='agate')
+        try:
+            with warnings.catch_warnings():
+                if getattr(self.args, 'no_header_row', None):
+                    warnings.filterwarnings(action='ignore', message='Column names not specified', module='agate')
 
-    #             self.main()
-    #     finally:
-    #         self.input_file.close()
+                self.main()
+        finally:
+            self.input_file.close()
 
     def main(self):
         if self.additional_input_expected():
@@ -125,11 +125,13 @@ class CSVSed(AllTextUtility):
         writer_kwargs = self.writer_kwargs
 
         rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+        # xrows = list(rows)
+        # stderr.write(f"How many rows: {len(xrows)}\n")
+
 
         patterns = dict((column_id, pattern) for column_id in column_ids)
 
         if self.args.exclude_unmatched:
-            stderr.write(f"FILTERING\n")
             xreader = FilteringCSVReader(rows, header=False, patterns=patterns, inverse=False, any_match=True)
         else:
             xreader = rows
@@ -137,51 +139,24 @@ class CSVSed(AllTextUtility):
 
         output = agate.csv.writer(self.output_file, **writer_kwargs)
         output.writerow(column_names)
-        ####
-
-
-        # TK TODO THIS IS UGLY!!
-        z = 0
-        xreader = list(xreader)
-        stderr.write(f"How many rows: {len(xreader)}\n")
 
         for z, row in enumerate(xreader):
-            # the exclude_unmatched flag basically does csvgrep, all in one here
-
-            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
-            #     if self.args.literal_match:
-            #         if not any(pattern in val for i, val in enumerate(row) if i in myio.column_ids):
-            #             continue
-            #     else:
-            #         if not any(pattern.search(val) for i, val in enumerate(row) if i in myio.column_ids):
-            #             continue
-            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
-            #     keep_row = False
-            #     if self.args.literal_match:
-            #         keep_row = any(pattern in val for i, val in enumerate(row) if i in column_ids)
-            #     else:
-            #         keep_row = any(pattern.search(val) for i, val in enumerate(row) if i in column_ids)
-
-            #     if not keep_row:
-            #         continue
-
-            # if z > 10:
-            #     continue
-
             d = []
             for _x, val in enumerate(row):
                 newval = val
                 if _x in column_ids:
                     if self.args.replace_value:
-                        mx = pattern.search(val)
-                        if mx:
-                            newval = pattern.sub(repl, mx.captures(0)[0])
+                        if self.args.literal_match:
+                            newval = repl if pattern in val else val
+                        else:
+                            mx = pattern.search(val)
+                            if mx:
+                                newval = pattern.sub(repl, mx.group(0))
                     else:
                         newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
                 d.append(newval)
             output.writerow(d)
 
-        stderr.write(f"Z count: {z}\n")
 
 def launch_new_instance():
     utility = CSVSed()

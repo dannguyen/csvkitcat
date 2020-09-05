@@ -17,7 +17,7 @@ install_requires = [
 
 setup(
     name='csvkitcat',
-    version='1.5.0-alpha',
+    version='1.5.1-alpha',
     description='The unofficial extended, awkward family of csvkit',
     long_description=open('README.rst').read(),
     author='Dan Nguyen',

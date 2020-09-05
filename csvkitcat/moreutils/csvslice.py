@@ -1,7 +1,8 @@
 
 from csvkitcat.alltext import AllTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
-import regex as re
+from csvkitcat import rxlib as re
+
 import warnings
 from sys import stderr
 

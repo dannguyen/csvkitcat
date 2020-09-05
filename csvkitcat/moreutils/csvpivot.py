@@ -1,5 +1,5 @@
 
-import regex as re
+from csvkitcat import rxlib as re
 from sys import stderr
 from typing import NoReturn
 import warnings

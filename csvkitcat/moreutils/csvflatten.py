@@ -2,7 +2,7 @@
 
 import agate
 from csvkit.cli import CSVKitUtility
-import regex as re
+from csvkitcat import rxlib as re
 import sys
 
 OUTPUT_COLUMNS = {'names': ['fieldname', 'value',], 'types': (agate.Text(), agate.Text())}
