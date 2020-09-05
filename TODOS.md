@@ -13,6 +13,7 @@ In general:
 - csvsed:
   - [X] `--replace` replace entire field, e.g. 'Hello world'
   - performance:
+    - debug by copying FilteredCSVReader and rewriting csvgrep
     why is:
 
     ```

@@ -50,41 +50,41 @@ class CSVSed(AllTextUtility):
         self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
                                     help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')
 
-        ###########boilerplate
-        self.argparser.add_argument('-D', '--out-delimiter', dest='out_delimiter',
-                                    help='Delimiting character of the output CSV file.')
-        self.argparser.add_argument('-T', '--out-tabs', dest='out_tabs', action='store_true',
-                                    help='Specify that the output CSV file is delimited with tabs. Overrides "-D".')
-        self.argparser.add_argument('-Q', '--out-quotechar', dest='out_quotechar',
-                                    help='Character used to quote strings in the output CSV file.')
-        self.argparser.add_argument('-U', '--out-quoting', dest='out_quoting', type=int, choices=[0, 1, 2, 3],
-                                    help='Quoting style used in the output CSV file. 0 = Quote Minimal, 1 = Quote All, 2 = Quote Non-numeric, 3 = Quote None.')
-        self.argparser.add_argument('-B', '--out-no-doublequote', dest='out_doublequote', action='store_false',
-                                    help='Whether or not double quotes are doubled in the output CSV file.')
-        self.argparser.add_argument('-P', '--out-escapechar', dest='out_escapechar',
-                                    help='Character used to escape the delimiter in the output CSV file if --quoting 3 ("Quote None") is specified and to escape the QUOTECHAR if --no-doublequote is specified.')
-        self.argparser.add_argument('-M', '--out-lineterminator', dest='out_lineterminator',
-                                    help='Character used to terminate lines in the output CSV file.')
+    #     ###########boilerplate
+    #     self.argparser.add_argument('-D', '--out-delimiter', dest='out_delimiter',
+    #                                 help='Delimiting character of the output CSV file.')
+    #     self.argparser.add_argument('-T', '--out-tabs', dest='out_tabs', action='store_true',
+    #                                 help='Specify that the output CSV file is delimited with tabs. Overrides "-D".')
+    #     self.argparser.add_argument('-Q', '--out-quotechar', dest='out_quotechar',
+    #                                 help='Character used to quote strings in the output CSV file.')
+    #     self.argparser.add_argument('-U', '--out-quoting', dest='out_quoting', type=int, choices=[0, 1, 2, 3],
+    #                                 help='Quoting style used in the output CSV file. 0 = Quote Minimal, 1 = Quote All, 2 = Quote Non-numeric, 3 = Quote None.')
+    #     self.argparser.add_argument('-B', '--out-no-doublequote', dest='out_doublequote', action='store_false',
+    #                                 help='Whether or not double quotes are doubled in the output CSV file.')
+    #     self.argparser.add_argument('-P', '--out-escapechar', dest='out_escapechar',
+    #                                 help='Character used to escape the delimiter in the output CSV file if --quoting 3 ("Quote None") is specified and to escape the QUOTECHAR if --no-doublequote is specified.')
+    #     self.argparser.add_argument('-M', '--out-lineterminator', dest='out_lineterminator',
+    #                                 help='Character used to terminate lines in the output CSV file.')
 
 
-    def _extract_csv_writer_kwargs(self):
-        kwargs = {}
+    # def _extract_csv_writer_kwargs(self):
+    #     kwargs = {}
 
-        # if self.args.line_numbers:
-        #     kwargs['line_numbers'] = True
+    #     # if self.args.line_numbers:
+    #     #     kwargs['line_numbers'] = True
 
-        if self.args.out_tabs:
-            kwargs['delimiter'] = '\t'
-        elif self.args.out_delimiter:
-            kwargs['delimiter'] = self.args.out_delimiter
+    #     if self.args.out_tabs:
+    #         kwargs['delimiter'] = '\t'
+    #     elif self.args.out_delimiter:
+    #         kwargs['delimiter'] = self.args.out_delimiter
 
 
-        for arg in ('quotechar', 'quoting', 'doublequote', 'escapechar', 'lineterminator'):
-            value = getattr(self.args, 'out_%s' % arg)
-            if value is not None:
-                kwargs[arg] = value
+    #     for arg in ('quotechar', 'quoting', 'doublequote', 'escapechar', 'lineterminator'):
+    #         value = getattr(self.args, 'out_%s' % arg)
+    #         if value is not None:
+    #             kwargs[arg] = value
 
-        return kwargs
+    #     return kwargs
 
 
     # def run(self):
@@ -125,6 +125,9 @@ class CSVSed(AllTextUtility):
         writer_kwargs = self.writer_kwargs
 
         rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+        # xrows = list(rows)
+        # stderr.write(f"How many rows: {len(xrows)}\n")
+
 
         patterns = dict((column_id, pattern) for column_id in column_ids)
 
@@ -137,51 +140,35 @@ class CSVSed(AllTextUtility):
 
         output = agate.csv.writer(self.output_file, **writer_kwargs)
         output.writerow(column_names)
+
+
+        #### BENCHMARKING ISSUES
         ####
-
-
         # TK TODO THIS IS UGLY!!
-        z = 0
-        xreader = list(xreader)
-        stderr.write(f"How many rows: {len(xreader)}\n")
+        z = 0 # TK: becnchmark code to delete later
+        # xreader = list(xreader)
+        # stderr.write(f"How many rows: {len(xreader)}\n")
 
         for z, row in enumerate(xreader):
-            # the exclude_unmatched flag basically does csvgrep, all in one here
 
-            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
-            #     if self.args.literal_match:
-            #         if not any(pattern in val for i, val in enumerate(row) if i in myio.column_ids):
-            #             continue
-            #     else:
-            #         if not any(pattern.search(val) for i, val in enumerate(row) if i in myio.column_ids):
-            #             continue
-            # if self.args.exclude_unmatched: # TODO: UGLY SPAGHETTI
-            #     keep_row = False
-            #     if self.args.literal_match:
-            #         keep_row = any(pattern in val for i, val in enumerate(row) if i in column_ids)
-            #     else:
-            #         keep_row = any(pattern.search(val) for i, val in enumerate(row) if i in column_ids)
-
-            #     if not keep_row:
-            #         continue
-
-            # if z > 10:
-            #     continue
 
             d = []
             for _x, val in enumerate(row):
                 newval = val
                 if _x in column_ids:
                     if self.args.replace_value:
-                        mx = pattern.search(val)
-                        if mx:
-                            newval = pattern.sub(repl, mx.captures(0)[0])
+                        if self.args.literal_match:
+                            newval = repl if pattern in val else val
+                        else:
+                            mx = pattern.search(val)
+                            if mx:
+                                newval = pattern.sub(repl, mx.captures(0)[0])
                     else:
                         newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
                 d.append(newval)
             output.writerow(d)
 
-        stderr.write(f"Z count: {z}\n")
+        # stderr.write(f"Z count: {z}\n")
 
 def launch_new_instance():
     utility = CSVSed()
