@@ -1,7 +1,12 @@
 # TODOS
 
-# PRIORITY NEXT
 
+## Priority
+
+ONGOING: created benchmark-testing branch to figure out wtf is going on with csvsed
+
+- [ ] add library version info; implement similar to dannguyen/pgark https://github.com/dannguyen/pgark/blob/master/setup.py
+- [ ] makes changes to `setup.py` as per above
 
 In general:
 
