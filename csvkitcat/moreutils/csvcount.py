@@ -1,7 +1,6 @@
 from collections import defaultdict
 import csv
 from csvkitcat import rxlib as re
-
 from csvkitcat.alltext import AllTextUtility
 
 class _keydict(defaultdict):
