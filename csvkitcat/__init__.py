@@ -24,6 +24,9 @@ from csvkit.cli import CSVKitUtility, parse_column_identifiers
 from slugify import slugify as pyslugify
 from typing import Union as tyUnion, Sequence as tySequence
 
+import re as _rxlib  # because I'm still deciding between re/regex, we should have a global reference to the lib
+rxlib = _rxlib
+
 
 
 def slugify(txt:tyUnion[str, tySequence]):

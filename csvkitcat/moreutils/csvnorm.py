@@ -2,6 +2,7 @@
 
 
 from csvkitcat.alltext import AllTextUtility
+# from csvkitcat import rxlib as re
 import regex as re
 
 class CSVNorm(AllTextUtility):

@@ -1,6 +1,6 @@
 from collections import defaultdict
 import csv
-import regex as re
+from csvkitcat import rxlib as re
 
 from csvkitcat.alltext import AllTextUtility
 

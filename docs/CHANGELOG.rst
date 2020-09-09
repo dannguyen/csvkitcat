@@ -4,6 +4,11 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.5.1-alpha
+===========
+
+- the ``regex`` module seems to be very slow (e.g. csvsed), so it's been replaced with standard ``re`` in all tools except ``csvnorm``. Hopefully that's ok!
+
 
 1.5.0-alpha
 ===========
