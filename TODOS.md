@@ -4,6 +4,18 @@
 ## Priority
 
 ONGOING:
+
+- csvsed: 
+  - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
+  - [ ] actually it's still broken: -E does not allow for multiple expressions
+    - [ ] in the middle of figuring out how to balance -E with [PATTERN] [REPL] crap
+  - [ ] `-E` should take 2,3 arguments, in the way that csvrgrep -E takes 1 to 2
+  - [ ] Clean up/rethink how sed_expressions are executed on each row
+  - [ ] Write a helper to clean/normalize self.sed_expressions
+  - [ ] Write more tests
+    - [ ] Write test for complicated CSV that reflects how order of expressions can change results
+
+
 - csvrgrep: 
   - [X] learned that regex module is very slow compared to re, for some reason...
   - [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
@@ -20,13 +32,6 @@ ONGOING:
   - [ ] clean up csvrgrep.filter_rows
   - [ ] To think on: is it a problem that csvrgrep doesn't have an option that effectively ORs the results of each expression? How would that even work? Other than to write a custom CSV filterer
     - [X] write a test to affirm that multiple expressions are ANDED
-
-- csvsed: 
-  - [ ] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
-  - [ ] Clean up/rethink how sed_expressions are executed on each row
-  - [ ] Write a helper to clean/normalize self.sed_expressions
-  - [ ] Write more tests
-    - [ ] Write test for complicated CSV that reflects how order of expressions can change results
 
 ```sh
 time cat ZUNK/mass-fec.csv | 

@@ -222,7 +222,9 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
         self.assertEqual(e.exception.code, 2)
         self.assertIn("-E/--expr takes 1 or 2 arguments, not 3:", ioerr.getvalue())
 
-    ########## future work
+
+
+########## future work
 
     def test_multi_expressions_are_ANDed_not_ORed(self):
 
@@ -240,3 +242,4 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
             ],
             ["act,scene,speaker,lines", "4,7,Laertes,Know you the hand?",],
         )
+

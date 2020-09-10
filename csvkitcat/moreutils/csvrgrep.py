@@ -5,7 +5,7 @@ from sys import argv, stderr
 import six
 import warnings
 
-from typing import Iterable as typeIterable
+from typing import Iterable as typeIterable, NoReturn as typeNoReturn, List as typeList
 
 from csvkit.grep import FilteringCSVReader
 
@@ -126,6 +126,31 @@ class CSVRgrep(CSVGrep):
         finally:
             self.input_file.close()
 
+    def _handle_expressions(self) -> typeList:
+        exlist = getattr(self.args, 'expressions_list', [])
+        if not exlist:
+            self.argparser.error("Must specify at least one -E/--expr expression")
+
+        expressions = []
+        for i, _e in enumerate(exlist):
+            ex = _e.copy()
+            if len(ex) < 1:
+                self.argparser.error(
+                    "-E/--expr requires at least 1 argument, a pattern to be grepped"
+                )
+            if len(ex) > 2:
+                self.argparser.error(
+                    f"""-E/--expr takes 1 or 2 arguments, not {len(ex)}: {ex}"""
+                )
+
+            if len(ex) == 1:
+                # blank column_str argument is interpreted as "use -c/--columns value"
+                ex.append("")
+
+            expressions.append(ex)
+
+        return expressions
+
     def main(self):
         if self.args.names_only:
             self.print_column_names()
@@ -141,23 +166,8 @@ class CSVRgrep(CSVGrep):
                 "No input file or piped data provided. Waiting for standard input:\n"
             )
 
-        if not self.args.expressions_list:
-            self.argparser.error("Must specify at least one -E/--expr expression")
 
-        for i, e in enumerate(self.args.expressions_list):
-            if len(e) == 0:
-                self.argparser.error(
-                    "-E/--expr requires at least 1 argument, a pattern to be grepped"
-                )
-            if len(e) > 2:
-                self.argparser.error(
-                    f"""-E/--expr takes 1 or 2 arguments, not {len(e)}: {e}"""
-                )
-
-            if len(e) < 2:
-                # blank column_str argument is interpreted as "use -c/--columns value"
-                e.append("")
-
+        self.expressions = self._handle_expressions()
 
         self.all_match = self.args.all_match
         self.any_match = not self.all_match
@@ -178,7 +188,7 @@ class CSVRgrep(CSVGrep):
         ) = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
 
 
-        for epattern, ecolstring in self.args.expressions_list:
+        for epattern, ecolstring in self.expressions:
             rows = filter_rows(
                 rows,
                 epattern,
@@ -202,8 +212,6 @@ class CSVRgrep(CSVGrep):
 def launch_new_instance():
     utility = CSVRgrep()
     utility.run()
-
-
 
 
 def filter_rows(
