@@ -9,7 +9,7 @@ def main():
     )
 
     parser.add_argument(
-        "-E", "--expression", dest="expressions_list", action="append", nargs='*',
+        "-E", "--expression", dest="expressions_list", action="append", nargs="*",
     )
 
     # parser.add_argument(
@@ -47,21 +47,21 @@ def main():
         print("In expressions mode!")
         for e in exes:
             print(e)
-#            print(f"\t pattern: {p}   repl: {r}   columns: {c}")
+    #            print(f"\t pattern: {p}   repl: {r}   columns: {c}")
 
-        # if args.pattern and not args.file:
-        #     args.file = args.pattern
-        #     delattr(args, "pattern")
-        #     delattr(args, "repl")
+    # if args.pattern and not args.file:
+    #     args.file = args.pattern
+    #     delattr(args, "pattern")
+    #     delattr(args, "repl")
 
-        # elif args.pattern and args.file:
-        #     # this is bad!
-        #     parser.error(
-        #         f"""Got an unexpected positional argument; either:
-        #         - More than 3 arguments for -E/--expr {exes[-1]}
-        #         - Or, a PATTERN argument, which is invalid when using -E/--expr
-        #     """
-        #     )
+    # elif args.pattern and args.file:
+    #     # this is bad!
+    #     parser.error(
+    #         f"""Got an unexpected positional argument; either:
+    #         - More than 3 arguments for -E/--expr {exes[-1]}
+    #         - Or, a PATTERN argument, which is invalid when using -E/--expr
+    #     """
+    #     )
     else:
         # print(f"No expressions: {args.expressions_list}")
         # the above will error out

@@ -25,6 +25,7 @@ Utilities
     /moreutils/csvgroupby
     /moreutils/csvnorm
     /moreutils/csvpivot
+    /moreutils/csvrgrep
     /moreutils/csvsed
     /moreutils/csvslice
     /moreutils/csvxcap

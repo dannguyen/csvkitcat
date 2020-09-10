@@ -13,6 +13,10 @@ from csvkit.utilities.csvgrep import CSVGrep
 from csvkitcat import agate, parse_column_identifiers, rxlib as re
 
 
+
+
+
+
 class CSVRgrep(CSVGrep):
     description = "Like csvgrep, except with support for multiple expressions"
     override_flags = ["f", "L", "blanks", "date-format", "datetime-format"]
@@ -167,44 +171,6 @@ class CSVRgrep(CSVGrep):
         if writer_kwargs.pop("line_numbers", False):
             reader_kwargs["line_numbers"] = True
 
-        def filterfoo(
-            rows: typeIterable,
-            pattern_str: str,
-            columns_str: str,
-            column_names: list,
-            default_column_ids: list,
-            literal_match: bool,
-            column_offset: int,
-            inverse: bool,
-            any_match: bool,
-            not_columns,
-        ) -> FilteringCSVReader:
-
-            if literal_match:
-                pattern = pattern_str
-            else:  # literal match
-                pattern = re.compile(pattern_str)
-
-            if columns_str:
-                expr_col_ids = parse_column_identifiers(
-                    columns_str, column_names, column_offset, not_columns
-                )
-            else:
-                expr_col_ids = default_column_ids
-
-            epatterns = dict((eid, pattern) for eid in expr_col_ids)
-
-            filtered_rows = FilteringCSVReader(
-                rows,
-                header=False,
-                patterns=epatterns,
-                inverse=self.args.inverse,
-                any_match=self.any_match,
-            )
-
-            for r in filtered_rows:
-                yield r
-
         (
             rows,
             column_names,
@@ -213,7 +179,7 @@ class CSVRgrep(CSVGrep):
 
 
         for epattern, ecolstring in self.args.expressions_list:
-            rows = filterfoo(
+            rows = filter_rows(
                 rows,
                 epattern,
                 ecolstring,
@@ -236,6 +202,47 @@ class CSVRgrep(CSVGrep):
 def launch_new_instance():
     utility = CSVRgrep()
     utility.run()
+
+
+
+
+def filter_rows(
+    rows: typeIterable,
+    pattern_str: str,
+    columns_str: str,
+    column_names: list,
+    default_column_ids: list,
+    literal_match: bool,
+    column_offset: int,
+    inverse: bool,
+    any_match: bool,
+    not_columns,
+) -> FilteringCSVReader:
+
+    if literal_match:
+        pattern = pattern_str
+    else:  # literal match
+        pattern = re.compile(pattern_str)
+
+    if columns_str:
+        expr_col_ids = parse_column_identifiers(
+            columns_str, column_names, column_offset, not_columns
+        )
+    else:
+        expr_col_ids = default_column_ids
+
+    epatterns = dict((eid, pattern) for eid in expr_col_ids)
+
+    filtered_rows = FilteringCSVReader(
+        rows,
+        header=False,
+        patterns=epatterns,
+        inverse=inverse,
+        any_match=any_match,
+    )
+    return filtered_rows
+
+
 
 
 if __name__ == "__main__":

@@ -7,8 +7,9 @@ CHANGELOG
 1.5.5-alpha
 ===========
 
-- csvrgrep
-- csvsed, csvxcap/xfind/xplit now use csvrgrep and -G option
+- :doc:`csvrgrep <moreutils/csvrgrep>`: like ``csvgrep``, but designed for when you want to concisely do a lot of regex filtering over a combination of columns
+
+- csvsed: reworking its internals. Still being worked on, but current tests pass
 
 1.5.1-alpha
 ===========

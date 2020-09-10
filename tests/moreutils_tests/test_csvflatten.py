@@ -214,8 +214,8 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         p2.wait()
 
         self.assertEqual(
-            txt.splitlines()[-12:]
-            == """
+            txt.splitlines()[-12:],
+            """
 | lines     | O, speak to me no mo |
 |           | re;                  |
 |           | These words, like da |
@@ -227,5 +227,5 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
 | act       | 4                    |
 | scene     | 7                    |
 | speaker   | Laertes              |
-| lines     | Know you the hand?   |""".strip().splitlines()
+| lines     | Know you the hand?   |""".strip().splitlines(),
         )

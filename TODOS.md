@@ -10,12 +10,23 @@ ONGOING:
 
   - [x] pull out the csvsed grep into its own method
   - [x] basic implementation and tests
-  - [ ] write and test error handling
-  - [ ] move into csvsed, csvxcap, etc. 
-    - [ ] or should I just leave it out of csvsed??
+  - [x] write and test error handling
+  - [X] move into csvsed
+    - [?] or should I just leave it out of csvsed??
+    - [X] benchmarks/fooprofile.py sed runs pretty well
+  - [X] benchmark csvrgrep; is it any faster than multiple invocations of csvgrep?
+    - A little bit slower somehow, but we'll worry about it later
+  - [ ] move into csvxcap/find/split
+  - [ ] clean up csvrgrep.filter_rows
+  - [ ] To think on: is it a problem that csvrgrep doesn't have an option that effectively ORs the results of each expression? How would that even work? Other than to write a custom CSV filterer
+    - [X] write a test to affirm that multiple expressions are ANDED
 
-  - [ ] csvsed is broken for now
-  - [ ] benchmark csvrgrep; is it any faster than multiple invocations of csvgrep?
+- csvsed: 
+  - [ ] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
+  - [ ] Clean up/rethink how sed_expressions are executed on each row
+  - [ ] Write a helper to clean/normalize self.sed_expressions
+  - [ ] Write more tests
+    - [ ] Write test for complicated CSV that reflects how order of expressions can change results
 
 ```sh
 time cat ZUNK/mass-fec.csv | 
