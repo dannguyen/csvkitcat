@@ -57,6 +57,7 @@ setup(
             'csvgroupby = csvkitcat.moreutils.csvgroupby:launch_new_instance',
             'csvnorm = csvkitcat.moreutils.csvnorm:launch_new_instance',
             'csvpivot = csvkitcat.moreutils.csvpivot:launch_new_instance',
+            'csvrgrep = csvkitcat.moreutils.csvrgrep:launch_new_instance',
             'csvsed = csvkitcat.moreutils.csvsed:launch_new_instance',
             'csvslice = csvkitcat.moreutils.csvslice:launch_new_instance',
             'csvxcap = csvkitcat.moreutils.csvxcap:launch_new_instance',

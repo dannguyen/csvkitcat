@@ -18,6 +18,7 @@ from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
 from io import StringIO
 
+
 class TestCSVSed(CSVKitTestCase, EmptyFileTests):
     Utility = CSVSed
     default_args = ["hello", "world"]
@@ -117,20 +118,11 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
             ["id,phrase", "1,hello world", "2,good   bye", "3,a  ok",],
         )
 
-
     def test_replace_value(self):
         self.assertLines(
-            ['-R', '(?i)^y', 'Yeah', 'examples/yes.csv'],
-            [
-                'code,value',
-                '1,Yeah',
-                '2,no',
-                '3,Yeah',
-                '4,Yeah',
-                '5,Yeah',
-            ]
-
-            )
+            ["-R", "(?i)^y", "Yeah", "examples/yes.csv"],
+            ["code,value", "1,Yeah", "2,no", "3,Yeah", "4,Yeah", "5,Yeah",],
+        )
 
     def test_replace_value_w_cap_group(self):
         ############### replace
@@ -143,58 +135,36 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
         """
         self.assertLines(
             ["--replace", r"my (\w+)", r"Your \1!", "examples/myway.csv"],
-            [
-                "code,value",
-                "1,Your money!",
-                "2,Your stuff!",
-                "3,Your car!",
-            ],
+            ["code,value", "1,Your money!", "2,Your stuff!", "3,Your car!",],
         )
-
-
 
     def test_like_grep(self):
         self.assertLines(
             ["-G", r"my (\w{5,})", r"Your \1!", "examples/myway.csv"],
-            [
-                "code,value",
-                "1,Your money!",
-                '2,"Your stuff!, my way"',
-            ],
+            ["code,value", "1,Your money!", '2,"Your stuff!, my way"',],
         )
-
-
 
     # @skiptest('need to do test_like_grep on their own')
     def test_replace_and_like_grep(self):
         self.assertLines(
-            ['-R', '-G', '(?i)^y', 'Yeah', 'examples/yes.csv'],
-            [
-                'code,value',
-                '1,Yeah',
-                '3,Yeah',
-                '4,Yeah',
-                '5,Yeah',
-            ]
-            )
+            ["-R", "-G", "(?i)^y", "Yeah", "examples/yes.csv"],
+            ["code,value", "1,Yeah", "3,Yeah", "4,Yeah", "5,Yeah",],
+        )
 
-############ expressions
+    ############ expressions
 
     def test_manual_expression(self):
         self.assertLines(
-            ["-E", r"my (\w{5,})", r"Your \1!", 'value', "examples/myway.csv"],
+            ["-E", r"my (\w{5,})", r"Your \1!", "value", "examples/myway.csv"],
             [
                 "code,value",
                 "1,Your money!",
                 '2,"Your stuff!, my way"',
-                '3,your house has my car',
+                "3,your house has my car",
             ],
         )
 
-
-
-
-##################### errors
+    ##################### errors
     # class ColumnsTests(object):
     def test_invalid_column(self):
         args = ["-c", "0",] + self.default_args + ["examples/dummy.csv"]

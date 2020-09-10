@@ -3,19 +3,36 @@
 
 ## Priority
 
-ONGOING: created benchmark-testing branch to figure out wtf is going on with csvsed
-- [X] learned that regex module is very slow compared to re, for some reason...
-- [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
+ONGOING:
+- csvrgrep: 
+  - [X] learned that regex module is very slow compared to re, for some reason...
+  - [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
+
+  - [x] pull out the csvsed grep into its own method
+  - [x] basic implementation and tests
+  - [ ] write and test error handling
+  - [ ] move into csvsed, csvxcap, etc. 
+  - [ ] csvsed is broken for now
+
 - csvsed: 
   - [X] change `-X` to `-G/--grep-rows/grep-match`
   - [ ] write tests for multiple invocations of `-E`
+  - [ ] FilterMoreCSVReader.standardize_stuff/patterns should conver patternslist to: 
+    - a dict where each key is a pattern-expression, and each value is a list of columns to test; an empty list is all columns
+    - in theory, we want to iterate per sed_expression when doing pattern matching by row
+      - 
+
   - [ ] benchmark the sloppy draft of csvsed with multi-expression searching
-  - [ ] FilterMoreCSVReader.standardize_stuff should return a dict where each key is a pattern-expression, and each value is a list of columns to test; an empty list is all columns
+  - how does regular sed deal with chained expressions
+
+
+In general:
+
+- [ ] write a better csvkitutil class, with consistent implementation of init common args
 
 - [ ] add library version info; implement similar to dannguyen/pgark https://github.com/dannguyen/pgark/blob/master/setup.py
 - [ ] makes changes to `setup.py` as per above
 
-In general:
 
 - [ ] clean up code with Black
   - [x] some tests blacked

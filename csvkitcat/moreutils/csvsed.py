@@ -49,7 +49,7 @@ class CSVSed(AllTextUtility):
                                         action='append',
                                         type=str,
                                         help=r"""
-                                        When you want to do multiple expressions:
+                                        When you want to do multiple sed_expressions:
                                             -E 'PATTERN' 'REPL' '[names_of_columns]'
 
                                             'names_of_columns' is a comma-delimited list of columns; it cannot refer to
@@ -126,13 +126,13 @@ class CSVSed(AllTextUtility):
                  to: csvsed -E 'PATTERN' 'REPL' 'COLUMNS' -E x y z input.csv
         """
 
-        def _handle_expressions() -> typeNoReturn:
-            self.expressions = getattr(self.args, 'expressions_list', [])
+        def _handle_sed_expressions() -> typeNoReturn:
+            self.sed_expressions = getattr(self.args, 'expressions_list', [])
 
-            if not self.expressions:
+            if not self.sed_expressions:
                 # then PATTERN and REPL are set positionally
                 exp = [self.args.pattern, self.args.repl, ''] # 3rd argument is the sub-columns to filter by, but can be empty by default
-                self.expressions =[exp,]
+                self.sed_expressions =[exp,]
             else:
                 # error handling
                 if not self.args.input_path and self.args.pattern and not self.args.repl:
@@ -149,7 +149,7 @@ class CSVSed(AllTextUtility):
                     self.parser.error("Some other unhandled positional arg thingy [TODO]")
 
 
-        _handle_expressions()
+        _handle_sed_expressions()
         self.input_file = self._open_input_file(self.args.input_path)
 
         try:
@@ -182,7 +182,7 @@ class CSVSed(AllTextUtility):
 
         all_patterns = []
 
-        for e in self.expressions:
+        for e in self.sed_expressions:
             pattern, repl, ecol_string = e
             if not self.args.literal_match:
                 e[0] = pattern = re.compile(pattern)
@@ -229,7 +229,7 @@ class CSVSed(AllTextUtility):
             for v_id, val in enumerate(row):
                 newval = val
 
-                for ex in self.expressions:
+                for ex in self.sed_expressions:
                     pattern, repl, _xids = ex
                     excol_ids = _xids if _xids else all_column_ids
 

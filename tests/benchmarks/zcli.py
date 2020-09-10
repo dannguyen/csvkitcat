@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-
+import sys
 
 def main():
     parser = argparse.ArgumentParser(description='Test if we can make arguments optional')
@@ -51,7 +51,10 @@ def main():
                 - Or, a PATTERN argument, which is invalid when using -E/--expr
             """)
     else:
-        print(f"No expressions: {args.expressions_list}")
+        # print(f"No expressions: {args.expressions_list}")
+        # the above will error out
+        # AttributeError: 'Namespace' object has no attribute 'expressions_list'
+        pass
     print('--------------------\n')
 
 
@@ -59,6 +62,10 @@ def main():
     for k, v in vargs.items():
         print(f"{k}: {v}")
 
+    print("\n\n")
+    print("and here are argv:")
+    for i, arg in enumerate(sys.argv):
+        print(f"{i}: {arg}")
 
 if __name__ == '__main__':
     main()

@@ -43,9 +43,10 @@ from sys import argv, stdout, stderr
 import csv
 import regex as re
 
-DEFAULT_PATH = 'examples/realdata/osha-violation.csv'
-DEFAULT_PATTERN = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
-DEFAULT_REPL = r'\2/\3/\1'
+DEFAULT_PATH = "examples/realdata/osha-violation.csv"
+DEFAULT_PATTERN = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
+DEFAULT_REPL = r"\2/\3/\1"
+
 
 def as_csv(inpath):
     stderr.write("mode: as_csv\n")
@@ -56,7 +57,7 @@ def as_csv(inpath):
         for row in csv.reader(src):
             d = []
             for col in row:
-                d.append(DEFAULT_PATTERN.sub(DEFAULT_REPL , col))
+                d.append(DEFAULT_PATTERN.sub(DEFAULT_REPL, col))
             outs.writerow(d)
 
 
@@ -67,14 +68,14 @@ def as_raw(inpath):
             xline = DEFAULT_PATTERN.sub(DEFAULT_REPL, line)
             stdout.write(xline)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     inpath = DEFAULT_PATH if len(argv) < 3 else argv[2]
 
     if len(argv) > 1:
-        if argv[1] == 'raw':
-           as_raw(inpath)
+        if argv[1] == "raw":
+            as_raw(inpath)
         else:
             as_csv(inpath)
     else:
         as_csv(inpath)
-

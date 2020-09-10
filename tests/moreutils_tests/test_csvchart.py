@@ -29,14 +29,12 @@ class TestCSVChart(CSVKitTestCase):
     @skiptest("don't know how to deal with interactive stuff")
     def test_launch_new_instance(self):
         with patch.object(
-            sys,
-            "argv",
-            [self.Utility.__name__.lower(), "examples/dummy.csv"],
+            sys, "argv", [self.Utility.__name__.lower(), "examples/dummy.csv"],
         ):
             launch_new_instance()
 
-#################################
-### Tests that verify my examples
+    #################################
+    ### Tests that verify my examples
 
     """
     name,things
@@ -59,7 +57,7 @@ Carson     30 |:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 """
 
         exlines = exoutput.splitlines()
-        testlines = self.get_output_as_list(['--printable', "examples/tings.csv"])
+        testlines = self.get_output_as_list(["--printable", "examples/tings.csv"])
 
         # self.assertEqual(len(exlines), len(testlines))
 
@@ -68,10 +66,8 @@ Carson     30 |:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             self.assertEqual(t_line.strip(), x_line.strip())
             # assert x_line.strip() == t_line.strip()
 
-
-
-###############################
-## error testing
+    ###############################
+    ## error testing
 
     @skiptest("Implement later")
     def test_error_when_value_column_is_non_numeric(self):

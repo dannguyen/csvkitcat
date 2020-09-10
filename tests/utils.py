@@ -29,7 +29,9 @@ import six
 
 from csvkit.exceptions import ColumnIdentifierError, RequiredHeaderError
 import warnings
-warnings.filterwarnings('ignore', category=DeprecationWarning)
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 @contextmanager
 def stderr_as_stdout():
@@ -48,7 +50,7 @@ def stdin_as_string(content):
 
 
 class CSVKitTestCase(unittest.TestCase):
-    warnings.filterwarnings(action='ignore', module='agate')
+    warnings.filterwarnings(action="ignore", module="agate")
 
     def get_output(self, args):
         output_file = six.StringIO()
@@ -65,7 +67,7 @@ class CSVKitTestCase(unittest.TestCase):
         return six.StringIO(self.get_output(args))
 
     def get_output_as_list(self, args):
-        return self.get_output(args).split('\n')
+        return self.get_output(args).split("\n")
 
     def get_output_as_reader(self, args):
         return agate.csv.reader(self.get_output_as_io(args))
@@ -82,7 +84,7 @@ class CSVKitTestCase(unittest.TestCase):
         lines = self.get_output_as_list(args)
 
         if newline_at_eof:
-            rows.append('')
+            rows.append("")
 
         for i, row in enumerate(rows):
             self.assertEqual(lines[i], row)
@@ -92,22 +94,22 @@ class CSVKitTestCase(unittest.TestCase):
 
 class EmptyFileTests(object):
     def test_empty(self):
-        with open('examples/empty.csv') as f:
+        with open("examples/empty.csv") as f:
             with stdin_as_string(f):
-                utility = self.Utility(getattr(self, 'default_args', []))
+                utility = self.Utility(getattr(self, "default_args", []))
                 utility.run()
 
 
 class NamesTests(object):
     def test_names(self):
-        output = self.get_output_as_io(['-n', 'examples/dummy.csv'])
+        output = self.get_output_as_io(["-n", "examples/dummy.csv"])
 
-        self.assertEqual(next(output), '  1: a\n')
-        self.assertEqual(next(output), '  2: b\n')
-        self.assertEqual(next(output), '  3: c\n')
+        self.assertEqual(next(output), "  1: a\n")
+        self.assertEqual(next(output), "  2: b\n")
+        self.assertEqual(next(output), "  3: c\n")
 
     def test_invalid_options(self):
-        args = ['-n', '--no-header-row', 'examples/dummy.csv']
+        args = ["-n", "--no-header-row", "examples/dummy.csv"]
 
         output_file = six.StringIO()
         utility = self.Utility(args, output_file)
@@ -120,7 +122,7 @@ class NamesTests(object):
 
 class ColumnsTests(object):
     def test_invalid_column(self):
-        args = getattr(self, 'columns_args', []) + ['-c', '0', 'examples/dummy.csv']
+        args = getattr(self, "columns_args", []) + ["-c", "0", "examples/dummy.csv"]
 
         output_file = six.StringIO()
         utility = self.Utility(args, output_file)

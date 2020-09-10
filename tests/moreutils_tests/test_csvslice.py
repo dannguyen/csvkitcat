@@ -123,4 +123,3 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         assert "Slice index cannot be set if start/end/length are also defined" in str(
             c3.exception
         )
-

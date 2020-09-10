@@ -4,6 +4,12 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.5.5-alpha
+===========
+
+- csvrgrep
+- csvsed, csvxcap/xfind/xplit now use csvrgrep and -G option
+
 1.5.1-alpha
 ===========
 

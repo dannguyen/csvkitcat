@@ -44,16 +44,16 @@ class FilterMoreCSVReader(FilteringCSVReader):
             return not self.inverse  # True
 
 
-def standardize_stuff(all_column_names:typeList[str], patternlists:typeList[typeTuple[typeList[int], str]]) -> typeDict[typeList[int], typeList[typeCallable]]:
+
+
+def standardize_stuff(patternlists:typeList[typeTuple[typeList[int], str]]) -> typeDict[typeList[int], typeList[typeCallable]]:
     r"""
-    all_column_names example:
-        ['name', 'surname', 'phone']
 
     patternlists example:
 
         [
-            (['name', 'surname', 'phone'], r'\w+'),
-            (['phone'], r'\d+'),
+            ([1, 2, 3], r'\w+'),
+            ([3], r'\d+'),
         ]
 
     Returns:
@@ -84,3 +84,45 @@ class regex_callable(object):
 
     def __call__(self, arg):
         return self.pattern.search(arg)
+
+
+# def standardize_stuff(all_column_names:typeList[str], patternlists:typeList[typeTuple[typeList[int], str]]) -> typeDict[typeList[int], typeList[typeCallable]]:
+#     r"""
+#     all_column_names example:
+#         ['name', 'surname', 'phone']
+
+#     patternlists example:
+
+#         [
+#             (['name', 'surname', 'phone'], r'\w+'),
+#             (['phone'], r'\d+'),
+#         ]
+
+#     Returns:
+#         {
+#             1: ['\w+'],
+#             2: ['\w+'],
+#             3: ['\w+', '\d+'],
+
+#         }
+
+#     where each pattern is a callable not a string
+#     """
+#     df = defaultdict(list)
+#     for colnames, pattern in patternlists:
+#         for k in colnames:
+#             idx = all_column_names.index(k)
+#             pfoo = pattern_as_function(pattern)
+#             df[idx].append(pfoo)
+#             # TODO: optimize by having patterns as functions
+#     return df
+
+
+
+# class regex_callable(object):
+
+#     def __init__(self, pattern):
+#         self.pattern = pattern
+
+#     def __call__(self, arg):
+#         return self.pattern.search(arg)
