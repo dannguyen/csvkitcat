@@ -12,6 +12,8 @@ except ImportError:
 
 from csvkit.exceptions import ColumnIdentifierError
 from csvkitcat.moreutils.csvsed import CSVSed, launch_new_instance
+
+from unittest import skip as skiptest
 from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
 from io import StringIO
@@ -150,9 +152,23 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
         )
 
 
-    def test_exclude_unmatched(self):
+
+    def test_like_grep(self):
         self.assertLines(
-            ['-R', '-X', '(?i)^y', 'Yeah', 'examples/yes.csv'],
+            ["-G", r"my (\w{5,})", r"Your \1!", "examples/myway.csv"],
+            [
+                "code,value",
+                "1,Your money!",
+                '2,"Your stuff!, my way"',
+            ],
+        )
+
+
+
+    # @skiptest('need to do test_like_grep on their own')
+    def test_replace_and_like_grep(self):
+        self.assertLines(
+            ['-R', '-G', '(?i)^y', 'Yeah', 'examples/yes.csv'],
             [
                 'code,value',
                 '1,Yeah',
@@ -161,6 +177,20 @@ class TestCSVSed(CSVKitTestCase, EmptyFileTests):
                 '5,Yeah',
             ]
             )
+
+############ expressions
+
+    def test_manual_expression(self):
+        self.assertLines(
+            ["-E", r"my (\w{5,})", r"Your \1!", 'value', "examples/myway.csv"],
+            [
+                "code,value",
+                "1,Your money!",
+                '2,"Your stuff!, my way"',
+                '3,your house has my car',
+            ],
+        )
+
 
 
 

@@ -3,13 +3,15 @@
 
 
 from csvkitcat.alltext import AllTextUtility
-from csvkit.grep import FilteringCSVReader
+from csvkitcat.grep_more import FilterMoreCSVReader
 from csvkitcat import rxlib as re
+from csvkitcat import parse_column_identifiers
 
 import agate
 import warnings
 
 from sys import stderr
+from typing import NoReturn as typeNoReturn
 
 
 class CSVSed(AllTextUtility):
@@ -37,15 +39,37 @@ class CSVSed(AllTextUtility):
                                     default=False,
                                     help='Replace entire field with [REPL], instead of just the substring matched by [PATTERN]',)
 
-        self.argparser.add_argument('-X', '--exclude-unmatched', dest='exclude_unmatched', action='store_true',
+        self.argparser.add_argument('-G', '--like-grep', dest='like_grep', action='store_true',
                                     default=False,
-                                    help='Only return rows in which [PATTERN] was matched')
+                                    help="""Only return rows in which [PATTERN] was matched, i.e. like grep''s traditional behavior""")
+
+
+        self.argparser.add_argument('-E', '--expr', dest='expressions_list',
+                                        nargs=3,
+                                        action='append',
+                                        type=str,
+                                        help=r"""
+                                        When you want to do multiple expressions:
+                                            -E 'PATTERN' 'REPL' '[names_of_columns]'
+
+                                            'names_of_columns' is a comma-delimited list of columns; it cannot refer to
+                                                columns *not included* in the `-c/--columns` flag; leave blank to match all columns
+
+                                        e.g.
+                                        -E '(?i)\b(bob|bobby|rob)\b' 'Robert' 'first_name' \
+                                        -E '^(?i)smith$' 'SMITH' 'last_name' \
+                                        -E '(\d{2})-(\d{3})' '$1:$2' '' \
+                                        """,
+            )
 
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
+                                    nargs='?',
                                     help='A regex pattern to find')
 
         self.argparser.add_argument(metavar='REPL', dest='repl',
+                                    nargs='?',
                                     help='A regex pattern to replace with')
+
 
         self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
                                     help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')
@@ -87,6 +111,8 @@ class CSVSed(AllTextUtility):
         return kwargs
 
 
+
+
     def run(self):
         """
         A wrapper around the main loop of the utility which handles opening and
@@ -94,7 +120,36 @@ class CSVSed(AllTextUtility):
 
         TK: This is copy-pasted form CSVKitUtil because we have to override 'f'; maybe there's
             a way to refactor this...
+
+        csvsed has special functionality, in which the presence of `-E/--expr` changes the command signature,
+            i.e. from: csvsed PATTERN REPL input.csv
+                 to: csvsed -E 'PATTERN' 'REPL' 'COLUMNS' -E x y z input.csv
         """
+
+        def _handle_expressions() -> typeNoReturn:
+            self.expressions = getattr(self.args, 'expressions_list', [])
+
+            if not self.expressions:
+                # then PATTERN and REPL are set positionally
+                exp = [self.args.pattern, self.args.repl, ''] # 3rd argument is the sub-columns to filter by, but can be empty by default
+                self.expressions =[exp,]
+            else:
+                # error handling
+                if not self.args.input_path and self.args.pattern and not self.args.repl:
+                    self.args.input_path = self.args.pattern
+                    delattr(self.args, 'pattern')
+                    delattr(self.args, 'repl')
+                elif self.args.input_path and self.args.pattern:
+                    # if input_path was given AND self.args.pattern (i.e. any other positional args besides INPUT_PATH)
+                    self.parser.error(f"""Got an unexpected positional argument; either:
+                        - More than 3 arguments for -E/--expr {exes[-1]}
+                        - Or, a PATTERN argument, which is invalid when using -E/--expr
+                    """)
+                else:
+                    self.parser.error("Some other unhandled positional arg thingy [TODO]")
+
+
+        _handle_expressions()
         self.input_file = self._open_input_file(self.args.input_path)
 
         try:
@@ -106,56 +161,115 @@ class CSVSed(AllTextUtility):
         finally:
             self.input_file.close()
 
+
+
+
     def main(self):
         if self.additional_input_expected():
             self.argparser.error('You must provide an input file or piped data.')
 
-        self.input_file = self._open_input_file(self.args.input_path)
-        # myio = self.init_io()
+        reader_kwargs = self.reader_kwargs
+        reader_kwargs
+        writer_kwargs = self.writer_kwargs
 
         max_match_count = self.args.max_match_count
         if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
             max_match_count = -1 if self.args.literal_match else 0
 
-        pattern = self.args.pattern if self.args.literal_match else re.compile(fr'{self.args.pattern}')
-        repl = fr'{self.args.repl}'
-
-        ### copied straight from csvkit.csvgrep
-        reader_kwargs = self.reader_kwargs
-        writer_kwargs = self.writer_kwargs
-
-        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
-        # xrows = list(rows)
-        # stderr.write(f"How many rows: {len(xrows)}\n")
 
 
-        patterns = dict((column_id, pattern) for column_id in column_ids)
+        all_rows, all_column_names, all_column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
 
-        if self.args.exclude_unmatched:
-            xreader = FilteringCSVReader(rows, header=False, patterns=patterns, inverse=False, any_match=True)
+        all_patterns = []
+
+        for e in self.expressions:
+            pattern, repl, ecol_string = e
+            if not self.args.literal_match:
+                e[0] = pattern = re.compile(pattern)
+
+            if ecol_string:
+                 # TODO: this should throw an error of ecol_str refers to columns not in all_column_ids
+                ecol_ids = parse_column_identifiers(ecol_string, all_column_names, self.get_column_offset(), getattr(self.args, 'not_columns', None))
+            else:
+                ecol_ids = all_column_ids
+            e[2] =  ecol_ids
+
+            ecol_names = [all_column_names[i] for i in ecol_ids]
+            all_patterns.append([ecol_names, pattern])
+
+
+        if self.args.like_grep:
+            xreader = FilterMoreCSVReader(all_rows,
+                header=False,
+                patternlists=all_patterns,
+                all_column_names=all_column_names,
+                inverse=False, any_match=True)
         else:
-            xreader = rows
+            xreader = all_rows
+
+
+
+        # pattern = self.args.pattern if self.args.literal_match else re.compile(fr'{self.args.pattern}')
+        # repl = fr'{self.args.repl}'
+        # patterns = dict((column_id, pattern) for column_id in column_ids)
+
+
+        # if self.args.like_grep:
+        #     xreader = FilterMoreCSVReader(rows, header=False, patternlists=all_patterns, inverse=False, any_match=True)
+        # else:
+        #     xreader = rows
 
 
         output = agate.csv.writer(self.output_file, **writer_kwargs)
-        output.writerow(column_names)
+        output.writerow(all_column_names)
 
-        for z, row in enumerate(xreader):
+
+        for row in xreader:
             d = []
-            for _x, val in enumerate(row):
+            for v_id, val in enumerate(row):
                 newval = val
-                if _x in column_ids:
-                    if self.args.replace_value:
-                        if self.args.literal_match:
-                            newval = repl if pattern in val else val
+
+                for ex in self.expressions:
+                    pattern, repl, _xids = ex
+                    excol_ids = _xids if _xids else all_column_ids
+
+                    if v_id in excol_ids:
+                        if self.args.replace_value:
+                            if self.args.literal_match:
+                                newval = repl if pattern in val else val
+                            else:
+                                mx = pattern.search(val)
+                                if mx:
+                                    newval = pattern.sub(repl, mx.group(0))
                         else:
-                            mx = pattern.search(val)
-                            if mx:
-                                newval = pattern.sub(repl, mx.group(0))
-                    else:
-                        newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
+                            if self.args.literal_match:
+                                newval = val.replace(pattern, repl, max_match_count)
+                            else:
+                                newval = pattern.sub(repl, val, max_match_count)
                 d.append(newval)
+
             output.writerow(d)
+
+
+        # for z, row in enumerate(xreader):
+        #     d = []
+        #     for _x, val in enumerate(row):
+        #         newval = val
+        #         if _x in all_column_ids:
+        #             if self.args.replace_value:
+        #                 if self.args.literal_match:
+        #                     newval = repl if pattern in val else val
+        #                 else:
+        #                     mx = pattern.search(val)
+        #                     if mx:
+        #                         newval = pattern.sub(repl, mx.group(0))
+        #             else:
+        #                 newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
+        #         d.append(newval)
+        #     output.writerow(d)
+
+
+        # import IPython; IPython.embed()
 
 
 def launch_new_instance():

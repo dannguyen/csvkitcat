@@ -1,0 +1,7 @@
+Stacked bar chart of FEC independent expenditures
+-------------------------------------------------
+
+    $  cat examples/realdata/fec-independent-exp.csv \
+        | csvsed -XR -c candidate_last_name '(TRUMP|BIDEN)' '\1' \
+        | csvpivot -r candidate_last_name,support_oppose_indicator -a sum:expenditure_amount \
+        | csvchart bar -X candidate_last_name -Y Sum  -C support_oppose_indicator

@@ -6,7 +6,11 @@
 ONGOING: created benchmark-testing branch to figure out wtf is going on with csvsed
 - [X] learned that regex module is very slow compared to re, for some reason...
 - [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
-
+- csvsed: 
+  - [X] change `-X` to `-G/--grep-rows/grep-match`
+  - [ ] write tests for multiple invocations of `-E`
+  - [ ] benchmark the sloppy draft of csvsed with multi-expression searching
+  - [ ] FilterMoreCSVReader.standardize_stuff should return a dict where each key is a pattern-expression, and each value is a list of columns to test; an empty list is all columns
 
 - [ ] add library version info; implement similar to dannguyen/pgark https://github.com/dannguyen/pgark/blob/master/setup.py
 - [ ] makes changes to `setup.py` as per above
