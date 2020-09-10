@@ -213,7 +213,7 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         txt = p2.communicate()[0].decode("utf-8")
         p2.wait()
 
-        assert (
+        self.assertEqual(
             txt.splitlines()[-12:]
             == """
 | lines     | O, speak to me no mo |

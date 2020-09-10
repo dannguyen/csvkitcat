@@ -12,8 +12,51 @@ ONGOING:
   - [x] basic implementation and tests
   - [ ] write and test error handling
   - [ ] move into csvsed, csvxcap, etc. 
+    - [ ] or should I just leave it out of csvsed??
+
   - [ ] csvsed is broken for now
   - [ ] benchmark csvrgrep; is it any faster than multiple invocations of csvgrep?
+
+```sh
+time cat ZUNK/mass-fec.csv | 
+  csvgrep -c 1-77 -a -r '\w{15,}' |
+  csvgrep -c 1-77 -a -r '^[ADJBT]' |
+  csvgrep -c 1-77 -a -r '\d{5,}' |
+  csvgrep -c 1-77 -a -r 'DONALD|JOSEPH' |
+  csvgrep -c 1-77 -a -r 'TRUMP|BIDEN' |
+  wc -l 
+
+real  0m5.386s
+user  0m18.642s
+sys 0m0.612s
+
+time cat ZUNK/mass-fec.csv |   csvgrep -r 'BIDEN|TRUMP' -a -c 1-77 | wc -l
+
+real  0m3.925s
+user  0m3.853s
+sys 0m0.113s
+
+###################
+
+time cat ZUNK/mass-fec.csv |
+  csvrgrep -E '\w{15,}'     \
+           -E '^[ADJBT]' \
+           -E '\d{5,}' \
+           -E 'DONALD|JOSEPH' \
+           -E 'TRUMP|BIDEN' |
+  wc -l 
+
+real  0m6.356s
+user  0m6.251s
+sys 0m0.148s
+
+time cat ZUNK/mass-fec.csv |   csvrgrep -E 'BIDEN|TRUMP' | wc -l
+real  0m4.153s
+user  0m4.037s
+sys 0m0.152s
+
+```
+
 
 - csvsed: 
   - [X] change `-X` to `-G/--grep-rows/grep-match`

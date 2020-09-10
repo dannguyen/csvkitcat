@@ -177,7 +177,6 @@ class CSVSed(AllTextUtility):
             max_match_count = -1 if self.args.literal_match else 0
 
 
-
         all_rows, all_column_names, all_column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
 
         all_patterns = []
@@ -279,3 +278,114 @@ def launch_new_instance():
 
 if __name__ == '__main__':
     launch_new_instance()
+
+
+
+
+
+
+    # def main(self):
+    #     if self.additional_input_expected():
+    #         self.argparser.error('You must provide an input file or piped data.')
+
+    #     reader_kwargs = self.reader_kwargs
+    #     reader_kwargs
+    #     writer_kwargs = self.writer_kwargs
+
+    #     max_match_count = self.args.max_match_count
+    #     if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
+    #         max_match_count = -1 if self.args.literal_match else 0
+
+
+    #     all_rows, all_column_names, all_column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+
+    #     all_patterns = []
+
+    #     for e in self.sed_expressions:
+    #         pattern, repl, ecol_string = e
+    #         if not self.args.literal_match:
+    #             e[0] = pattern = re.compile(pattern)
+
+    #         if ecol_string:
+    #              # TODO: this should throw an error of ecol_str refers to columns not in all_column_ids
+    #             ecol_ids = parse_column_identifiers(ecol_string, all_column_names, self.get_column_offset(), getattr(self.args, 'not_columns', None))
+    #         else:
+    #             ecol_ids = all_column_ids
+    #         e[2] =  ecol_ids
+
+    #         ecol_names = [all_column_names[i] for i in ecol_ids]
+    #         all_patterns.append([ecol_names, pattern])
+
+
+    #     if self.args.like_grep:
+    #         xreader = FilterMoreCSVReader(all_rows,
+    #             header=False,
+    #             patternlists=all_patterns,
+    #             all_column_names=all_column_names,
+    #             inverse=False, any_match=True)
+    #     else:
+    #         xreader = all_rows
+
+
+
+    #     # pattern = self.args.pattern if self.args.literal_match else re.compile(fr'{self.args.pattern}')
+    #     # repl = fr'{self.args.repl}'
+    #     # patterns = dict((column_id, pattern) for column_id in column_ids)
+
+
+    #     # if self.args.like_grep:
+    #     #     xreader = FilterMoreCSVReader(rows, header=False, patternlists=all_patterns, inverse=False, any_match=True)
+    #     # else:
+    #     #     xreader = rows
+
+
+    #     output = agate.csv.writer(self.output_file, **writer_kwargs)
+    #     output.writerow(all_column_names)
+
+
+    #     for row in xreader:
+    #         d = []
+    #         for v_id, val in enumerate(row):
+    #             newval = val
+
+    #             for ex in self.sed_expressions:
+    #                 pattern, repl, _xids = ex
+    #                 excol_ids = _xids if _xids else all_column_ids
+
+    #                 if v_id in excol_ids:
+    #                     if self.args.replace_value:
+    #                         if self.args.literal_match:
+    #                             newval = repl if pattern in val else val
+    #                         else:
+    #                             mx = pattern.search(val)
+    #                             if mx:
+    #                                 newval = pattern.sub(repl, mx.group(0))
+    #                     else:
+    #                         if self.args.literal_match:
+    #                             newval = val.replace(pattern, repl, max_match_count)
+    #                         else:
+    #                             newval = pattern.sub(repl, val, max_match_count)
+    #             d.append(newval)
+
+    #         output.writerow(d)
+
+
+    #     # for z, row in enumerate(xreader):
+    #     #     d = []
+    #     #     for _x, val in enumerate(row):
+    #     #         newval = val
+    #     #         if _x in all_column_ids:
+    #     #             if self.args.replace_value:
+    #     #                 if self.args.literal_match:
+    #     #                     newval = repl if pattern in val else val
+    #     #                 else:
+    #     #                     mx = pattern.search(val)
+    #     #                     if mx:
+    #     #                         newval = pattern.sub(repl, mx.group(0))
+    #     #             else:
+    #     #                 newval = val.replace(pattern, repl, max_match_count) if self.args.literal_match else pattern.sub(repl, val, max_match_count)
+    #     #         d.append(newval)
+    #     #     output.writerow(d)
+
+
+    #     # import IPython; IPython.embed()

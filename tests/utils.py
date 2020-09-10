@@ -28,7 +28,6 @@ import agate
 import six
 
 from csvkit.exceptions import ColumnIdentifierError, RequiredHeaderError
-import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
