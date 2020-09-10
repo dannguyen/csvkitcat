@@ -10,6 +10,7 @@ except ImportError:
 
 from csvkitcat.moreutils.csvrgrep import CSVRgrep, launch_new_instance
 from tests.utils import CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests
+from unittest import skip as skiptest
 
 
 # class TestCSVRgrep(CSVKitTestCase, EmptyFileTests):
@@ -109,6 +110,7 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, ColumnsTests, NamesTests):
             ["a,b,c", "1,2,3", "2,3,42",],
         )
 
+
     def test_multi_expression_variable_expr_args(self):
         self.assertLines(
             ["-E", "2", "-m", "-E", r"3", "b,c", "-E", "2", "examples/dummy5.csv"],
@@ -140,3 +142,15 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, ColumnsTests, NamesTests):
             ["-E", "2", "a,b", "-E", "3", "examples/dummy5.csv"],
             ["a,b,c", "1,2,3", "2,3,42",],
         )
+
+
+
+
+    @skiptest('to do')
+    def test_when_last_expr_is_single_arg_and_no_input_file(self):
+        r"""
+        cat data.txt | csvrgrep -E '\d{2}'
+
+        Make sure that '\d{2}' is not taken from -E; input_file should be None in this case
+        """
+        pass

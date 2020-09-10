@@ -80,12 +80,18 @@ class CSVRgrep(CSVGrep):
         """
 
 
-
         if not self.args.input_path:
-            # then it must have been eaten by an -E flag; we assume the input file is in e[-1],
-            # where `e` is the last member of expressions_list
-            self.args.input_path = self.args.expressions_list[-1].pop()
+            # then it must have been eaten by an -E flag; we assume the input file is in last_expr[-1],
+            # where `last_expr` is the last member of expressions_list
+            last_expr = self.args.expressions_list[-1]
 
+            if len(last_expr) > 1:
+                # could be either 2 or 3
+                self.args.input_path = last_expr.pop()
+            else:
+                # else, last_expr has an implied second argument, and
+                # input_path is hopefully stdin
+                self.args.input_path = None
 
         self.input_file = self._open_input_file(self.args.input_path)
 

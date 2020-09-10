@@ -13,6 +13,7 @@ ONGOING:
   - [ ] write and test error handling
   - [ ] move into csvsed, csvxcap, etc. 
   - [ ] csvsed is broken for now
+  - [ ] benchmark csvrgrep; is it any faster than multiple invocations of csvgrep?
 
 - csvsed: 
   - [X] change `-X` to `-G/--grep-rows/grep-match`
