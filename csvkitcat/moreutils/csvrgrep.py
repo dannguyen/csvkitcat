@@ -7,17 +7,17 @@ import warnings
 
 from typing import Iterable as typeIterable, NoReturn as typeNoReturn, List as typeList
 
+
 from csvkit.grep import FilteringCSVReader
-
 from csvkit.utilities.csvgrep import CSVGrep
+
+
 from csvkitcat import agate, parse_column_identifiers, rxlib as re
+from csvkitcat.kitcat.alltext import AllTextUtility
 
 
 
-
-
-
-class CSVRgrep(CSVGrep):
+class CSVRgrep(AllTextUtility):
     description = "Like csvgrep, except with support for multiple expressions"
     override_flags = ["f", "L", "blanks", "date-format", "datetime-format"]
 
@@ -169,11 +169,12 @@ class CSVRgrep(CSVGrep):
 
         self.expressions = self._handle_expressions()
 
-        self.all_match = self.args.all_match
-        self.any_match = not self.all_match
-        self.literal_match = self.args.literal_match
-        self.column_offset = self.get_column_offset()
-        self.not_columns = getattr(self.args, "not_columns", None)
+        _all_match = self.args.all_match
+        _any_match = not _all_match
+        _inverse = self.args.inverse
+        _literal_match = self.args.literal_match
+        _column_offset = self.get_column_offset()
+        _not_columns = getattr(self.args, "not_columns", None)
 
         reader_kwargs = self.reader_kwargs
         writer_kwargs = self.writer_kwargs
@@ -195,11 +196,11 @@ class CSVRgrep(CSVGrep):
                 ecolstring,
                 column_names,
                 default_column_ids,
-                literal_match=self.literal_match,
-                column_offset=self.column_offset,
-                inverse=self.args.inverse,
-                any_match=self.any_match,
-                not_columns=self.not_columns,
+                literal_match=_literal_match,
+                column_offset=_column_offset,
+                inverse=_inverse,
+                any_match=_any_match,
+                not_columns=_not_columns,
             )
 
         output = agate.csv.writer(self.output_file, **writer_kwargs)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.alltext import AllTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat import rxlib as re
 

@@ -2,9 +2,9 @@ import argparse
 import warnings
 
 from csvkitcat import agate, parse_column_identifiers
-from csvkitcat.agatable import AgatableUtil
 from csvkitcat.exceptions import ArgumentErrorTK
-from csvkitcat.pandashelper import agate_to_df
+from csvkitcat.kitcat.agatable import AgatableUtil
+from csvkitcat.kitcat.pandasutil import agate_to_df
 
 
 import altair_viewer as altview

@@ -1,30 +1,45 @@
 #!/usr/bin/env python
 
+import os
 import sys
 from setuptools import setup
 
+HERE_PATH = os.path.abspath(os.path.dirname(__file__))
+ABOUT = {}
+with open(os.path.join(HERE_PATH, "csvkitcat", "__about__.py"), "r") as f:
+    exec(f.read(), ABOUT)
+
+with open("README.rst", "r") as f:
+    README = f.read()
+
 install_requires = [
     'csvkit>=1.0.5',
-    'agate>=1.6.1',
     "altair>=4.1",
     "altair-viewer>=0.3.0",
     "python-slugify>=4.0",
     'regex>=2020.7.14',
-    # 'agate-excel>=0.2.2',
-    # 'agate-dbf>=0.2.0',
-    # 'agate-sql>=0.5.3',
 ]
 
+dev_requires = [
+    'coverage>=4.4.2',
+    'nose>=1.1.2',
+    'sphinx>=1.0.7',
+    'sphinx_rtd_theme',
+    'tox>=3.1.0',
+]
+
+
 setup(
-    name='csvkitcat',
-    version='1.5.5-alpha',
-    description='The unofficial extended, awkward family of csvkit',
-    long_description=open('README.rst').read(),
-    author='Dan Nguyen',
-    author_email='dansonguyen@gmail.com',
-    url='https://github.com/dannguyen/csvkitcat',
+    name=ABOUT["__title__"],
+    version=ABOUT["__version__"],
+    description=ABOUT["__description__"],
+    author=ABOUT["__author__"],
+    author_email=ABOUT["__author_email__"],
+    url=ABOUT["__url__"],
+    long_description=README,
+    long_description_content_type="text/x-rst",
     project_urls={
-        'Documentation': 'https://csvkit.readthedocs.io/en/latest/',
+        'Documentation': 'https://csvkitcat.readthedocs.io/en/latest/',
     },
     license='MIT',
     classifiers=[
@@ -65,5 +80,8 @@ setup(
             'csvxplit = csvkitcat.moreutils.csvxplit:launch_new_instance',
         ]
     },
-    install_requires=install_requires
+    install_requires=install_requires,
+    extras_require={
+        'dev': dev_requires
+    }
 )

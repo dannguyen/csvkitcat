@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.alltext import AllTextUtility
 from csvkitcat.moreutils.csvrgrep import CSVRgrep, filter_rows
 from csvkitcat import rxlib as re
 from csvkitcat import parse_column_identifiers
@@ -125,26 +125,57 @@ class CSVSed(AllTextUtility):
         """
 
         def _handle_sed_expressions() -> typeNoReturn:
-            self.sed_expressions = getattr(self.args, 'expressions_list', [])
+            expressions_list = getattr(self.args, 'expressions_list', None)
+            expressions_list = expressions_list.copy() if expressions_list else []
 
-            if not self.sed_expressions:
+            # self.sed_expressions = getattr(self.args, 'expressions_list', [])
+
+            if not expressions_list:
                 # then PATTERN and REPL are set positionally
+                if not (self.args.pattern and self.args.repl):
+                    self.parser.error("Both [PATTERN] and [REPL] arguments need to be filled when not using -E/--expr")
+
                 exp = [self.args.pattern, self.args.repl, ''] # 3rd argument is the sub-columns to filter by, but can be empty by default
                 self.sed_expressions =[exp,]
             else:
+
+                def _build_sedexprlist():
+                    self.sed_expressions = []
+
+                    for i, _e in enumerate(expressions_list):
+                        ex = _e.copy()
+
+                        if len(ex) < 2:
+                            self.argparser.error(
+                                f"-E/--expr requires at least 2 arguments; you provided {len(ex)}: {ex}"
+                            )
+                        if len(ex) > 3:
+                            self.argparser.error(
+                                f"""-E/--expr takes 2 or 3 arguments, not {len(ex)}: {ex}"""
+                            )
+
+                        if len(ex) == 2:
+                            # blank column_str argument is interpreted as "use -c/--columns value"
+                            ex.append('')
+
+
+
                 # error handling
+                if self.args.pattern or self.args.repl:
+                    self.argparser.error("If using -E/--expr, [PATTERN] and [REPL] arguments cannot be filled in")
+
                 if not self.args.input_path and self.args.pattern and not self.args.repl:
                     self.args.input_path = self.args.pattern
                     delattr(self.args, 'pattern')
                     delattr(self.args, 'repl')
                 elif self.args.input_path and self.args.pattern:
                     # if input_path was given AND self.args.pattern (i.e. any other positional args besides INPUT_PATH)
-                    self.parser.error(f"""Got an unexpected positional argument; either:
+                    self.argparser.error(f"""Got an unexpected positional argument; either:
                         - More than 3 arguments for -E/--expr {exes[-1]}
                         - Or, a PATTERN argument, which is invalid when using -E/--expr
                     """)
                 else:
-                    self.parser.error("Some other unhandled positional arg thingy [TODO]")
+                    self.argparser.error("Some other unhandled positional arg thingy [TODO]")
 
 
         _handle_sed_expressions()

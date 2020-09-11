@@ -2,7 +2,7 @@ import agate
 from collections import namedtuple
 import six
 
-from csvkitcat import CSVKitcatUtil
+from csvkitcat.kitcat.ckutil import CSVKitcatUtil
 from sys import stdout
 
 # JUST_TEXT_COLUMNS = agate.TypeTester(types=[agate.Text(cast_nulls=False)])

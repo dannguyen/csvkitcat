@@ -4,6 +4,10 @@
 ## Priority
 
 ONGOING:
+- [X] Added makefile and proper setup stuff
+- [ ] consolidating csvkitutil subclasses
+- [ ] fix up alltex
+- [ ] Implement --version 
 
 - csvsed: 
   - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
@@ -17,6 +21,7 @@ ONGOING:
 
 
 - csvrgrep: 
+  - [ ] test and make sure all-matches/inverse works as expected
   - [X] learned that regex module is very slow compared to re, for some reason...
   - [X] added `from csvkitcat import rxlib as re`, to all tools except for csvnorm
 

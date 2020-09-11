@@ -1,5 +1,5 @@
 from agate.aggregations import Count, Min, Max, MaxLength, Mean, Median, Mode, StDev, Sum
-from csvkitcat import CSVKitcatUtil
+from csvkitcat.kitcat.ckutil import CSVKitcatUtil
 from csvkitcat.exceptions import *
 
 from collections import namedtuple

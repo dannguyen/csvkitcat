@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import agate
-from csvkit.cli import CSVKitUtility
+from csvkitcat import CSVKitUtility
 from csvkitcat import rxlib as re
 import sys
 

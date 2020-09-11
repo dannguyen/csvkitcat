@@ -10,7 +10,7 @@ except ImportError:
     from unittest.mock import patch
 
 
-from csvkitcat.agatable import Aggregates
+from csvkitcat.kitcat.agatable import Aggregates
 
 from csvkitcat.moreutils.csvpivot import CSVPivot, launch_new_instance
 from csvkitcat.exceptions import *

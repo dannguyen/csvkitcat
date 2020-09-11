@@ -2,10 +2,6 @@ altair>=4.1
 altair-viewer>=0.3.0
 csvkit>=1.0.5
 python-slugify>=4.0
-six>=1.6.1
-
-
-
 
 # Development
 coverage>=4.4.2

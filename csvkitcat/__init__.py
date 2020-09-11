@@ -34,14 +34,3 @@ def slugify(txt:tyUnion[str, tySequence]):
         txt = ' '.join(txt)
     return pyslugify(txt, separator='_')
 
-
-class CSVKitcatUtil(CSVKitUtility):
-    def get_column_offset(self):
-        if getattr(self.args, 'zero_based', None):
-            if self.args.zero_based:
-                return 0
-            else:
-                return 1
-        else:
-            return 1
-    # dumb hack

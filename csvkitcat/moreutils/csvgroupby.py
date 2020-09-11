@@ -9,7 +9,7 @@ import warnings
 
 
 from csvkitcat import agate, parse_column_identifiers, slugify
-from csvkitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
+from csvkitcat.kitcat.agatable import AgatableUtil, parse_aggregate_string_arg, print_available_aggregates
 from csvkitcat.exceptions import ArgumentErrorTK
 
 

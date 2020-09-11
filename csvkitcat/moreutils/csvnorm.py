@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from csvkitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.alltext import AllTextUtility
 # from csvkitcat import rxlib as re
 import regex as re
 
