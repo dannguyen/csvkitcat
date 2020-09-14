@@ -4,23 +4,32 @@
 ## Priority
 
 ONGOING:
+
+- csvsed/csvrgrep 1.5.7
+  - [ ] consider making the mutliple grep expressions ORed instead of ANDed
+
+
+
+- csvsed 1.5.6: 
+  - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
+  - [X] actually it's still broken: -E does not allow for multiple expressions
+    - [X] in the middle of figuring out how to balance -E with [PATTERN] [REPL] crap
+        - Decided to kill [PATTERN] [REPL] usage
+  - [x] `-E` should take 2,3 arguments, in the way that csvrgrep -E takes 1 to 2
+  - [?] Clean up/rethink how sed_expressions are executed on each row
+  - [x] Write a helper to clean/normalize self.sed_expressions
+  - [X] Write more tests
+    - [X] Write test for complicated CSV that reflects how order of expressions can change results
+
+
 - [X] Added makefile and proper setup stuff
 - [?] consolidating csvkitutil subclasses
 - [x] fix up alltex instances and inheritance
   - [x] cleaned up csvflatten inheritance
-- [ ] Implement --version 
+- [X] Implement --version 
 - [ ] clean up argumenterrorTK
 
 
-- csvsed: 
-  - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
-  - [ ] actually it's still broken: -E does not allow for multiple expressions
-    - [ ] in the middle of figuring out how to balance -E with [PATTERN] [REPL] crap
-  - [ ] `-E` should take 2,3 arguments, in the way that csvrgrep -E takes 1 to 2
-  - [ ] Clean up/rethink how sed_expressions are executed on each row
-  - [ ] Write a helper to clean/normalize self.sed_expressions
-  - [ ] Write more tests
-    - [ ] Write test for complicated CSV that reflects how order of expressions can change results
 
 
 - csvrgrep: 

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 import contextlib
 from io import StringIO
+from subprocess import Popen, PIPE
 import sys
-from multiprocessing import Process
 
 try:
     from mock import patch
@@ -173,7 +174,8 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
         lines = txt.splitlines()
         self.assertEqual(lines, ["a,b,c", "1,2,3", "3,4,1",])
 
-    ##### error stuff
+    ##############################
+    # error stuff
 
     def test_error_when_no_expressions(self):
         ioerr = StringIO()
@@ -191,7 +193,25 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
                 u = self.get_output(["-E", "-m", "examples/dummy.csv"])
 
         self.assertEqual(e.exception.code, 2)
-        self.assertIn("-E/--expr requires at least 1 argument", ioerr.getvalue())
+        self.assertIn("-E/--expr takes 1 or 2 arguments, not 0:", ioerr.getvalue())
+
+    def test_error_when_expression_has_more_than_2_args(self):
+        ioerr = StringIO()
+        with contextlib.redirect_stderr(ioerr):
+            with self.assertRaises(SystemExit) as e:
+                u = self.get_output(["-E", "a", "b", "c", "examples/dummy.csv"])
+
+        self.assertEqual(e.exception.code, 2)
+        self.assertIn("-E/--expr takes 1 or 2 arguments, not 3:", ioerr.getvalue())
+
+    def test_no_error_when_expression_has_1_args_and_piped_input(self):
+        p1 = Popen(["cat", "examples/dummy.csv",], stdout=PIPE)
+        p2 = Popen(["csvrgrep", "-E", "1|2",], stdin=p1.stdout, stdout=PIPE)
+        p1.stdout.close()
+        p1.wait()
+        txt = p2.communicate()[0].decode("utf-8")
+        p2.wait()
+        self.assertEqual(txt.splitlines(), ["a,b,c", "1,2,3"])
 
     @skiptest("because I dont know how to deal with stdin.isatty holdup")
     def test_error_when_final_expression_eats_up_input_path(self):
@@ -213,18 +233,7 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
         sys.stdin = oldstdin
         exit
 
-    def test_error_when_expression_has_more_than_2_args(self):
-        ioerr = StringIO()
-        with contextlib.redirect_stderr(ioerr):
-            with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["-E", "a", "b", "c", "examples/dummy.csv"])
-
-        self.assertEqual(e.exception.code, 2)
-        self.assertIn("-E/--expr takes 1 or 2 arguments, not 3:", ioerr.getvalue())
-
-
-
-########## future work
+    ########## future work
 
     def test_multi_expressions_are_ANDed_not_ORed(self):
 
@@ -242,4 +251,3 @@ class TestCSVGrep(CSVKitTestCase, EmptyFileTests, NamesTests, ColumnsTests):
             ],
             ["act,scene,speaker,lines", "4,7,Laertes,Know you the hand?",],
         )
-

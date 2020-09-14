@@ -64,7 +64,6 @@ class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
             ],
         )
 
-
     """
 # mess.csv
 "code","name"
@@ -86,40 +85,43 @@ folks
 whats  up? "
     """
 
-
     def test_specify_squeeze_space(self):
         """strip is on by default"""
         self.assertLines(
-            ['--keep-lines', "-Q", "s", "examples/linebreaks.csv"],
-            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats up?"'],
+            ["--keep-lines", "-Q", "s", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', "you", "folks", "", "", 'whats up?"'],
         )
 
     def test_specify_squeeze_lines(self):
         """strip is on by default"""
         self.assertLines(
-            ['--keep-lines', "-Q", "l", "examples/linebreaks.csv"],
-            ["id,speech", '1,"hey', 'you', 'folks', 'whats  up?"'],
+            ["--keep-lines", "-Q", "l", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', "you", "folks", 'whats  up?"'],
         )
 
     def test_specify_all_squeeze_types(self):
         """basically the same as the default, i.e. pointless to spell it out"""
         self.assertLines(
-            ['--keep-lines', "--squeeze", "l", "-Q", "s", "examples/linebreaks.csv"],
-            ["id,speech", '1,"hey', 'you', 'folks', 'whats up?"'],
+            ["--keep-lines", "--squeeze", "l", "-Q", "s", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', "you", "folks", 'whats up?"'],
         )
 
     def test_disable_squeeze_overrides_squeeze_specifying(self):
         self.assertLines(
-            ['--keep-lines', "-Q", "s", '--no-squeeze', "examples/linebreaks.csv"],
-            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats  up?"'],
+            ["--keep-lines", "-Q", "s", "--no-squeeze", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', "you", "folks", "", "", 'whats  up?"'],
         )
 
         self.assertLines(
-            ['--keep-lines', "--squeeze", "l", '--no-squeeze', "examples/linebreaks.csv"],
-            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats  up?"'],
+            [
+                "--keep-lines",
+                "--squeeze",
+                "l",
+                "--no-squeeze",
+                "examples/linebreaks.csv",
+            ],
+            ["id,speech", '1,"hey', "you", "folks", "", "", 'whats  up?"'],
         )
-
-
 
     def test_keep_consecutive_whitespace_oldtest(self):
         self.assertLines(

@@ -134,11 +134,7 @@ class CSVRgrep(JustTextUtility):
         expressions = []
         for i, _e in enumerate(exlist):
             ex = _e.copy()
-            if len(ex) < 1:
-                self.argparser.error(
-                    "-E/--expr requires at least 1 argument, a pattern to be grepped"
-                )
-            if len(ex) > 2:
+            if len(ex) < 1 or len(ex) > 2:
                 self.argparser.error(
                     f"""-E/--expr takes 1 or 2 arguments, not {len(ex)}: {ex}"""
                 )
@@ -174,7 +170,7 @@ class CSVRgrep(JustTextUtility):
         _inverse = self.args.inverse
         _literal_match = self.args.literal_match
         _column_offset = self.get_column_offset()
-        _not_columns = getattr(self.args, "not_columns", None)
+        # _not_columns = getattr(self.args, "not_columns", None)
 
         reader_kwargs = self.reader_kwargs
         writer_kwargs = self.writer_kwargs
@@ -200,7 +196,7 @@ class CSVRgrep(JustTextUtility):
                 column_offset=_column_offset,
                 inverse=_inverse,
                 any_match=_any_match,
-                not_columns=_not_columns,
+                # not_columns=_not_columns,
             )
 
         output = agate.csv.writer(self.output_file, **writer_kwargs)
@@ -225,7 +221,7 @@ def filter_rows(
     column_offset: int,
     inverse: bool,
     any_match: bool,
-    not_columns,
+    # not_columns,
 ) -> FilteringCSVReader:
 
     if literal_match:
@@ -235,7 +231,7 @@ def filter_rows(
 
     if columns_str:
         expr_col_ids = parse_column_identifiers(
-            columns_str, column_names, column_offset, not_columns
+            columns_str, column_names, column_offset,
         )
     else:
         expr_col_ids = default_column_ids

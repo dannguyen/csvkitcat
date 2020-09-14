@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 import contextlib
 from io import StringIO
 from subprocess import Popen, PIPE
@@ -25,8 +24,6 @@ from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string
 class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
     Utility = CSVFlatten
 
-
-
     def test_launch_new_instance(self):
         with patch.object(
             sys, "argv", [self.Utility.__name__.lower(), "examples/dummy.csv"]
@@ -42,7 +39,6 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
             ["examples/dummy.csv"], ["fieldname,value", "a,1", "b,2", "c,3",]
         )
 
-
     def test_version(self):
         p1 = Popen(["csvflatten", "--version"], stdout=PIPE)
         # p1.stdout.close()
@@ -56,7 +52,6 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         # p1.wait()
         # txt = p2.communicate()[0].decode("utf-8")
         # p2.wait()
-
 
     """
 # linebreaks.csv
@@ -74,7 +69,16 @@ whats  up? "
         """internal newlines are preserved, but leading/trailing newlines and spaces are stripped"""
         self.assertLines(
             ["examples/linebreaks.csv",],
-            ["fieldname,value", "id,1", "speech,hey", ",you", ",folks", ",", ",", ",whats  up?",],
+            [
+                "fieldname,value",
+                "id,1",
+                "speech,hey",
+                ",you",
+                ",folks",
+                ",",
+                ",",
+                ",whats  up?",
+            ],
         )
 
     def test_skip_lines(self):
@@ -88,7 +92,6 @@ whats  up? "
             ["examples/dummy.csv", "--chop-length", "42",],
             ['"fieldname","value"', '"a","1"', '"b","2"', '"c","3"',],
         )
-
 
         self.assertLines(
             ["examples/dummy.csv", "-L", "42",],
@@ -153,8 +156,6 @@ whats  up? "
             ],
         )
 
-
-
     ## end of record marker/separator
     def test_end_of_record_marker_default(self):
         """
@@ -204,7 +205,6 @@ whats  up? "
             ],
         )
 
-
     def test_custom_end_of_record_marker(self):
         self.assertLines(
             ["examples/tinyvals.csv", "-E", "False"],
@@ -236,7 +236,6 @@ whats  up? "
                 """omega,%""",
             ],
         )
-
 
     #################################
     ### Tests that verify my examples
@@ -308,14 +307,15 @@ whats  up? "
 | lines     | Know you the hand?   |""".strip().splitlines(),
         )
 
-
-
-### errors
+    ### errors
     def test_error_when_chop_label_but_no_chop_length(self):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(['--chop-label', "examples/dummy4.csv"])
+                u = self.get_output(["--chop-label", "examples/dummy4.csv"])
 
         self.assertEqual(e.exception.code, 2)
-        self.assertIn("-B/--chop-label is an invalid option unless -L/--chop-length is specified", ioerr.getvalue())
+        self.assertIn(
+            "-B/--chop-label is an invalid option unless -L/--chop-length is specified",
+            ioerr.getvalue(),
+        )

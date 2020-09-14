@@ -124,9 +124,9 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
             c3.exception
         )
 
-
-
-#################### examples
+    #################### examples
 
     def test_basic_example(self):
-        self.assertLines(["-B", "2", "-L", "2", "examples/yes.csv"], ["code,value", "3,Yes", "4,Y"])
+        self.assertLines(
+            ["-B", "2", "-L", "2", "examples/yes.csv"], ["code,value", "3,Yes", "4,Y"]
+        )
