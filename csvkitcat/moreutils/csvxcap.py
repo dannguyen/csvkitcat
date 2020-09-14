@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat import rxlib as re
 
@@ -8,7 +8,7 @@ import warnings
 
 DEFAULT_COL_PREFIX = 'xcap'
 
-class CSVXcap(AllTextUtility):
+class CSVXcap(JustTextUtility):
     description = """Capture regex groups in [COLUMN] with [PATTERN] and create new columns"""
 
     override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']

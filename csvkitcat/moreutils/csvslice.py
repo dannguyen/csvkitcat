@@ -1,12 +1,12 @@
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat import rxlib as re
 
 import warnings
 from sys import stderr
 
-class CSVSlice(AllTextUtility):
+class CSVSlice(JustTextUtility):
     description = """Returns the header, plus rows in the specified 0-index range, half-open-interval"""
 
     override_flags = ['L', 'blanks', 'date-format', 'datetime-format']

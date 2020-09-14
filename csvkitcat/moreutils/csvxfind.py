@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat import rxlib as re
 
@@ -9,7 +9,7 @@ import warnings
 DEFAULT_COL_PREFIX = 'xfind'
 DEFAULT_XFIND_DELIMITER = ';'
 
-class CSVXfind(AllTextUtility):
+class CSVXfind(JustTextUtility):
     description = """Find all regex [PATTERN] in [COLUMN], create new column with all matches"""
 
     override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat import rxlib as re
 
@@ -8,7 +8,7 @@ import warnings
 
 DEFAULT_COL_PREFIX = 'xp'
 
-class CSVXplit(AllTextUtility):
+class CSVXplit(JustTextUtility):
     description = """Split a [COLUMN] by [PATTERN]"""
 
     override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']

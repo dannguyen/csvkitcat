@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.moreutils.csvrgrep import CSVRgrep, filter_rows
 from csvkitcat import rxlib as re
 from csvkitcat import parse_column_identifiers
@@ -12,7 +12,7 @@ from sys import stderr
 from typing import NoReturn as typeNoReturn
 
 
-class CSVSed(AllTextUtility):
+class CSVSed(JustTextUtility):
     description = """Replaces all instances of [PATTERN] with [REPL]"""
 
     override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']

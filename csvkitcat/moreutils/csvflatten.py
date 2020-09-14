@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 
-from csvkitcat import agate, CSVKitUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
+from csvkitcat import agate
 from csvkitcat import rxlib as re
 import sys
 
-OUTPUT_COLUMNS = {'names': ['fieldname', 'value',], 'types': (agate.Text(), agate.Text())}
+FLAT_COLUMNS = {'names': ['fieldname', 'value',], 'types': (agate.Text(), agate.Text())}
 DEFAULT_EOR_MARKER = '~~~~~~~~~'
 
-class CSVFlatten(CSVKitUtility):
+class CSVFlatten(JustTextUtility):
     description = """Prints flattened records, such that each row represents a record's fieldname and corresponding value,
                      similar to transposing a record in spreadsheet format"""
 
-    override_flags = ['l', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['L', 'blanks', 'date-format', 'datetime-format']
 
 
     def add_arguments(self):
@@ -34,7 +35,7 @@ class CSVFlatten(CSVKitUtility):
 
 
     def _extract_csv_writer_kwargs(self):
-        kwargs = {}
+        kwargs = super()._extract_csv_writer_kwargs()
 
         if self.args.chop_length:
             # we force arg.out_quoting to be 1 i.e. Quote All
@@ -61,12 +62,6 @@ class CSVFlatten(CSVKitUtility):
 
         self._figure_out_record_marker()
 
-        raw_rows = agate.csv.reader(self.skip_lines(), **self.reader_kwargs)
-        raw_column_names = next(raw_rows)
-
-
-        writer = agate.csv.writer(self.output_file, **self.writer_kwargs)
-        writer.writerow(OUTPUT_COLUMNS['names'])
         maxvallength = self.args.chop_length
         if maxvallength:
             valpattern = re.compile(fr'[^\n]{{1,{maxvallength}}}')
@@ -74,19 +69,23 @@ class CSVFlatten(CSVKitUtility):
             valpattern = re.compile(r'.+')
 
 
-        for y, row in enumerate(raw_rows):
+        myio = self.init_io(write_header=False)
+        myio.output.writerow(FLAT_COLUMNS['names'])
+
+
+        for y, row in enumerate(myio.rows):
             if self.end_of_record_marker and y > 0:
                 # a "normal" fieldname/value row, in which value is less than maxcolwidth
-                writer.writerow((self.end_of_record_marker, None))
+                myio.output.writerow((self.end_of_record_marker, None))
 
-            for x, fieldname in enumerate(raw_column_names):
+            for x, fieldname in enumerate(myio.column_names):
                 linevalues = row[x].strip().splitlines()
                 _linecount = 0
                 for i, value in enumerate(linevalues):
                     if not value: # i.e. a blank new line
                         _linecount += 1
                         fname = f'{fieldname}~{_linecount}' if self.args.label_chopped_values is True else None
-                        writer.writerow([fname, ""])
+                        myio.output.writerow([fname, ""])
                     else:
                         chunks = valpattern.findall(value)
                         for j, chunk in enumerate(chunks):
@@ -95,7 +94,7 @@ class CSVFlatten(CSVKitUtility):
                             else:
                                 fname = f'{fieldname}~{_linecount}' if self.args.label_chopped_values is True else None
                             _linecount += 1
-                            writer.writerow([fname, chunk])
+                            myio.output.writerow([fname, chunk])
 
 
 

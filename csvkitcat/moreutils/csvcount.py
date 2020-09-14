@@ -1,7 +1,7 @@
 from collections import defaultdict
 import csv
 from csvkitcat import rxlib as re
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 
 class _keydict(defaultdict):
     """
@@ -24,7 +24,7 @@ def count_csv_rows(file, no_headers=False):
     xc = sum(1 for r in c)
     return xc
 
-class CSVCount(AllTextUtility):
+class CSVCount(JustTextUtility):
     description = """Returns count of rows, not counting header. Much much MUCH slower than `xsv count`
     It's even slower than `csvstat --count` ¯\\_(ツ)_/¯"""
 

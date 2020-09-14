@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 # from csvkitcat import rxlib as re
 import regex as re
 
-class CSVNorm(AllTextUtility):
+class CSVNorm(JustTextUtility):
     description = """Normalize non-printable characters, e.g. newlines, spaces, and other vertical and horizontal chars.
                      Optionally, normalize letter case"""
 

@@ -13,11 +13,11 @@ from csvkit.utilities.csvgrep import CSVGrep
 
 
 from csvkitcat import agate, parse_column_identifiers, rxlib as re
-from csvkitcat.kitcat.alltext import AllTextUtility
+from csvkitcat.kitcat.justtext import JustTextUtility
 
 
 
-class CSVRgrep(AllTextUtility):
+class CSVRgrep(JustTextUtility):
     description = "Like csvgrep, except with support for multiple expressions"
     override_flags = ["f", "L", "blanks", "date-format", "datetime-format"]
 

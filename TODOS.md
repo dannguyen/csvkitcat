@@ -310,7 +310,7 @@ csvxtract/xfind
 
 - [ ] kill unnecessary arguments
   - [?] partially did this by looking at `csvkit.cli._init_common_parser(self)`
-  - [x] added custom `_extract_csv_reader_kwargs` to alltext.py, with a third argument to `getattr` to prevent error
+  - [x] added custom `_extract_csv_reader_kwargs` to justtext.py, with a third argument to `getattr` to prevent error
 
 - [ ] copy https://csvkit.readthedocs.io/en/latest/scripts/csvstat.html
     ```py

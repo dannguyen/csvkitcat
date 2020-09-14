@@ -2,6 +2,11 @@ from csvkitcat import CSVKitUtility
 
 
 class CSVKitcatUtil(CSVKitUtility):
+    """
+    slightly adjusted version of standard CSVKitUtility
+    """
+
+
     def get_column_offset(self):
         if getattr(self.args, 'zero_based', None):
             if self.args.zero_based:
