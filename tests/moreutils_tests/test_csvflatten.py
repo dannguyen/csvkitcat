@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import six
+import contextlib
+from io import StringIO
 from subprocess import Popen, PIPE
 import sys
-
 
 try:
     from mock import patch
@@ -46,20 +46,26 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
 
     def test_skip_lines(self):
         self.assertLines(
-            ["--skip-lines", "3", "-D", "|", "examples/test_skip_lines.csv"],
-            ["fieldname|value", "a|1", "b|2", "c|3",],
+            ["--skip-lines", "3", "examples/test_skip_lines.csv"],
+            ["fieldname,value", "a,1", "b,2", "c,3",],
         )
 
-    def test_forced_quoting_in_X_mode(self):
+    def test_forced_quoting_in_chop_length_mode(self):
         self.assertLines(
-            ["examples/dummy.csv", "-X", "42", "-U", "3"],
+            ["examples/dummy.csv", "--chop-length", "42",],
+            ['"fieldname","value"', '"a","1"', '"b","2"', '"c","3"',],
+        )
+
+
+        self.assertLines(
+            ["examples/dummy.csv", "-L", "42",],
             ['"fieldname","value"', '"a","1"', '"b","2"', '"c","3"',],
         )
 
     ## X-chop
     def test_x_chop(self):
         self.assertLines(
-            ["examples/statecodes.csv", "-X", "5"],
+            ["examples/statecodes.csv", "-L", "5"],
             [
                 '"fieldname","value"',
                 '"code","IA"',
@@ -78,7 +84,7 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
 
     def test_x_chop_field_label(self):
         self.assertLines(
-            ["examples/statecodes.csv", "-X", "5", "--chop-labels"],
+            ["examples/statecodes.csv", "-L", "5", "--chop-labels"],
             [
                 '"fieldname","value"',
                 '"code","IA"',
@@ -94,6 +100,27 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
                 '"name~1","ssee"',
             ],
         )
+
+        """same test, but with alt label"""
+        self.assertLines(
+            ["examples/statecodes.csv", "-L", "5", "-B"],
+            [
+                '"fieldname","value"',
+                '"code","IA"',
+                '"name","Iowa"',
+                f'"{DEFAULT_EOR_MARKER}",""',
+                '"code","RI"',
+                '"name","Rhode"',
+                '"name~1"," Isla"',
+                '"name~2","nd"',
+                f'"{DEFAULT_EOR_MARKER}",""',
+                '"code","TN"',
+                '"name","Tenne"',
+                '"name~1","ssee"',
+            ],
+        )
+
+
 
     ## end of record marker/separator
     def test_end_of_record_marker_default(self):
@@ -132,7 +159,7 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
             ],
         )
         self.assertLines(
-            ["examples/tinyvals.csv", "--eor", "none"],
+            ["examples/tinyvals.csv", "-E", "none"],
             [
                 """fieldname,value""",
                 """alpha,1""",
@@ -144,9 +171,10 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
             ],
         )
 
+
     def test_custom_end_of_record_marker(self):
         self.assertLines(
-            ["examples/tinyvals.csv", "--eor", "False"],
+            ["examples/tinyvals.csv", "-E", "False"],
             [
                 """fieldname,value""",
                 """alpha,1""",
@@ -159,6 +187,23 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
                 """omega,%""",
             ],
         )
+
+        # all-caps NONE is NOT treated as "none"
+        self.assertLines(
+            ["examples/tinyvals.csv", "-E", "NONE"],
+            [
+                """fieldname,value""",
+                """alpha,1""",
+                """omega,9""",
+                f"""NONE,""",
+                """alpha,a""",
+                """omega,z""",
+                f"""NONE,""",
+                """alpha,$""",
+                """omega,%""",
+            ],
+        )
+
 
     #################################
     ### Tests that verify my examples
@@ -206,7 +251,7 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         )
 
     def test_chopped_hamlet_w_csvlook(self):
-        p1 = Popen(["csvflatten", "-X", "20", "examples/hamlet.csv"], stdout=PIPE)
+        p1 = Popen(["csvflatten", "-L", "20", "examples/hamlet.csv"], stdout=PIPE)
         p2 = Popen(["csvlook"], stdin=p1.stdout, stdout=PIPE)
         p1.stdout.close()
         p1.wait()
@@ -229,3 +274,15 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
 | speaker   | Laertes              |
 | lines     | Know you the hand?   |""".strip().splitlines(),
         )
+
+
+
+### errors
+    def test_error_when_chop_label_but_no_chop_length(self):
+        ioerr = StringIO()
+        with contextlib.redirect_stderr(ioerr):
+            with self.assertRaises(SystemExit) as e:
+                u = self.get_output(['--chop-label', "examples/dummy4.csv"])
+
+        self.assertEqual(e.exception.code, 2)
+        self.assertIn("-B/--chop-label is an invalid option unless -L/--chop-length is specified", ioerr.getvalue())

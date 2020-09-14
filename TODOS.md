@@ -5,9 +5,12 @@
 
 ONGOING:
 - [X] Added makefile and proper setup stuff
-- [ ] consolidating csvkitutil subclasses
-- [ ] fix up alltex
+- [?] consolidating csvkitutil subclasses
+- [ ] fix up alltex instances and inheritance
+  - [x] cleaned up csvflatten inheritance
 - [ ] Implement --version 
+- [ ] clean up argumenterrorTK
+
 
 - csvsed: 
   - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows

@@ -104,7 +104,7 @@ Shakespeare and csvlook::
 
 Chopping the text length to no more than 20 characters per line:
 
-    $ csvflatten -X 20 examples/hamlet.csv | csvlook
+    $ csvflatten -L 20 examples/hamlet.csv | csvlook
 
     | fieldname | value                |
     | --------- | -------------------- |
@@ -148,7 +148,7 @@ Chopping the text length to no more than 20 characters per line:
 
 Another example with csvlook::
 
-    $ csvflatten examples/longvals.csv -X 50 | csvlook | pbcopy
+    $ csvflatten examples/longvals.csv -L 50 | csvlook | pbcopy
 
 
 ::
@@ -182,10 +182,10 @@ Another example with csvlook::
     | url          | https://en.wikipedia.org/wiki/Adaptation_(film)    |
 
 
-Giving each chopped field a header::
+Label each line of a chopped field with its respective header::
 
 
-    $ csvflatten examples/longvals.csv -X 50 --chop-labels | csvlook
+    $ csvflatten examples/longvals.csv -L 50 -B | csvlook
 
 
     | fieldname     | value                                              |
