@@ -11,7 +11,7 @@ DEFAULT_COL_PREFIX = 'xp'
 class CSVXplit(AllTextUtility):
     description = """Split a [COLUMN] by [PATTERN]"""
 
-    override_flags = ['f', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
 

@@ -11,7 +11,7 @@ DEFAULT_COL_PREFIX = 'xcap'
 class CSVXcap(AllTextUtility):
     description = """Capture regex groups in [COLUMN] with [PATTERN] and create new columns"""
 
-    override_flags = ['f', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
 

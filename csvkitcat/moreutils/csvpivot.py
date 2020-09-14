@@ -20,7 +20,7 @@ from csvkitcat.exceptions import *
 class CSVPivot(AgatableUtil):
     description = """Do a simple pivot table, by row, column, or row and column"""
 
-    override_flags = [ 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['L', 'blanks', 'date-format', 'datetime-format']
 
 
 

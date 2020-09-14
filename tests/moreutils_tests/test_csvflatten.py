@@ -37,11 +37,24 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
             ["examples/dummy.csv"], ["fieldname,value", "a,1", "b,2", "c,3",]
         )
 
+
+    """
+# linebreaks.csv
+id,speech
+1,"
+hey
+you
+folks
+
+
+whats  up? "
+    """
+
     def test_newline_handling(self):
-        """newlines are stripped, including leading/trailing striplines"""
+        """internal newlines are preserved, but leading/trailing newlines and spaces are stripped"""
         self.assertLines(
             ["examples/linebreaks.csv",],
-            ["fieldname,value", "id,1", "speech,hey", ",you", ",folks", ",whats up? ",],
+            ["fieldname,value", "id,1", "speech,hey", ",you", ",folks", ",", ",", ",whats  up?",],
         )
 
     def test_skip_lines(self):

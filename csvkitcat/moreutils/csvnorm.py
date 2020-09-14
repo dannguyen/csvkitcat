@@ -9,7 +9,7 @@ class CSVNorm(AllTextUtility):
     description = """Normalize non-printable characters, e.g. newlines, spaces, and other vertical and horizontal chars.
                      Optionally, normalize letter case"""
 
-    override_flags = [ 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = [ 'L', 'blanks', 'date-format', 'datetime-format']
 
 
 
@@ -35,7 +35,7 @@ class CSVNorm(AllTextUtility):
                     help='''Do no space character translations, i.e. ignore and override -T/--translate-space option''')
 
 
-        self.argparser.add_argument('-S', '--squeeze', dest='squeeze_actions',  action='append',
+        self.argparser.add_argument('-Q', '--squeeze', dest='squeeze_actions',  action='append',
                    choices=Normy.SQUEEZE_ACTIONS.copy(),
                    default=[],
                    help='''A list of consecutive space squeezing/collapsing actions. By default, all of the following are performed:
@@ -43,7 +43,7 @@ class CSVNorm(AllTextUtility):
                     "(l)ines" squeezes consecutive '\n' characters
                     "(s)paces" squeezes consecutive ' ' characters''')
 
-        self.argparser.add_argument('--SX', '--no-squeeze', dest='squeeze_actions_disabled',
+        self.argparser.add_argument('--NQ', '--no-squeeze', dest='squeeze_actions_disabled',
                     action='store_true',
                     help='''Do no consecutive space squeezing i.e. ignore and override -S/--squeeze''')
 
@@ -106,9 +106,6 @@ class CSVNorm(AllTextUtility):
                     row[i] = Normy.norm(val, self.normalization_opts)
             myio.output.writerow(row)
 
-        # import json
-        # print("normalize operations:", json.dumps(self.normalization_opts, indent=2))
-
 
 
 class Normy(object):
@@ -155,8 +152,6 @@ class Normy(object):
 
         txt = txt.strip() if options.get('strip') is True else txt
         return txt
-
-
 
 
 

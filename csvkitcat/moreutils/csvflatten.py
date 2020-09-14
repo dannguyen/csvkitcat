@@ -69,9 +69,9 @@ class CSVFlatten(CSVKitUtility):
         writer.writerow(OUTPUT_COLUMNS['names'])
         maxvallength = self.args.chop_length
         if maxvallength:
-            valpattern = re.compile(fr'[^\n]{{{maxvallength}}}|.+?(?=\n|$)')
+            valpattern = re.compile(fr'[^\n]{{1,{maxvallength}}}')
         else:
-            valpattern = re.compile(r'.+?(?=\n|$)')
+            valpattern = re.compile(r'.+')
 
 
         for y, row in enumerate(raw_rows):
@@ -80,19 +80,22 @@ class CSVFlatten(CSVKitUtility):
                 writer.writerow((self.end_of_record_marker, None))
 
             for x, fieldname in enumerate(raw_column_names):
-                value = row[x]
-                lenval = len(value)
-
-                chunks = valpattern.findall(value)
-                for i, chunk in enumerate(chunks):
-                    if i == 0:
-                        fname = fieldname
-                    elif self.args.label_chopped_values is True:
-                        fname = f'{fieldname}~{i}'
+                linevalues = row[x].strip().splitlines()
+                _linecount = 0
+                for i, value in enumerate(linevalues):
+                    if not value: # i.e. a blank new line
+                        _linecount += 1
+                        fname = f'{fieldname}~{_linecount}' if self.args.label_chopped_values is True else None
+                        writer.writerow([fname, ""])
                     else:
-                        fname = None
-                    writer.writerow([fname, chunk])
-
+                        chunks = valpattern.findall(value)
+                        for j, chunk in enumerate(chunks):
+                            if _linecount == 0:
+                               fname = fieldname
+                            else:
+                                fname = f'{fieldname}~{_linecount}' if self.args.label_chopped_values is True else None
+                            _linecount += 1
+                            writer.writerow([fname, chunk])
 
 
 

@@ -64,21 +64,72 @@ class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
             ],
         )
 
-    def test_disable_squeeze_space(self):
-        self.assertRows(
-            ["--squeeze", "l", "examples/strips.csv"],
-            [["id", "text"], ["1", "hey"], ["2", "hello  world"], ["3", "bye    now"],],
+
+    """
+# mess.csv
+"code","name"
+"   1","Dan "
+"0  2"," Billy   Bob  "
+"0003"," ..Who..? "
+"4   "," Mr.
+   R
+obot    "
+
+# linebreaks.csv
+id,speech
+1,"
+hey
+you
+folks
+
+
+whats  up? "
+    """
+
+
+    def test_specify_squeeze_space(self):
+        """strip is on by default"""
+        self.assertLines(
+            ['--keep-lines', "-Q", "s", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats up?"'],
         )
+
+    def test_specify_squeeze_lines(self):
+        """strip is on by default"""
+        self.assertLines(
+            ['--keep-lines', "-Q", "l", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', 'you', 'folks', 'whats  up?"'],
+        )
+
+    def test_specify_all_squeeze_types(self):
+        """basically the same as the default, i.e. pointless to spell it out"""
+        self.assertLines(
+            ['--keep-lines', "--squeeze", "l", "-Q", "s", "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', 'you', 'folks', 'whats up?"'],
+        )
+
+    def test_disable_squeeze_overrides_squeeze_specifying(self):
+        self.assertLines(
+            ['--keep-lines', "-Q", "s", '--no-squeeze', "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats  up?"'],
+        )
+
+        self.assertLines(
+            ['--keep-lines', "--squeeze", "l", '--no-squeeze', "examples/linebreaks.csv"],
+            ["id,speech", '1,"hey', 'you', 'folks', '', '', 'whats  up?"'],
+        )
+
+
 
     def test_keep_consecutive_whitespace_oldtest(self):
         self.assertLines(
-            ["examples/consec_ws.csv", "--SX"],
+            ["examples/consec_ws.csv", "--NQ"],
             ["id,phrase", "1,hello world", "2,good   bye", "3,a  ok"],
         )
 
     def test_disable_strip_and_squeeze(self):
         self.assertLines(
-            ["--SX", "--no-strip", "examples/strips.csv"],
+            ["--NQ", "--no-strip", "examples/strips.csv"],
             [
                 """id,text""",
                 """1,hey""",
@@ -136,6 +187,6 @@ class TestCSVNorm(CSVKitTestCase, ColumnsTests, EmptyFileTests, NamesTests):
     def test_selected_columns_normd_w_options(self):
         """since Column 1 is not selected, no stripping of `id` is done"""
         self.assertLines(
-            ["examples/consec_ws.csv", "-c", "2", "--SX"],
+            ["examples/consec_ws.csv", "-c", "2", "--NQ"],
             ["id,phrase", "1,hello world", "2,good   bye", " 3  ,a  ok"],
         )

@@ -14,8 +14,8 @@ class AllTextUtility(CSVKitcatUtil):
 
     def init_io(self, write_header=True):
 
-        self.args.sniff_limit = 0       # TK is needed??
-        self.args.no_inference = True   # TK is needed??
+        # self.args.sniff_limit = 0       # TK is needed??
+        # self.args.no_inference = True   # TK is needed??
 
         if not hasattr(self.args, 'columns'):
             self.args.columns = []
@@ -46,7 +46,7 @@ class AllTextUtility(CSVKitcatUtil):
             kwargs['delimiter'] = self.args.delimiter
 
         for arg in ('quotechar', 'quoting', 'doublequote', 'escapechar', 'field_size_limit', 'skipinitialspace'):
-            value = getattr(self.args, arg, None)
+            value = getattr(self.args, arg)
             if value is not None:
                 kwargs[arg] = value
 

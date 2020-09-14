@@ -29,7 +29,7 @@ class CSVCount(AllTextUtility):
     It's even slower than `csvstat --count` ¯\\_(ツ)_/¯"""
 
     # override_flags = [ 'S', 'P', 'zero',  'l', 'L', 'blanks', 'date-format', 'datetime-format']
-    override_flags = [ 'P', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = [ 'P', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
     def add_arguments(self):

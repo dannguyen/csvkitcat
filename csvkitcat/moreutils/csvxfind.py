@@ -12,7 +12,7 @@ DEFAULT_XFIND_DELIMITER = ';'
 class CSVXfind(AllTextUtility):
     description = """Find all regex [PATTERN] in [COLUMN], create new column with all matches"""
 
-    override_flags = ['f', '-D', 'S', 'L', 'blanks', 'date-format', 'datetime-format']
+    override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']
 
 
 

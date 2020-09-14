@@ -19,7 +19,7 @@ from unittest import skip as skiptest
 
 class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
     Utility = CSVSlice
-    default_args = ["-S", "1"]
+    default_args = ["-B", "1"]
 
     def test_launch_new_instance(self):
         with patch.object(
@@ -40,7 +40,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         10,11,12
         """
         self.assertLines(
-            ["-S", "2", "examples/dummy4.csv"], ["a,b,c", "7,8,9", "10,11,12",]
+            ["-B", "2", "examples/dummy4.csv"], ["a,b,c", "7,8,9", "10,11,12",]
         )
 
     def test_start_negative_end(self):
@@ -50,7 +50,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         """
 
         self.assertLines(
-            ["-S", "-2", "examples/dummy4.csv"], ["a,b,c", "7,8,9", "10,11,12",]
+            ["-B", "-2", "examples/dummy4.csv"], ["a,b,c", "7,8,9", "10,11,12",]
         )
 
     def test_basic_end(self):
@@ -63,7 +63,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
     def test_basic_start_and_end(self):
         self.assertLines(
-            ["-E", "3", "-S", "1", "examples/dummy4.csv"], ["a,b,c", "4,5,6", "7,8,9",]
+            ["-E", "3", "-B", "1", "examples/dummy4.csv"], ["a,b,c", "4,5,6", "7,8,9",]
         )
 
     def test_basic_negative_end(self):
@@ -71,7 +71,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
     def test_negative_start_and_end(self):
         self.assertLines(
-            ["-S", "-3", "-E", "-2", "examples/dummy4.csv"], ["a,b,c", "4,5,6",]
+            ["-B", "-3", "-E", "-2", "examples/dummy4.csv"], ["a,b,c", "4,5,6",]
         )
 
     def test_basic_length(self):
@@ -81,7 +81,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
     def test_basic_length_and_start(self):
         self.assertLines(
-            ["-S", "1", "-L", "2", "examples/dummy4.csv"], ["a,b,c", "4,5,6", "7,8,9",]
+            ["-B", "1", "-L", "2", "examples/dummy4.csv"], ["a,b,c", "4,5,6", "7,8,9",]
         )
 
     ### index option
@@ -93,7 +93,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
     def test_index_is_equivalent_to_start_and_length_opts(self):
         idx_rows = self.get_output_as_list(["--index", "2", "examples/dummy4.csv"])
         slen_rows = self.get_output_as_list(
-            ["--start", "2", "--len", "1", "examples/dummy4.csv"]
+            ["--begin", "2", "--len", "1", "examples/dummy4.csv"]
         )
 
         for i, idx_row in enumerate(idx_rows):
@@ -112,7 +112,7 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
 
     def test_error_when_index_and_other_slice_options_are_set(self):
         with self.assertRaises(ArgumentErrorTK) as c1:
-            self.get_output(["-i", "1", "-S", "1", "examples/dummy4.csv"])
+            self.get_output(["-i", "1", "-B", "1", "examples/dummy4.csv"])
 
         with self.assertRaises(ArgumentErrorTK) as c2:
             self.get_output(["-i", "1", "-E", "2", "examples/dummy4.csv"])
@@ -123,3 +123,10 @@ class TestCSVSlice(CSVKitTestCase, EmptyFileTests):
         assert "Slice index cannot be set if start/end/length are also defined" in str(
             c3.exception
         )
+
+
+
+#################### examples
+
+    def test_basic_example(self):
+        self.assertLines(["-B", "2", "-L", "2", "examples/yes.csv"], ["code,value", "3,Yes", "4,Y"])
