@@ -4,12 +4,21 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.5.6-alpha
+===========
+
+- changed various flags for many of the tools
+- added ``--version`` flag
+- cleaned up internals and csvkit inheritance
+- [NOT YET FIXED] csvsed is fixed
+
 1.5.5-alpha
 ===========
 
 - :doc:`csvrgrep <moreutils/csvrgrep>`: like ``csvgrep``, but designed for when you want to concisely do a lot of regex filtering over a combination of columns
 
 - csvsed: reworking its internals. Still being worked on, but current tests pass
+
 
 1.5.1-alpha
 ===========

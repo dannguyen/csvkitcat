@@ -27,7 +27,7 @@ from contextlib import contextmanager
 import agate
 import six
 
-from csvkit.exceptions import ColumnIdentifierError, RequiredHeaderError
+from csvkitcat.exceptions import ColumnIdentifierError, RequiredHeaderError
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 

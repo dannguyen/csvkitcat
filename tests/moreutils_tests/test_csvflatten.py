@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+
 import contextlib
 from io import StringIO
 from subprocess import Popen, PIPE
@@ -11,6 +13,7 @@ try:
 except ImportError:
     from unittest.mock import patch
 
+from csvkitcat import __version__
 from csvkitcat.moreutils.csvflatten import (
     CSVFlatten,
     launch_new_instance,
@@ -21,6 +24,8 @@ from tests.utils import CSVKitTestCase, EmptyFileTests, stdin_as_string
 
 class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
     Utility = CSVFlatten
+
+
 
     def test_launch_new_instance(self):
         with patch.object(
@@ -36,6 +41,21 @@ class TestCSVFlatten(CSVKitTestCase, EmptyFileTests):
         self.assertLines(
             ["examples/dummy.csv"], ["fieldname,value", "a,1", "b,2", "c,3",]
         )
+
+
+    def test_version(self):
+        p1 = Popen(["csvflatten", "--version"], stdout=PIPE)
+        # p1.stdout.close()
+        p1.wait()
+        txt = p1.communicate()[0].decode("utf-8")
+        self.assertEqual(txt.splitlines()[0], f"csvkitcat.csvflatten ({__version__})")
+
+        # p1 = Popen(["csvflatten", "-L", "20", "examples/hamlet.csv"], stdout=PIPE)
+        # p2 = Popen(["csvlook"], stdin=p1.stdout, stdout=PIPE)
+        # p1.stdout.close()
+        # p1.wait()
+        # txt = p2.communicate()[0].decode("utf-8")
+        # p2.wait()
 
 
     """

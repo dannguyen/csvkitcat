@@ -12,6 +12,9 @@ import altair as alt
 
 
 def custom_init_common_parser(cparser):
+    """
+    this is a hack since we're trying to do a subcommand thingy
+    """
 
     cparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
                                 help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')

@@ -1,5 +1,5 @@
 
-from csvkit.exceptions import ColumnIdentifierError, CustomException
+from csvkit.exceptions import ColumnIdentifierError, CustomException, RequiredHeaderError
 from agate import DataTypeError
 
 

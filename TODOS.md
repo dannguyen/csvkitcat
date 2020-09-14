@@ -6,7 +6,7 @@
 ONGOING:
 - [X] Added makefile and proper setup stuff
 - [?] consolidating csvkitutil subclasses
-- [ ] fix up alltex instances and inheritance
+- [x] fix up alltex instances and inheritance
   - [x] cleaned up csvflatten inheritance
 - [ ] Implement --version 
 - [ ] clean up argumenterrorTK

@@ -10,7 +10,7 @@ try:
 except ImportError:
     from unittest.mock import patch
 
-from csvkit.exceptions import ColumnIdentifierError
+from csvkitcat.exceptions import ColumnIdentifierError
 
 from csvkitcat.exceptions import ArgumentErrorTK
 from csvkitcat.moreutils.csvxcap import CSVXcap, launch_new_instance
