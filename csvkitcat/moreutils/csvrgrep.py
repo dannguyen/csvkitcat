@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 
-from sys import argv, stderr
+from sys import argv, stderr, stdin
+from os import isatty
+
 import six
 import warnings
 
@@ -80,6 +82,12 @@ class CSVRgrep(JustTextUtility):
             help="If specified, only select rows for which every column matches the given pattern",
         )
 
+
+        self.argparser.add_argument(metavar='PATTERN', dest='first_pattern', type=str,
+                                    # nargs='?',
+                                    help='A pattern to search for',)
+
+
         self.argparser.add_argument(
             metavar="FILE",
             nargs="?",
@@ -93,23 +101,49 @@ class CSVRgrep(JustTextUtility):
         closing files.
         """
 
+        # TODO: SPAGHETTI HACK; untangle later
+        if self.args.names_only:
+            if not self.args.first_pattern and not self.args.input_path:
+                # attempt stdin
+                # print('opening None')
+                self.input_file = self._open_input_file(None)
+            elif self.args.first_pattern and not self.args.input_path:
+                if not isatty(stdin.fileno()):
+                    # then stdin has data
+                    # print(f'have pattern, but opening stdin')
+                    self.input_file = self._open_input_file(None)
+                else:
+                    # assume that first_pattern ate up the input_path
+                    # print(f'opening first_pattern: {self.args.first_pattern}')
+                    self.input_file = self._open_input_file(self.args.first_pattern)
+            else:
+                # print(f'opening input_path: {self.args.input_path}')
+                self.input_file = self._open_input_file(self.args.input_path)
+            self.print_column_names()
+            self.input_file.close()
+            return
+
+
+        self.last_expr = []
         if not self.args.input_path:
             # then it must have been eaten by an -E flag; we assume the input file is in last_expr[-1],
             # where `last_expr` is the last member of expressions_list
-            self.last_expr = self.args.expressions_list[-1]
 
-            if len(self.last_expr) > 1:
-                # could be either 2 or 3
-                self.args.input_path = self.last_expr.pop()
-            elif len(self.last_expr) == 1:
-                pass
-                # do nothing, but be warned that if there is no stdin,
-                # then -E might have eaten up the input_file argument
-                # and interpreted it as pattern
-            else:
-                # else, last_expr has an implied second argument, and
-                # input_path is hopefully stdin
-                self.args.input_path = None
+            if self.args.expressions_list:
+                self.last_expr = self.args.expressions_list[-1]
+
+                if len(self.last_expr) > 1:
+                    # could be either 2 or 3
+                    self.args.input_path = self.last_expr.pop()
+                elif len(self.last_expr) == 1:
+                    pass
+                    # do nothing, but be warned that if there is no stdin,
+                    # then -E might have eaten up the input_file argument
+                    # and interpreted it as pattern
+                else:
+                    # else, last_expr has an implied second argument, and
+                    # input_path is hopefully stdin
+                    self.args.input_path = None
 
         self.input_file = self._open_input_file(self.args.input_path)
 
@@ -127,30 +161,31 @@ class CSVRgrep(JustTextUtility):
             self.input_file.close()
 
     def _handle_expressions(self) -> typeList:
-        exlist = getattr(self.args, 'expressions_list', [])
-        if not exlist:
-            self.argparser.error("Must specify at least one -E/--expr expression")
-
         expressions = []
-        for i, _e in enumerate(exlist):
-            ex = _e.copy()
-            if len(ex) < 1 or len(ex) > 2:
-                self.argparser.error(
-                    f"""-E/--expr takes 1 or 2 arguments, not {len(ex)}: {ex}"""
-                )
+        first_pattern = self.args.first_pattern
+        first_colstring = self.args.columns if self.args.columns else ''
+        expressions.append([first_pattern, first_colstring])
 
-            if len(ex) == 1:
-                # blank column_str argument is interpreted as "use -c/--columns value"
-                ex.append("")
+        # if not exlist:
+        #     self.argparser.error("Must specify at least one -E/--expr expression")
 
-            expressions.append(ex)
+        if exlist := getattr(self.args, 'expressions_list'):
+            for i, _e in enumerate(exlist):
+                ex = _e.copy()
+                if len(ex) < 1 or len(ex) > 2:
+                    self.argparser.error(
+                        f"""-E/--expr takes 1 or 2 arguments, not {len(ex)}: {ex}"""
+                    )
+
+                if len(ex) == 1:
+                    # blank column_str argument is interpreted as "use -c/--columns value"
+                    ex.append(first_colstring)
+
+                expressions.append(ex)
 
         return expressions
 
     def main(self):
-        if self.args.names_only:
-            self.print_column_names()
-            return
 
         if self.additional_input_expected():
             if len(self.last_expr) == 1:

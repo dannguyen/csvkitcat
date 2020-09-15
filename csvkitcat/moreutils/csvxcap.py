@@ -19,10 +19,10 @@ class CSVXcap(JustTextUtility):
 
 
         self.argparser.add_argument(metavar='COLUMN', dest='target_column',
-                                    help='A column to split by pattern')
+                                    help='A column to extract captures')
 
         self.argparser.add_argument(metavar='PATTERN', dest='pattern',
-                                    help='A regex pattern to split by')
+                                    help='A regex pattern to capture')
 
 
         self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',

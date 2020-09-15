@@ -163,6 +163,12 @@ class CSVSed(JustTextUtility):
                 # blank column_str argument is interpreted as "use -c/--columns value"
                 ex.append('')
 
+
+            # special case for when user is attempting to do a replacement that has a leading
+            # hyphen
+            if ex[1][0:2] == r'\-':
+                ex[1] = ex[1][1:]
+
             the_expressions.append(ex)
 
         return the_expressions
@@ -237,7 +243,8 @@ class CSVSed(JustTextUtility):
                 newval = val
 
                 for ex in self.expressions:
-                    pattern, repl, _xids = ex
+                    pattern, repltext, _xids = ex
+                    repl = fr'{repltext}'
                     excol_ids = _xids if _xids else myio.column_ids  # todos: this should be handled earlier
 
                     if v_id in excol_ids:

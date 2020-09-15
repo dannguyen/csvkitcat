@@ -407,3 +407,84 @@ class TestCSVSed(CSVKitTestCase):
         # clean up stdin
         sys.stdin = oldstdin
         exit
+
+
+
+
+
+
+###########
+### special stuff
+
+    def test_pattern_arg_has_leading_hyphen_causes_error(self):
+        ioerr = StringIO()
+        with contextlib.redirect_stderr(ioerr):
+            with self.assertRaises(SystemExit) as e:
+                u = self.get_output(['-E', r'-\d', r'@\d', "examples/ledger.csv"])
+
+        self.assertEqual(e.exception.code, 2)
+        self.assertIn(r"unrecognized arguments: -\d", ioerr.getvalue())
+        # todo later
+        # self.assertIn(rf"""If you are trying to match a pattern that begins with a hyphen, put a backslash before that hyphen, e.g. '\-\d' """, ioerr.getvalue())
+
+
+    def test_pattern_arg_has_leading_hyphen_escaped(self):
+        self.assertLines(
+            [
+                "-G",
+                "-E", r'\-(\d)', r'@\1',
+                "examples/ledger.csv",
+            ],
+            [
+                'id,name,revenue,gross',
+                # '001,apples,21456,$3210.45',
+                # '002,bananas,"2,442","-$1,234"',
+                # '003,cherries,"$9,700.55","($7.90)"',
+                # '004,dates,4 102 765.33,18 765',
+                # '005,eggplants,"$3,987",$501',
+                # '006,figs,"$30,333","(777.66)"',
+                '006,grapes,"154,321.98","@32,654"',
+            ],
+        )
+
+
+    def test_pattern_arg_has_leading_hyphen_double_escaped(self):
+        self.assertLines(
+            [
+                "-G",
+                "-E", r'\\-(\d)', r'@\1',
+                "examples/ledger.csv",
+            ],
+            [
+                'id,name,revenue,gross',
+                # '001,apples,21456,$3210.45',
+                # '002,bananas,"2,442","-$1,234"',
+                # '003,cherries,"$9,700.55","($7.90)"',
+                # '004,dates,4 102 765.33,18 765',
+                # '005,eggplants,"$3,987",$501',
+                # '006,figs,"$30,333","(777.66)"',
+            ],
+        )
+
+
+
+
+
+    def test_repl_arg_has_leading_hyphen_escaped(self):
+        self.assertLines(
+            [
+                "-G",
+                "-E", r'\-(\d)', r'\-X\1',
+                "examples/ledger.csv",
+            ],
+            [
+                'id,name,revenue,gross',
+                # '001,apples,21456,$3210.45',
+                # '002,bananas,"2,442","-$1,234"',
+                # '003,cherries,"$9,700.55","($7.90)"',
+                # '004,dates,4 102 765.33,18 765',
+                # '005,eggplants,"$3,987",$501',
+                # '006,figs,"$30,333","(777.66)"',
+                '006,grapes,"154,321.98","-X32,654"',
+            ],
+        )

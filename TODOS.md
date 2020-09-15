@@ -5,6 +5,23 @@
 
 ONGOING:
 
+- csvsed/csvrgrep:
+  - revamp to act more like csvwhere: only use -E when doing additional expressions
+  - is it wise to let users implicitly affect columns that were set by global flag `-c/--columns`; would it be better to force users to explicitly list columns?
+  - csvrgrep revamp:
+    - [X] finish up tests, especially error handling
+    - [ ] handling of optional arguments between PATTERN and INPUT_FILE is not robust
+  - csvsed:
+    - [ ] revamp to have mandated pattern and repl
+    - [ ] -G should only impact first_pattern and repl
+
+- csvsed and all regexing:
+  - special case for when pattern or repl start with a leading hyphen
+  - let user do '\-', which will be interpreted as '-':
+    - [X] fix breaking test: TestCSVSed.test_repl_arg_has_leading_hyphen_escaped
+    - [ ] test for edge case if user is attempting '\\-'
+
+
 - csvwhere:
 
   - [x] basic implementation and tests
@@ -13,10 +30,31 @@ ONGOING:
   - [ ] figure out how to use agate.Table.where instead of duplicating and relocalizing code
   - [ ] compare performance to csvsql
 
+
+- csvround: `csvround [COLUMNS] -E/--expr 'ROUNDING_TYPE[round]|arg'    --inplace`
+  - come up with alt name: csvchop, csvtrim, csvlop, csvprune, csvshrink, 
+  - rounding types:
+    - ceil, floor, round (1 by default, power of 10)
+    - time (truncate time to decade-year-month-day-hour-minute-second)
+    - length (truncate str to max length)
+    - delimiter (truncate first delimiter)
+  - create new column for each operation
+    - by default? or should --in-place replacement be default?
+  - since we're operating with just strings, (don't use agatetable) we have the option of being silent by default if user attempts an operation that doesn't work
+  - by default, new columns have this pattern: "column_name_chopped"; give user the option of --suffix
+
+
+- csvxtract/csvxform: `csvxtract COLUMN PATTERN --new-column-name`
+  - creates a new column
+  - but how is it different than csvsed other than that?
+
+
 - realexamples
   - [ ] congress-legislators: 
     - csvsql to calculate age
     - pivot counts of party, and chart and csvrange (born after 1900)
+
+
 
 
 - csvsed/csvrgrep 1.5.7
