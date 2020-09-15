@@ -13,19 +13,25 @@ from typing import List as typeList
 class CSVSed(JustTextUtility):
     description = """Replaces all instances of [PATTERN] with [REPL]"""
 
-    override_flags = ['f', 'L', 'blanks', 'date-format', 'datetime-format']
-
+    override_flags = ["f", "L", "blanks", "date-format", "datetime-format"]
 
     def add_arguments(self):
-        self.argparser.add_argument('-c', '--columns', dest='columns',
-                                    help='A comma separated list of column indices, names or ranges to be searched, e.g. "1,id,3-5".')
+        self.argparser.add_argument(
+            "-c",
+            "--columns",
+            dest="columns",
+            help='A comma separated list of column indices, names or ranges to be searched, e.g. "1,id,3-5".',
+        )
 
-        self.argparser.add_argument('-E', '--expr', dest='expressions_list',
-                                        # required=True,
-                                        nargs='*',
-                                        action='append',
-                                        type=str,
-                                        help=r"""
+        self.argparser.add_argument(
+            "-E",
+            "--expr",
+            dest="expressions_list",
+            # required=True,
+            nargs="*",
+            action="append",
+            type=str,
+            help=r"""
                                         When you want to do multiple sed_expressions:
                                             -E 'PATTERN' 'REPL' '[names_of_columns]'
 
@@ -37,45 +43,66 @@ class CSVSed(JustTextUtility):
                                         -E '^(?i)smith$' 'SMITH' 'last_name' \
                                         -E '(\d{2})-(\d{3})' '$1:$2' '' \
                                         """,
-            )
+        )
 
+        self.argparser.add_argument(
+            "-m",
+            "--match-literal",
+            dest="literal_match",
+            action="store_true",
+            default=False,
+            help="By default, [PATTERN] is assumed to be a regex. Set this flag to make it a literal text find/replace",
+        )
 
-        self.argparser.add_argument('-m', '--match-literal', dest="literal_match", action='store_true',
-                                    default=False,
-                                    help='By default, [PATTERN] is assumed to be a regex. Set this flag to make it a literal text find/replace',)
+        self.argparser.add_argument(
+            "-G",
+            "--like-grep",
+            dest="like_grep",
+            action="store_true",
+            default=False,
+            help="""Only return rows in which [PATTERN] was a match (BEFORE any transformations) – i.e. like grep''s traditional behavior""",
+        )
 
+        self.argparser.add_argument(
+            "-R",
+            "--replace",
+            dest="replace_value",
+            action="store_true",
+            default=False,
+            help="Replace entire field with [REPL], instead of just the substring matched by [PATTERN]",
+        )
 
-        self.argparser.add_argument('-G', '--like-grep', dest='like_grep', action='store_true',
-                                    default=False,
-                                    help="""Only return rows in which [PATTERN] was a match (BEFORE any transformations) – i.e. like grep''s traditional behavior""")
+        self.argparser.add_argument(
+            "--max",
+            dest="max_match_count",
+            action="store",
+            default=0,
+            type=int,
+            help="Max number of matches to replace PER FIELD. Default is 0, i.e. no limit",
+        )
 
+        self.argparser.add_argument(
+            metavar="PATTERN",
+            dest="first_pattern",
+            type=str,
+            # nargs='?',
+            help="A pattern to search for",
+        )
 
-        self.argparser.add_argument('-R', '--replace', dest="replace_value", action='store_true',
-                                    default=False,
-                                    help='Replace entire field with [REPL], instead of just the substring matched by [PATTERN]',)
+        self.argparser.add_argument(
+            metavar="REPL",
+            dest="first_repl",
+            type=str,
+            # nargs='?',
+            help="A replacement pattern",
+        )
 
-
-        self.argparser.add_argument('--max', dest="max_match_count", action='store',
-                                    default=0,
-                                    type=int,
-                                    help='Max number of matches to replace PER FIELD. Default is 0, i.e. no limit')
-
-
-        self.argparser.add_argument(metavar='PATTERN', dest='first_pattern', type=str,
-                                    # nargs='?',
-                                    help='A pattern to search for',)
-
-        self.argparser.add_argument(metavar='REPL', dest='first_repl', type=str,
-                                    # nargs='?',
-                                    help='A replacement pattern',)
-
-
-        self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
-                                    help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')
-
-
-
-
+        self.argparser.add_argument(
+            metavar="FILE",
+            nargs="?",
+            dest="input_path",
+            help="The CSV file to operate on. If omitted, will accept input as piped data via STDIN.",
+        )
 
     def run(self):
         """
@@ -112,62 +139,47 @@ class CSVSed(JustTextUtility):
                     # input_path is hopefully stdin
                     self.args.input_path = None
 
+            # # # error handling
+            # #  if self.args.pattern or self.args.repl:
+            # #      self.argparser.error("If using -E/--expr, [PATTERN] and [REPL] arguments cannot be filled in")
 
-               # # # error handling
-               # #  if self.args.pattern or self.args.repl:
-               # #      self.argparser.error("If using -E/--expr, [PATTERN] and [REPL] arguments cannot be filled in")
-
-               # #  if not self.args.input_path and self.args.pattern and not self.args.repl:
-               # #      self.args.input_path = self.args.pattern
-               # #      delattr(self.args, 'pattern')
-               # #      delattr(self.args, 'repl')
-               # #  elif self.args.input_path and self.args.pattern:
-               # #      # if input_path was given AND self.args.pattern (i.e. any other positional args besides INPUT_PATH)
-               # #      self.argparser.error(f"""Got an unexpected positional argument; either:
-               # #          - More than 3 arguments for -E/--expr {exes[-1]}
-               # #          - Or, a PATTERN argument, which is invalid when using -E/--expr
-               # #      """)
-               # #  else:
-               # #      self.argparser.error("Some other unhandled positional arg thingy [TODO]")
-               # q
+            # #  if not self.args.input_path and self.args.pattern and not self.args.repl:
+            # #      self.args.input_path = self.args.pattern
+            # #      delattr(self.args, 'pattern')
+            # #      delattr(self.args, 'repl')
+            # #  elif self.args.input_path and self.args.pattern:
+            # #      # if input_path was given AND self.args.pattern (i.e. any other positional args besides INPUT_PATH)
+            # #      self.argparser.error(f"""Got an unexpected positional argument; either:
+            # #          - More than 3 arguments for -E/--expr {exes[-1]}
+            # #          - Or, a PATTERN argument, which is invalid when using -E/--expr
+            # #      """)
+            # #  else:
+            # #      self.argparser.error("Some other unhandled positional arg thingy [TODO]")
+            # q
 
         self.input_file = self._open_input_file(self.args.input_path)
 
         try:
             with warnings.catch_warnings():
-                if getattr(self.args, 'no_header_row', None):
-                    warnings.filterwarnings(action='ignore', message='Column names not specified', module='agate')
+                if getattr(self.args, "no_header_row", None):
+                    warnings.filterwarnings(
+                        action="ignore",
+                        message="Column names not specified",
+                        module="agate",
+                    )
 
                 self.main()
         finally:
             self.input_file.close()
 
-
-
     def _handle_sed_expressions(self) -> typeList:
-        # 'E/--expr' is required
-        # expressions_list = expressions_list.copy() if expressions_list else []
+        # TODO: fix this spaghetti CRAP: maybe make expressions handle dicts/named typles instead of lists
 
-        # self.sed_expressions = getattr(self.args, 'expressions_list', [])
-
-        # if not expressions_list:
-        #     # then PATTERN and REPL are set positionally
-        #     if not (self.args.pattern and self.args.repl):
-        #         self.parser.error("Both [PATTERN] and [REPL] arguments need to be filled when not using -E/--expr")
-
-        #     exp = [self.args.pattern, self.args.repl, ''] # 3rd argument is the sub-columns to filter by, but can be empty by default
-        #     self.sed_expressions =[exp,]
-        # else:
-
-            # def _build_sedexprlist():
-
-        first_col_str = self.args.columns if self.args.columns else ''
+        first_col_str = self.args.columns if self.args.columns else ""
         first_expr = [self.args.first_pattern, self.args.first_repl, first_col_str]
-
-        the_expressions = [first_expr]
-
-        if expressions_list := getattr(self.args, 'expressions_list', []):
-            for i, _e in enumerate(expressions_list):
+        expressions = [first_expr]
+        if list_expressions := getattr(self.args, "expressions_list", []):
+            for i, _e in enumerate(list_expressions):
                 ex = _e.copy()
 
                 if len(ex) < 2 or len(ex) > 3:
@@ -177,22 +189,24 @@ class CSVSed(JustTextUtility):
 
                 if len(ex) == 2:
                     ex.append(first_col_str)
-                # special case for when user is attempting to do a replacement that has a leading
-                # hyphen
 
-                the_expressions.append(ex)
+                expressions.append(ex)
 
-
-        # TODO: fix this spaghetti
-        # this branch re-loops through the_expressions and fixes any leading dashes in the repls
-        for ex in the_expressions:
-            if ex[1][0:2] == r'\-':
+        for ex in expressions:
+            # this branch re-loops through the_expressions and fixes any leading dashes in the repls
+            if ex[1][0:2] == r"\-":
                 ex[1] = ex[1][1:]
 
+            # compile the pattern into a regex
+            if not self.literal_match_mode:
+                ex[0] = re.compile(ex[0])
 
+            # set the column_ids
+            ex[2] = parse_column_identifiers(
+                ex[2], self.all_column_names, self.column_offset, None
+            )
 
-        return the_expressions
-
+        return expressions
 
     def main(self):
         # TODO: THIS IS CRAP
@@ -201,89 +215,89 @@ class CSVSed(JustTextUtility):
                 stderr.write(
                     f"""WARNING: the last positional argument – {self.last_expr[0]} – is interpreted as the first and only argument to -E/--expr, i.e. the pattern to search for.\n"""
                 )
-                stderr.write("Make sure that it isn't meant to be the name of your input file!\n\n")
+                stderr.write(
+                    "Make sure that it isn't meant to be the name of your input file!\n\n"
+                )
             stderr.write(
                 "No input file or piped data provided. Waiting for standard input:\n"
             )
 
+        self.literal_match_mode = self.args.literal_match
+        self.replace_value_mode = self.args.replace_value
 
+        self.max_match_count = self.args.max_match_count
+        if (
+            self.max_match_count < 1
+        ):  # because str.replace and re.sub use a different catchall/default value
+            self.max_match_count = -1 if self.literal_match_mode else 0
+
+        myio = self.init_io(write_header=True)
+        self.all_column_names = myio.column_names
+        self.all_column_ids = myio.column_ids
+        self.column_offset = self.get_column_offset()
 
         self.expressions = self._handle_sed_expressions()
 
-        max_match_count = self.args.max_match_count
-        if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
-            max_match_count = -1 if self.args.literal_match else 0
-
-
-        myio = self.init_io(write_header=True)
         xrows = myio.rows
-
-
         # here's where we emulate csvrgrep...
         if self.args.like_grep:
-            self.column_offset = self.get_column_offset()
 
-            for e in self.expressions:
-                epattern = e[0]
-                ecolstring = e[2] # if e[2] else selected_column_ids
+            epattern = self.args.first_pattern
+            ecolstring = self.args.columns
 
-                xrows = filter_rows(
-                    xrows,
-                    epattern,
-                    ecolstring,
-                    myio.column_names,
-                    myio.column_ids,
-                    literal_match=self.args.literal_match,
-                    column_offset=self.column_offset,
-                    inverse=False,
-                    any_match=True,
-                )
-
-
-        all_patterns = []
-        for e in self.expressions:
-            pattern, repl, ecol_string = e
-            if not self.args.literal_match:
-                e[0] = pattern = re.compile(pattern)
-
-            if ecol_string:
-                 # TODO: this should throw an error of ecol_str refers to columns not in all_column_ids
-                ecol_ids = parse_column_identifiers(ecol_string, myio.column_names, self.get_column_offset(), getattr(self.args, 'not_columns', None))
-            else:
-                ecol_ids = myio.column_ids
-            e[2] =  ecol_ids
-
-            ecol_names = [myio.column_names[i] for i in ecol_ids]
-            all_patterns.append([ecol_names, pattern])
-
+            xrows = filter_rows(
+                xrows,
+                epattern,
+                ecolstring,
+                self.all_column_names,
+                self.all_column_ids,
+                literal_match=self.literal_match_mode,
+                column_offset=self.column_offset,
+                inverse=False,
+                any_match=True,
+            )
 
         # TODO: fix spaghetti
+        # for each row, and for each column value
+        #  we iterate through each expression
+        #     and attempt/apply the substitution on the given column value,
+        #     i.e. newval
         for row in xrows:
-            d = []
-            for v_id, val in enumerate(row):
+            new_row = []
+
+            for cid, val in enumerate(row):
                 newval = val
 
                 for ex in self.expressions:
-                    pattern, repltext, _xids = ex
-                    repl = fr'{repltext}'
-                    excol_ids = _xids if _xids else myio.column_ids  # todos: this should be handled earlier
+                    pattern, repl, col_ids = ex
+                    if cid in col_ids:
+                        repl = fr"{repl}"
 
-                    if v_id in excol_ids:
-                        if self.args.replace_value:
-                            if self.args.literal_match:
+                        if not self.replace_value_mode:
+                            newval = (
+                                pattern.sub(repl, newval, self.max_match_count)
+                                if not self.literal_match_mode
+                                else newval.replace(pattern, repl, self.max_match_count)
+                            )
+
+                        elif self.replace_value_mode:
+                            if not self.literal_match_mode:
+                                mx = pattern.search(newval)
+                                newval = (
+                                    pattern.sub(repl, mx.group(0)) if mx else newval
+                                )
+                            elif self.literal_match_mode:
                                 newval = repl if pattern in newval else newval
                             else:
-                                mx = pattern.search(newval)
-                                if mx:
-                                    newval = pattern.sub(repl, mx.group(0))
+                                pass  # there is no else; I just want to explicitly mention self.literal_match_mode
                         else:
-                            if self.args.literal_match:
-                                newval = newval.replace(pattern, repl, max_match_count)
-                            else:
-                                newval = pattern.sub(repl, newval, max_match_count)
-                d.append(newval)
+                            pass  # there is no else; I just want to explicitly mention self.replace_value_mode
 
-            myio.output.writerow(d)
+                new_row.append(newval)
+                # end of expression-iteration; move on to the next column val
+
+            myio.output.writerow(new_row)
+            # end of column-value iteration, move on to the next row
 
 
 def launch_new_instance():
@@ -291,5 +305,5 @@ def launch_new_instance():
     utility.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     launch_new_instance()

@@ -9,6 +9,13 @@ CHANGELOG
 
 - csvwhere
 
+- csvsed, csvrgrep
+    - revamped required arguments and additional expressions
+
+- csvsed
+
+    + --like-grep now only filters by the first (required) expression, as chaining additional expressions likely results in a too-small result set for most use cases
+
 
 1.5.6-alpha
 ===========

@@ -144,6 +144,25 @@ class TestCSVSed(CSVKitTestCase):
             ["code,value", "1,Your money!", '2,"Your stuff!, my way"',],
         )
 
+    def test_like_grep_mode_uses_first_expression_only(self):
+        """
+        [
+        "a,b,c",
+        "1,2,3",
+        "2,3,42",
+        "3,4,1",
+        "22,99,222",
+        ]
+
+        The additional expr should still have a substitution effect, but it
+            should NOT limit the rows returned
+        """
+
+        self.assertLines(
+            ["-G", "3", "9", "examples/dummy5.csv", "-E", r"\d{2,}", "X"],
+            ["a,b,c", "1,2,9", "2,9,X", "9,4,1",],
+        )
+
     # @skiptest('need to do test_like_grep on their own')
     def test_replace_and_like_grep(self):
         self.assertLines(
@@ -318,6 +337,9 @@ class TestCSVSed(CSVKitTestCase):
             ],
         )
 
+    @skiptest(
+        "Deprecated, because --like-grep now only filters by the first expression, not subsequent ones"
+    )
     def test_multiple_expressions_like_grep_are_ANDed_not_ORed(self):
         self.assertLines(
             [

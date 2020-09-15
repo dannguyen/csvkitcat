@@ -12,8 +12,10 @@ ONGOING:
     - [X] finish up tests, especially error handling
     - [ ] handling of optional arguments between PATTERN and INPUT_FILE is not robust
   - csvsed:
-    - [ ] revamp to have mandated pattern and repl
-    - [ ] -G should only impact first_pattern and repl
+    - [X] revamp to have mandated pattern and repl
+    - [X] -G should only impact first_pattern and repl
+    - [X] cleaned up code a bit, still could use more refactoring
+    - 
 
 - csvsed and all regexing:
   - special case for when pattern or repl start with a leading hyphen
