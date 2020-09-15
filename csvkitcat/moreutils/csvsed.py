@@ -21,7 +21,7 @@ class CSVSed(JustTextUtility):
                                     help='A comma separated list of column indices, names or ranges to be searched, e.g. "1,id,3-5".')
 
         self.argparser.add_argument('-E', '--expr', dest='expressions_list',
-                                        required=True,
+                                        # required=True,
                                         nargs='*',
                                         action='append',
                                         type=str,
@@ -61,6 +61,15 @@ class CSVSed(JustTextUtility):
                                     help='Max number of matches to replace PER FIELD. Default is 0, i.e. no limit')
 
 
+        self.argparser.add_argument(metavar='PATTERN', dest='first_pattern', type=str,
+                                    # nargs='?',
+                                    help='A pattern to search for',)
+
+        self.argparser.add_argument(metavar='REPL', dest='first_repl', type=str,
+                                    # nargs='?',
+                                    help='A replacement pattern',)
+
+
         self.argparser.add_argument(metavar='FILE', nargs='?', dest='input_path',
                                     help='The CSV file to operate on. If omitted, will accept input as piped data via STDIN.')
 
@@ -81,24 +90,27 @@ class CSVSed(JustTextUtility):
                  to: csvsed -E 'PATTERN' 'REPL' 'COLUMNS' -E x y z input.csv
         """
 
-
+        self.last_expr = []
         if not self.args.input_path:
             # then it must have been eaten by an -E flag; we assume the input file is in last_expr[-1],
             # where `last_expr` is the last member of expressions_list
-            self.last_expr = self.args.expressions_list[-1]
 
-            if len(self.last_expr) > 2:
-                # could be either 3 or 4
-                self.args.input_path = self.last_expr.pop()
-            elif len(self.last_expr) == 2:
-                pass
-                # do nothing, but be warned that if there is no stdin,
-                # then -E might have eaten up the input_file argument
-                # and interpreted it as pattern
-            else:
-                # else, last_expr has an implied third argument, and
-                # input_path is hopefully stdin
-                self.args.input_path = None
+            # TODO: THIS IS CRAP
+            if self.args.expressions_list:
+                self.last_expr = self.args.expressions_list[-1]
+
+                if len(self.last_expr) > 2:
+                    # could be either 3 or 4
+                    self.args.input_path = self.last_expr.pop()
+                elif len(self.last_expr) == 2:
+                    pass
+                    # do nothing, but be warned that if there is no stdin,
+                    # then -E might have eaten up the input_file argument
+                    # and interpreted it as pattern
+                else:
+                    # else, last_expr has an implied third argument, and
+                    # input_path is hopefully stdin
+                    self.args.input_path = None
 
 
                # # # error handling
@@ -134,7 +146,6 @@ class CSVSed(JustTextUtility):
 
     def _handle_sed_expressions(self) -> typeList:
         # 'E/--expr' is required
-        expressions_list = getattr(self.args, 'expressions_list')
         # expressions_list = expressions_list.copy() if expressions_list else []
 
         # self.sed_expressions = getattr(self.args, 'expressions_list', [])
@@ -149,32 +160,42 @@ class CSVSed(JustTextUtility):
         # else:
 
             # def _build_sedexprlist():
-        the_expressions = []
 
-        for i, _e in enumerate(expressions_list):
-            ex = _e.copy()
+        first_col_str = self.args.columns if self.args.columns else ''
+        first_expr = [self.args.first_pattern, self.args.first_repl, first_col_str]
 
-            if len(ex) < 2 or len(ex) > 3:
-                self.argparser.error(
-                    f"-E/--expr takes 2 or 3 arguments; you provided {len(ex)}: {ex}"
-                )
+        the_expressions = [first_expr]
 
-            if len(ex) == 2:
-                # blank column_str argument is interpreted as "use -c/--columns value"
-                ex.append('')
+        if expressions_list := getattr(self.args, 'expressions_list', []):
+            for i, _e in enumerate(expressions_list):
+                ex = _e.copy()
+
+                if len(ex) < 2 or len(ex) > 3:
+                    self.argparser.error(
+                        f"-E/--expr takes 2 or 3 arguments; you provided {len(ex)}: {ex}"
+                    )
+
+                if len(ex) == 2:
+                    ex.append(first_col_str)
+                # special case for when user is attempting to do a replacement that has a leading
+                # hyphen
+
+                the_expressions.append(ex)
 
 
-            # special case for when user is attempting to do a replacement that has a leading
-            # hyphen
+        # TODO: fix this spaghetti
+        # this branch re-loops through the_expressions and fixes any leading dashes in the repls
+        for ex in the_expressions:
             if ex[1][0:2] == r'\-':
                 ex[1] = ex[1][1:]
 
-            the_expressions.append(ex)
+
 
         return the_expressions
 
 
     def main(self):
+        # TODO: THIS IS CRAP
         if self.additional_input_expected():
             if len(self.last_expr) == 2:
                 stderr.write(

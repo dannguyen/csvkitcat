@@ -22,7 +22,7 @@ from tests.utils import CSVKitTestCase, stdin_as_string, EmptyFileTests
 
 class TestCSVSed(CSVKitTestCase):
     Utility = CSVSed
-    default_args = ["-E", "hello", "world"]
+    default_args = ["hello", "world"]
 
     def test_launch_new_instance(self):
         with patch.object(
@@ -37,43 +37,36 @@ class TestCSVSed(CSVKitTestCase):
         Shouldn't alter headers
         """
         self.assertLines(
-            ["-E", r"(\w)", r"\1!", "examples/dummy.csv"], ["a,b,c", "1!,2!,3!",]
+            [r"(\w)", r"\1!", "examples/dummy.csv"], ["a,b,c", "1!,2!,3!",]
         )
 
-    def test_basic_dummy_expr_full_args(self):
+    def test_basic_dummy_with_columns_arg(self):
         self.assertLines(
-            ["--expr", r"(\w)", r"\1!", "1-3", "examples/dummy.csv"],
+            ["-c", "1-3", r"(\w)", r"\1!", "examples/dummy.csv"],
             ["a,b,c", "1!,2!,3!",],
         )
 
-    def test_outputs_non_pattern_matches_too(self):
+    def test_outputs_non_pattern_matches_are_returned(self):
         self.assertLines(
-            ["-E", r"([a-z])", r"\1!", "examples/tinyvals.csv"],
+            [r"([a-z])", r"\1!", "examples/tinyvals.csv"],
             ["alpha,omega", "1,9", "a!,z!", "$,%",],
         )
 
     def test_skip_lines(self):
         """redundant"""
         self.assertLines(
-            ["--skip-lines", "3", "-E", r"\w", "x", "examples/test_skip_lines.csv",],
+            ["--skip-lines", "3", r"\w", "x", "examples/test_skip_lines.csv",],
             ["a,b,c", "x,x,x",],
         )
 
     def test_column_choice(self):
         self.assertLines(
-            ["-c", "b,c", "--expr", r"(\w)", r"\1!", "examples/dummy.csv"],
-            ["a,b,c", "1,2!,3!",],
-        )
-
-        # expr column choice overrides global -c
-        self.assertLines(
-            ["-c", "b,c", "--expr", r"(\w)", r"\1!", "a,b", "examples/dummy.csv"],
-            ["a,b,c", "1!,2!,3",],
+            ["-c", "b,c", r"(\w)", r"\1!", "examples/dummy.csv"], ["a,b,c", "1,2!,3!",],
         )
 
     def test_supports_case_insensitivity(self):
         self.assertLines(
-            ["-E", r"(?i)miss", "Ms.", "examples/honorifics-fem.csv"],
+            [r"(?i)miss", "Ms.", "examples/honorifics-fem.csv"],
             [
                 "code,name",
                 "1,Mrs. Smith",
@@ -87,7 +80,7 @@ class TestCSVSed(CSVKitTestCase):
 
     def test_literal_match(self):
         self.assertLines(
-            ["-m", "-E", "s.", "x.", "examples/honorifics-fem.csv"],
+            ["-m", "s.", "x.", "examples/honorifics-fem.csv"],
             [
                 "code,name",
                 "1,Mrx. Smith",
@@ -101,13 +94,13 @@ class TestCSVSed(CSVKitTestCase):
 
     def test_max_match_count(self):
         self.assertLines(
-            ["--max", "2", "-E", r"(\w)", r"\1!", "examples/dummy3x.csv"],
+            ["--max", "2", r"(\w)", r"\1!", "examples/dummy3x.csv"],
             ["a,b,c", "1!d!,2!e!,3!f!", "1! t!x,4! t!y,5! t!z",],
         )
 
     def test_max_match_count_normalize_negative_val_to_default_catchall_val(self):
         self.assertLines(
-            ["-m", "--max", "-99999", "-E", "s.", "x.", "examples/honorifics-fem.csv"],
+            ["-m", "--max", "-99999", "s.", "x.", "examples/honorifics-fem.csv"],
             [
                 "code,name",
                 "1,Mrx. Smith",
@@ -121,13 +114,13 @@ class TestCSVSed(CSVKitTestCase):
 
     def test_hacky_strip(self):
         self.assertLines(
-            ["-E", r"^\s*(.+?)\s*$", r"\1", "examples/consec_ws.csv"],
+            [r"^\s*(.+?)\s*$", r"\1", "examples/consec_ws.csv"],
             ["id,phrase", "1,hello world", "2,good   bye", "3,a  ok",],
         )
 
     def test_replace_value(self):
         self.assertLines(
-            ["-R", "-E", "(?i)^y", "Yeah", "examples/yes.csv"],
+            ["-R", "(?i)^y", "Yeah", "examples/yes.csv"],
             ["code,value", "1,Yeah", "2,no", "3,Yeah", "4,Yeah", "5,Yeah",],
         )
 
@@ -141,28 +134,27 @@ class TestCSVSed(CSVKitTestCase):
         3,your house has my car
         """
         self.assertLines(
-            ["--replace", "-E", r"my (\w+)", r"Your \1!", "examples/myway.csv"],
+            ["--replace", r"my (\w+)", r"Your \1!", "examples/myway.csv"],
             ["code,value", "1,Your money!", "2,Your stuff!", "3,Your car!",],
         )
 
     def test_like_grep_mode(self):
         self.assertLines(
-            ["-G", "-E", r"my (\w{5,})", r"Your \1!", "examples/myway.csv"],
+            ["-G", r"my (\w{5,})", r"Your \1!", "examples/myway.csv"],
             ["code,value", "1,Your money!", '2,"Your stuff!, my way"',],
         )
 
     # @skiptest('need to do test_like_grep on their own')
     def test_replace_and_like_grep(self):
         self.assertLines(
-            ["-R", "-G", "-E", "(?i)^y", "Yeah", "examples/yes.csv"],
+            ["-R", "-G", "(?i)^y", "Yeah", "examples/yes.csv"],
             ["code,value", "1,Yeah", "3,Yeah", "4,Yeah", "5,Yeah",],
         )
 
     ############ expressions
-    # @skiptest('FIX ASAP')
-    def test_manual_expression(self):
+    def test_first_expression(self):
         self.assertLines(
-            ["-E", r"my (\w{5,})", r"Your \1!", "value", "examples/myway.csv"],
+            [r"my (\w{5,})", r"Your \1!", "examples/myway.csv", "-c", "value"],
             [
                 "code,value",
                 "1,Your money!",
@@ -171,24 +163,48 @@ class TestCSVSed(CSVKitTestCase):
             ],
         )
 
-    def test_manual_multiple_expression(self):
+    def test_additional_expression(self):
+        """
+        note how additional expression will use -c setting, when
+        its own columns string is missing
+        """
         self.assertLines(
             [
-                "-E",
+                "-c",
+                "value",
                 r"my (\w{5,})",
                 r"Your \1!",
-                "value",
-                "-E",
-                r"(\w)",
-                r"00\1",
-                "code",
                 "examples/myway.csv",
+                "-E",
+                r"(\w{3,}|\d+)",
+                r"_\1_",
             ],
             [
                 "code,value",
-                "001,Your money!",
-                '002,"Your stuff!, my way"',
-                "003,your house has my car",
+                "1,_Your_ _money_!",
+                '2,"_Your_ _stuff_!, my _way_"',
+                "3,_your_ _house_ _has_ my _car_",
+            ],
+        )
+
+    def test_additional_expression_column_specified(self):
+        self.assertLines(
+            [
+                "-c",
+                "value",
+                r"my (\w{5,})",
+                r"Your \1!",
+                "examples/myway.csv",
+                "-E",
+                r"(\w{3,}|\d+)",
+                r"_\1_",
+                "value,code",
+            ],
+            [
+                "code,value",
+                "_1_,_Your_ _money_!",
+                '_2_,"_Your_ _stuff_!, my _way_"',
+                "_3_,_your_ _house_ _has_ my _car_",
             ],
         )
 
@@ -219,10 +235,11 @@ class TestCSVSed(CSVKitTestCase):
     def test_order_expressions(self):
         self.assertLines(
             [
-                "-E",
+                "-c",
+                "col_a,col_b",
                 r"^(.{1,2})$",
                 r"\1\1",
-                "col_a,col_b",
+                "examples/ab.csv",
                 "-E",
                 r"^(.{4})$",
                 r"_\1_",
@@ -231,7 +248,6 @@ class TestCSVSed(CSVKitTestCase):
                 r"^(.{6})",
                 r"\1, oxford and etc.",
                 "col_a",
-                "examples/ab.csv",
             ],
             [
                 "id,col_a,col_b",
@@ -248,9 +264,10 @@ class TestCSVSed(CSVKitTestCase):
         self.assertLines(
             [
                 "--match-literal",
-                "-E",
                 "e",
                 "x",
+                "examples/ab.csv",
+                "-c",
                 "col_a,col_b",
                 "-E",
                 "o",
@@ -260,7 +277,6 @@ class TestCSVSed(CSVKitTestCase):
                 "er",
                 "oz",
                 "col_a,col_b",
-                "examples/ab.csv",
             ],
             [
                 "id,col_a,col_b",
@@ -282,15 +298,14 @@ class TestCSVSed(CSVKitTestCase):
 
         self.assertLines(
             [
-                "-E",
                 r"^(\d{2,4})$",
                 r"\1\1",
+                "examples/ab.csv",
                 "-G",
                 "-E",
                 r"(\d{2})",
                 r"_\1_",
                 "col_a,col_b",
-                "examples/ab.csv",
             ],
             [
                 "id,col_a,col_b",
@@ -307,10 +322,10 @@ class TestCSVSed(CSVKitTestCase):
         self.assertLines(
             [
                 # '-E', 'hey', 'hello',
-                "-E",
+                "-G",
                 "(?i)hello|hey",
                 "Goodbye",
-                "-G",
+                "examples/ab.csv",
                 "-E",
                 r".{5,}",
                 r"nada",
@@ -318,7 +333,6 @@ class TestCSVSed(CSVKitTestCase):
                 "-E",
                 r"(\d+)",
                 r"\1+",  # this is completely ineffectual because of the order of grepping
-                "examples/ab.csv",
             ],
             [
                 "id,col_a,col_b",
@@ -334,22 +348,24 @@ class TestCSVSed(CSVKitTestCase):
     ##############################
     # error stuff
 
-    def test_error_when_no_expressions(self):
-        ioerr = StringIO()
-        with contextlib.redirect_stderr(ioerr):
-            with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["examples/dummy4.csv"])
+    # def test_error_when_no_expressions(self):
+    #     ioerr = StringIO()
+    #     with contextlib.redirect_stderr(ioerr):
+    #         with self.assertRaises(SystemExit) as e:
+    #             u = self.get_output(["examples/dummy4.csv"])
 
-        self.assertEqual(e.exception.code, 2)
-        self.assertIn(
-            "the following arguments are required: -E/--expr", ioerr.getvalue()
-        )
+    #     self.assertEqual(e.exception.code, 2)
+    #     self.assertIn(
+    #         "the following arguments are required: -E/--expr", ioerr.getvalue()
+    #     )
 
     def test_error_when_expression_has_0_args(self):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["-E", "-m", "examples/dummy.csv"])
+                u = self.get_output(
+                    ["-E", "-m", "pattern", "repl", "examples/dummy.csv"]
+                )
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn(
@@ -360,7 +376,9 @@ class TestCSVSed(CSVKitTestCase):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["-E", "a", "-m", "examples/dummy.csv"])
+                u = self.get_output(
+                    ["-E", "a", "-m", "pattern", "repl", "examples/dummy.csv"]
+                )
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn(
@@ -371,7 +389,9 @@ class TestCSVSed(CSVKitTestCase):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["-E", "a", "b", "c", "d", "examples/dummy.csv"])
+                u = self.get_output(
+                    ["pattern", "repl", "examples/dummy.csv", "-E", "a", "b", "c", "d",]
+                )
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn(
@@ -381,7 +401,7 @@ class TestCSVSed(CSVKitTestCase):
 
     def test_no_error_when_expression_has_2_args_and_piped_input(self):
         p1 = Popen(["cat", "examples/dummy.csv",], stdout=PIPE)
-        p2 = Popen(["csvsed", "-E", "(1|2)", r"\1x"], stdin=p1.stdout, stdout=PIPE)
+        p2 = Popen(["csvsed", "(1|2)", r"\1x"], stdin=p1.stdout, stdout=PIPE)
         p1.stdout.close()
         p1.wait()
         txt = p2.communicate()[0].decode("utf-8")
@@ -408,35 +428,25 @@ class TestCSVSed(CSVKitTestCase):
         sys.stdin = oldstdin
         exit
 
-
-
-
-
-
-###########
-### special stuff
+    ###########
+    ### special stuff
 
     def test_pattern_arg_has_leading_hyphen_causes_error(self):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(['-E', r'-\d', r'@\d', "examples/ledger.csv"])
+                u = self.get_output([r"-\d", r"@\d", "examples/ledger.csv"])
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn(r"unrecognized arguments: -\d", ioerr.getvalue())
         # todo later
         # self.assertIn(rf"""If you are trying to match a pattern that begins with a hyphen, put a backslash before that hyphen, e.g. '\-\d' """, ioerr.getvalue())
 
-
     def test_pattern_arg_has_leading_hyphen_escaped(self):
         self.assertLines(
+            ["-G", r"\-(\d)", r"@\1", "examples/ledger.csv",],
             [
-                "-G",
-                "-E", r'\-(\d)', r'@\1',
-                "examples/ledger.csv",
-            ],
-            [
-                'id,name,revenue,gross',
+                "id,name,revenue,gross",
                 # '001,apples,21456,$3210.45',
                 # '002,bananas,"2,442","-$1,234"',
                 # '003,cherries,"$9,700.55","($7.90)"',
@@ -447,16 +457,11 @@ class TestCSVSed(CSVKitTestCase):
             ],
         )
 
-
     def test_pattern_arg_has_leading_hyphen_double_escaped(self):
         self.assertLines(
+            ["-G", r"\\-(\d)", r"@\1", "examples/ledger.csv",],
             [
-                "-G",
-                "-E", r'\\-(\d)', r'@\1',
-                "examples/ledger.csv",
-            ],
-            [
-                'id,name,revenue,gross',
+                "id,name,revenue,gross",
                 # '001,apples,21456,$3210.45',
                 # '002,bananas,"2,442","-$1,234"',
                 # '003,cherries,"$9,700.55","($7.90)"',
@@ -466,19 +471,11 @@ class TestCSVSed(CSVKitTestCase):
             ],
         )
 
-
-
-
-
     def test_repl_arg_has_leading_hyphen_escaped(self):
         self.assertLines(
+            ["-G", r"\-(\d)", r"\-X\1", "examples/ledger.csv",],
             [
-                "-G",
-                "-E", r'\-(\d)', r'\-X\1',
-                "examples/ledger.csv",
-            ],
-            [
-                'id,name,revenue,gross',
+                "id,name,revenue,gross",
                 # '001,apples,21456,$3210.45',
                 # '002,bananas,"2,442","-$1,234"',
                 # '003,cherries,"$9,700.55","($7.90)"',
@@ -486,5 +483,36 @@ class TestCSVSed(CSVKitTestCase):
                 # '005,eggplants,"$3,987",$501',
                 # '006,figs,"$30,333","(777.66)"',
                 '006,grapes,"154,321.98","-X32,654"',
+            ],
+        )
+
+    ################################################
+    # examples
+
+    def test_example_intro(self):
+        r"""
+        $ csvsed "Ab[bi].+" "Abby" -E "(B|R)ob.*" "\1ob" -E "(?:Jack|John).*" "John"  examples/aliases.csv
+        """
+        self.assertLines(
+            [
+                r"Ab[bi].+",
+                "Abby",
+                "-E",
+                r"(B|R)ob.*",
+                r"\1ob",
+                "-E",
+                r"(?:Jack|John).*",
+                r"John",
+                "examples/aliases.csv",
+            ],
+            [
+                "id,to,from",
+                "1,Abby,Bob",
+                "2,Bob,John",
+                "3,Abby,John",
+                "4,John,Abner",
+                "5,Rob,John",
+                "6,Jon,Abby",
+                "7,Rob,Abby",
             ],
         )

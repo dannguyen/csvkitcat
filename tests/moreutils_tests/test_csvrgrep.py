@@ -30,7 +30,7 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         "examples/dummy.csv",
     ]
     columns_args = [
-        r'\d+',
+        r"\d+",
     ]
 
     def test_launch_new_instance(self):
@@ -44,14 +44,7 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
 
     def test_skip_lines(self):
         self.assertRows(
-            [
-                "--skip-lines",
-                "3",
-                "-c",
-                "a,b",
-                "1",
-                "examples/test_skip_lines.csv",
-            ],
+            ["--skip-lines", "3", "-c", "a,b", "1", "examples/test_skip_lines.csv",],
             [["a", "b", "c"], ["1", "2", "3"],],
         )
 
@@ -59,9 +52,10 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         """
         todo: figure out a way to robustly handle intermixed optional and positional args
         """
-        args = ['-c', '0'] + getattr(self, 'columns_args', []) + ['examples/dummy.csv']
+        args = ["-c", "0"] + getattr(self, "columns_args", []) + ["examples/dummy.csv"]
 
         import six
+
         output_file = six.StringIO()
         utility = self.Utility(args, output_file)
 
@@ -69,8 +63,6 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
             utility.run()
 
         output_file.close()
-
-
 
     def test_basic(self):
         """
@@ -94,16 +86,9 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         22,99,222
         """
         self.assertRows(
-            [
-
-            r"3|22",
-            "examples/dummy5.csv",
-            "-c", "b,c",
-            ],
+            [r"3|22", "examples/dummy5.csv", "-c", "b,c",],
             [["a", "b", "c"], ["1", "2", "3"], ["2", "3", "42"], ["22", "99", "222"]],
         )
-
-
 
     def test_two_patterns(self):
         """
@@ -114,16 +99,9 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         22,99,222
         """
         self.assertRows(
-            [
-            '-c', 'b,c',
-            '3|22',
-            "-E", r"^\d$",
-            "examples/dummy5.csv",
-            ],
-
+            ["-c", "b,c", "3|22", "-E", r"^\d$", "examples/dummy5.csv",],
             [["a", "b", "c"], ["1", "2", "3"], ["2", "3", "42"]],
         )
-
 
     def test_multi_patterns_explicit_col_arg(self):
         """
@@ -134,32 +112,24 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         22,99,222
         """
         self.assertLines(
-            [
-            '-c', 'b,c',
-            '3|22',
-            "-E", r"^\d$", 'c',
-            "examples/dummy5.csv",
-            ],
-            ['a,b,c', '1,2,3'],
+            ["-c", "b,c", "3|22", "-E", r"^\d$", "c", "examples/dummy5.csv",],
+            ["a,b,c", "1,2,3"],
         )
-
 
     ##############
 
     def test_basic_literal_match(self):
-        self.assertRows(
-            ["-m",  r"\d{2}", "examples/dummy5.csv"], [["a", "b", "c"],]
-        )
+        self.assertRows(["-m", r"\d{2}", "examples/dummy5.csv"], [["a", "b", "c"],])
 
         self.assertRows(
-            ["-m", "-c", "c",  "22", "examples/dummy5.csv"],
+            ["-m", "-c", "c", "22", "examples/dummy5.csv"],
             [["a", "b", "c"], ["22", "99", "222"]],
         )
 
     def test_all_match(self):
         """TODO: can't mix and match positional and optional args?"""
         self.assertLines(
-            ["-a",   "-c", "a,c", r"\d{2,}", "examples/dummy5.csv"],
+            ["-a", "-c", "a,c", r"\d{2,}", "examples/dummy5.csv"],
             ["a,b,c", "22,99,222",],
         )
 
@@ -167,8 +137,7 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
 
     def test_multi_expression_basic(self):
         self.assertLines(
-            ["2", "-E", r"1|3", "examples/dummy5.csv"],
-            ["a,b,c", "1,2,3", "2,3,42",],
+            ["2", "-E", r"1|3", "examples/dummy5.csv"], ["a,b,c", "1,2,3", "2,3,42",],
         )
 
     def test_multi_expression_variable_expr_args(self):
@@ -183,9 +152,7 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         takes precedence over  -c/--columns
         """
         self.assertLines(
-            ["-c", "a,c", "2",
-            "-E", r"\d{2,}", "b",
-             "examples/dummy5.csv"],
+            ["-c", "a,c", "2", "-E", r"\d{2,}", "b", "examples/dummy5.csv"],
             ["a,b,c", "22,99,222",],
         )
 
@@ -201,16 +168,22 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         22,99,222
         """
         self.assertLines(
-            ["-c", "c,a",
-            "2",
-            "-E", r"\d{2,}", "a,b,c",
-            "-E", "4", "examples/dummy5.csv"],
+            [
+                "-c",
+                "c,a",
+                "2",
+                "-E",
+                r"\d{2,}",
+                "a,b,c",
+                "-E",
+                "4",
+                "examples/dummy5.csv",
+            ],
             ["a,b,c", "2,3,42",],
         )
 
         self.assertLines(
-            ["-c", "a,b", "2", "-E", "3", "examples/dummy5.csv"],
-            ["a,b,c", "2,3,42",],
+            ["-c", "a,b", "2", "-E", "3", "examples/dummy5.csv"], ["a,b,c", "2,3,42",],
         )
 
     def test_when_single_pattern_and_no_input_file(self):
@@ -228,7 +201,6 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
 
         lines = txt.splitlines()
         self.assertEqual(lines, ["a,b,c", "2,3,42", "3,4,1",])
-
 
     def test_when_last_expr_has_just_one_arg_and_no_input_file(self):
         r"""
@@ -258,24 +230,21 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         self.assertEqual(e.exception.code, 2)
         self.assertIn("the following arguments are required: PATTERN", ioerr.getvalue())
 
-
     def test_error_when_no_pattern_but_additional_expressions(self):
         """"todo, maybe redundant"""
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(['-E', '1', 'examples/dummy.csv'])
+                u = self.get_output(["-E", "1", "examples/dummy.csv"])
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn("the following arguments are required: PATTERN", ioerr.getvalue())
-
-
 
     def test_error_when_expression_has_0_args(self):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(["-E", "-m", 'PATTERN', "examples/dummy.csv"])
+                u = self.get_output(["-E", "-m", "PATTERN", "examples/dummy.csv"])
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn("-E/--expr takes 1 or 2 arguments, not 0:", ioerr.getvalue())
@@ -284,14 +253,16 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output(['PATTERN', "examples/dummy.csv", "-E", "a", "b", "c",])
+                u = self.get_output(
+                    ["PATTERN", "examples/dummy.csv", "-E", "a", "b", "c",]
+                )
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn("-E/--expr takes 1 or 2 arguments, not 3:", ioerr.getvalue())
 
     def test_no_error_when_expression_has_1_args_and_piped_input(self):
         p1 = Popen(["cat", "examples/dummy.csv",], stdout=PIPE)
-        p2 = Popen(["csvrgrep", '2|1', "-E", "1|2",], stdin=p1.stdout, stdout=PIPE)
+        p2 = Popen(["csvrgrep", "2|1", "-E", "1|2",], stdin=p1.stdout, stdout=PIPE)
         p1.stdout.close()
         p1.wait()
         txt = p2.communicate()[0].decode("utf-8")
@@ -324,7 +295,7 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
 
         self.assertLines(
             [
-                '.+',
+                ".+",
                 "examples/hamlet.csv",
                 "--expr",
                 r"^[HL]",
@@ -338,30 +309,25 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
             ["act,scene,speaker,lines", "4,7,Laertes,Know you the hand?",],
         )
 
-
-###########
-### special stuff
+    ###########
+    ### special stuff
 
     def test_pattern_arg_has_leading_hyphen_causes_error(self):
         ioerr = StringIO()
         with contextlib.redirect_stderr(ioerr):
             with self.assertRaises(SystemExit) as e:
-                u = self.get_output([r'-\d', "examples/ledger.csv"])
+                u = self.get_output([r"-\d", "examples/ledger.csv"])
 
         self.assertEqual(e.exception.code, 2)
         self.assertIn(r"unrecognized arguments: -\d", ioerr.getvalue())
         # todo later
         # self.assertIn(rf"""If you are trying to match a pattern that begins with a hyphen, put a backslash before that hyphen, e.g. '\-\d' """, ioerr.getvalue())
 
-
     def test_pattern_arg_has_leading_hyphen_escaped(self):
         self.assertLines(
+            [r"\-\d", "examples/ledger.csv",],
             [
-                r'\-\d',
-                "examples/ledger.csv",
-            ],
-            [
-                'id,name,revenue,gross',
+                "id,name,revenue,gross",
                 # '001,apples,21456,$3210.45',
                 # '002,bananas,"2,442","-$1,234"',
                 # '003,cherries,"$9,700.55","($7.90)"',
@@ -372,15 +338,11 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
             ],
         )
 
-
     def test_pattern_arg_has_leading_hyphen_double_escaped(self):
         self.assertLines(
+            [r"\\-\d", "examples/ledger.csv",],
             [
-                r'\\-\d',
-                "examples/ledger.csv",
-            ],
-            [
-                'id,name,revenue,gross',
+                "id,name,revenue,gross",
                 # '001,apples,21456,$3210.45',
                 # '002,bananas,"2,442","-$1,234"',
                 # '003,cherries,"$9,700.55","($7.90)"',
@@ -389,7 +351,3 @@ class TestCSVRgrep(CSVKitTestCase, EmptyFileTests, NamesTests):
                 # '006,figs,"$30,333","(777.66)"',
             ],
         )
-
-
-
-
