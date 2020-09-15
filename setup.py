@@ -75,6 +75,7 @@ setup(
             'csvrgrep = csvkitcat.moreutils.csvrgrep:launch_new_instance',
             'csvsed = csvkitcat.moreutils.csvsed:launch_new_instance',
             'csvslice = csvkitcat.moreutils.csvslice:launch_new_instance',
+            'csvwhere = csvkitcat.moreutils.csvwhere:launch_new_instance',
             'csvxcap = csvkitcat.moreutils.csvxcap:launch_new_instance',
             'csvxfind = csvkitcat.moreutils.csvxfind:launch_new_instance',
             'csvxplit = csvkitcat.moreutils.csvxplit:launch_new_instance',

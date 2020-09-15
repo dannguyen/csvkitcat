@@ -14,7 +14,7 @@ from csvkitcat.moreutils.csvnorm import CSVNorm, launch_new_instance
 from tests.utils import (
     CSVKitTestCase,
     EmptyFileTests,
-    stdin_as_string,
+    # stdin_as_string,
     ColumnsTests,
     NamesTests,
 )

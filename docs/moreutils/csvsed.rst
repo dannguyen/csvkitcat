@@ -19,7 +19,7 @@ Examples
 
 Basic example::
 
-    $ csvsed '(?i)(?:Miss|Mrs|Ms)\.? *(.+)' 'The Ms. \1' examples/honorifics-fem.csv
+    $ csvsed -E '(?i)(?:Miss|Mrs|Ms)\.? *(.+)' 'The Ms. \1' examples/honorifics-fem.csv
 
 
     code,name

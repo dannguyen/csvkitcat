@@ -4,6 +4,12 @@ CHANGELOG
 
 .. contents:: :local:
 
+1.6.0-alpha (inprogress)
+========================
+
+- csvwhere
+
+
 1.5.6-alpha
 ===========
 

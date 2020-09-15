@@ -1,7 +1,5 @@
 import csv
 from io import StringIO
-
-from csvkitcat import rxlib as re
 from sys import stderr
 from typing import NoReturn
 import warnings
@@ -97,8 +95,8 @@ class CSVGroupby(AgatableUtil):
         _gcol_ids = parse_column_identifiers(
             self.args.columns,
             column_names,
-            column_offset=1,  # TK, do I need to worry about this?
-            excluded_columns=getattr(self.args, 'not_columns', None)
+            column_offset=self.get_column_offset(),
+            excluded_columns=None,
         )
         group_colnames = [column_names[i] for i in _gcol_ids]
 

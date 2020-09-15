@@ -5,21 +5,24 @@
 
 ONGOING:
 
+- csvwhere:
+
+  - [x] basic implementation and tests
+  - [ ] finish tests scaffold
+  - [ ] rethink horrendous use of eval
+  - [ ] figure out how to use agate.Table.where instead of duplicating and relocalizing code
+  - [ ] compare performance to csvsql
+
+- realexamples
+  - [ ] congress-legislators: 
+    - csvsql to calculate age
+    - pivot counts of party, and chart and csvrange (born after 1900)
+
+
 - csvsed/csvrgrep 1.5.7
-  - [ ] consider making the mutliple grep expressions ORed instead of ANDed
+  - [ ] csvrgrep: consider making the mutliple grep expressions ORed instead of ANDed, or provide option for -E/--expr (or) and -EA/--expr-anded
+  - [ ] csvsed: `--G` only applies to first expression; if you need better filtering, use csvgrep... 
 
-
-
-- csvsed 1.5.6: 
-  - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
-  - [X] actually it's still broken: -E does not allow for multiple expressions
-    - [X] in the middle of figuring out how to balance -E with [PATTERN] [REPL] crap
-        - Decided to kill [PATTERN] [REPL] usage
-  - [x] `-E` should take 2,3 arguments, in the way that csvrgrep -E takes 1 to 2
-  - [?] Clean up/rethink how sed_expressions are executed on each row
-  - [x] Write a helper to clean/normalize self.sed_expressions
-  - [X] Write more tests
-    - [X] Write test for complicated CSV that reflects how order of expressions can change results
 
 
 - [X] Added makefile and proper setup stuff
@@ -28,8 +31,6 @@ ONGOING:
   - [x] cleaned up csvflatten inheritance
 - [X] Implement --version 
 - [ ] clean up argumenterrorTK
-
-
 
 
 - csvrgrep: 
@@ -49,6 +50,20 @@ ONGOING:
   - [ ] clean up csvrgrep.filter_rows
   - [ ] To think on: is it a problem that csvrgrep doesn't have an option that effectively ORs the results of each expression? How would that even work? Other than to write a custom CSV filterer
     - [X] write a test to affirm that multiple expressions are ANDED
+
+
+- csvsed 1.5.6: 
+  - [X] Unbroke it on 2020-09-10 with successful integration with csvrgrep.filter_rows
+  - [X] actually it's still broken: -E does not allow for multiple expressions
+    - [X] in the middle of figuring out how to balance -E with [PATTERN] [REPL] crap
+        - Decided to kill [PATTERN] [REPL] usage
+  - [x] `-E` should take 2,3 arguments, in the way that csvrgrep -E takes 1 to 2
+  - [?] Clean up/rethink how sed_expressions are executed on each row
+  - [x] Write a helper to clean/normalize self.sed_expressions
+  - [X] Write more tests
+    - [X] Write test for complicated CSV that reflects how order of expressions can change results
+
+
 
 ```sh
 time cat ZUNK/mass-fec.csv | 

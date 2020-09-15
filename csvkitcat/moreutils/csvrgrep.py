@@ -170,28 +170,19 @@ class CSVRgrep(JustTextUtility):
         _inverse = self.args.inverse
         _literal_match = self.args.literal_match
         _column_offset = self.get_column_offset()
-        # _not_columns = getattr(self.args, "not_columns", None)
 
-        reader_kwargs = self.reader_kwargs
-        writer_kwargs = self.writer_kwargs
-        # Move the line_numbers option from the writer to the reader.
-        if writer_kwargs.pop("line_numbers", False):
-            reader_kwargs["line_numbers"] = True
 
-        (
-            rows,
-            column_names,
-            default_column_ids,
-        ) = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+        myio = self.init_io(write_header=True)
+        xrows = myio.rows
 
 
         for epattern, ecolstring in self.expressions:
-            rows = filter_rows(
-                rows,
+            xrows = filter_rows(
+                xrows,
                 epattern,
                 ecolstring,
-                column_names,
-                default_column_ids,
+                myio.column_names,
+                myio.column_ids,
                 literal_match=_literal_match,
                 column_offset=_column_offset,
                 inverse=_inverse,
@@ -199,11 +190,9 @@ class CSVRgrep(JustTextUtility):
                 # not_columns=_not_columns,
             )
 
-        output = agate.csv.writer(self.output_file, **writer_kwargs)
-        output.writerow(column_names)
 
-        for row in rows:
-            output.writerow(row)
+        for row in xrows:
+            myio.output.writerow(row)
 
 
 def launch_new_instance():

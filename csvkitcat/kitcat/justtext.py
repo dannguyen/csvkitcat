@@ -17,9 +17,17 @@ class JustTextUtility(CSVKitcatUtil):
         if not hasattr(self.args, 'columns'):
             self.args.columns = []
 
-        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**self.reader_kwargs)
+        reader_kwargs = self.reader_kwargs
+        writer_kwargs = self.writer_kwargs
 
-        output = agate.csv.writer(self.output_file, **self.writer_kwargs)
+        # Move the line_numbers option from the writer to the reader.
+        if writer_kwargs.pop("line_numbers", False):
+            reader_kwargs["line_numbers"] = True
+
+
+        rows, column_names, column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+
+        output = agate.csv.writer(self.output_file, **writer_kwargs)
         if write_header is True:
             output.writerow(column_names)
 

@@ -1,5 +1,4 @@
 
-from csvkitcat import rxlib as re
 from sys import stderr
 from typing import NoReturn
 import warnings
@@ -93,16 +92,16 @@ class CSVPivot(AgatableUtil):
         _prow_ids = parse_column_identifiers(
             self.args.pivot_rows,
             column_names,
-            column_offset=1,  # TK, do I need to worry about this?
-            excluded_columns=getattr(self.args, 'not_columns', None)
+            column_offset=self.get_column_offset(),
+            excluded_columns=None,
         ) if self.args.pivot_rows else None
         pivot_row_names = [column_names[i] for i in _prow_ids] if _prow_ids else None
 
         _pcol_ids = parse_column_identifiers(
             self.args.pivot_column,
             column_names,
-            column_offset=1,  # TK, do I need to worry about this?
-            excluded_columns=getattr(self.args, 'not_columns', None)
+            column_offset=self.get_column_offset(),
+            excluded_columns=None,
         ) if self.args.pivot_column else None
 
         if _pcol_ids and len(_pcol_ids) > 1:

@@ -2,10 +2,8 @@
 
 from csvkitcat.kitcat.justtext import JustTextUtility
 from csvkitcat.moreutils.csvrgrep import CSVRgrep, filter_rows
-from csvkitcat import rxlib as re
+from csvkitcat import agate, rxlib as re
 from csvkitcat import parse_column_identifiers
-
-import agate
 import warnings
 
 from sys import stderr
@@ -103,9 +101,6 @@ class CSVSed(JustTextUtility):
                 self.args.input_path = None
 
 
-
-
-
                # # # error handling
                # #  if self.args.pattern or self.args.repl:
                # #      self.argparser.error("If using -E/--expr, [PATTERN] and [REPL] arguments cannot be filled in")
@@ -185,35 +180,32 @@ class CSVSed(JustTextUtility):
             )
 
 
+
         self.expressions = self._handle_sed_expressions()
-
-
-        reader_kwargs = self.reader_kwargs
-        writer_kwargs = self.writer_kwargs
 
         max_match_count = self.args.max_match_count
         if max_match_count < 1: # because str.replace and re.sub use a different catchall/default value
             max_match_count = -1 if self.args.literal_match else 0
 
 
-        rows, all_column_names, selected_column_ids = self.get_rows_and_column_names_and_column_ids(**reader_kwargs)
+        myio = self.init_io(write_header=True)
+        xrows = myio.rows
 
 
         # here's where we emulate csvrgrep...
         if self.args.like_grep:
-            self.not_columns = getattr(self.args, "not_columns", None),
             self.column_offset = self.get_column_offset()
 
             for e in self.expressions:
                 epattern = e[0]
                 ecolstring = e[2] # if e[2] else selected_column_ids
 
-                rows = filter_rows(
-                    rows,
+                xrows = filter_rows(
+                    xrows,
                     epattern,
                     ecolstring,
-                    all_column_names,
-                    selected_column_ids,
+                    myio.column_names,
+                    myio.column_ids,
                     literal_match=self.args.literal_match,
                     column_offset=self.column_offset,
                     inverse=False,
@@ -229,28 +221,24 @@ class CSVSed(JustTextUtility):
 
             if ecol_string:
                  # TODO: this should throw an error of ecol_str refers to columns not in all_column_ids
-                ecol_ids = parse_column_identifiers(ecol_string, all_column_names, self.get_column_offset(), getattr(self.args, 'not_columns', None))
+                ecol_ids = parse_column_identifiers(ecol_string, myio.column_names, self.get_column_offset(), getattr(self.args, 'not_columns', None))
             else:
-                ecol_ids = selected_column_ids
+                ecol_ids = myio.column_ids
             e[2] =  ecol_ids
 
-            ecol_names = [all_column_names[i] for i in ecol_ids]
+            ecol_names = [myio.column_names[i] for i in ecol_ids]
             all_patterns.append([ecol_names, pattern])
 
 
-
-        output = agate.csv.writer(self.output_file, **writer_kwargs)
-        output.writerow(all_column_names)
-
-
-        for row in rows:
+        # TODO: fix spaghetti
+        for row in xrows:
             d = []
             for v_id, val in enumerate(row):
                 newval = val
 
                 for ex in self.expressions:
                     pattern, repl, _xids = ex
-                    excol_ids = _xids if _xids else selected_column_ids  # todos: this should be handled earlier
+                    excol_ids = _xids if _xids else myio.column_ids  # todos: this should be handled earlier
 
                     if v_id in excol_ids:
                         if self.args.replace_value:
@@ -267,7 +255,7 @@ class CSVSed(JustTextUtility):
                                 newval = pattern.sub(repl, newval, max_match_count)
                 d.append(newval)
 
-            output.writerow(d)
+            myio.output.writerow(d)
 
 
 def launch_new_instance():
