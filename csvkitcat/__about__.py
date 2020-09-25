@@ -4,6 +4,7 @@ __description__ = (
 )
 __url__ = "https://github.com/dannguyen/csvkitcat"
 __version__ = "1.6.1-alpha"
+__short_version__ = __version__.split('-')[0]
 __author__ = "Dan Nguyen"
 __author_email__ = "dansonguyen@gmail.com"
 

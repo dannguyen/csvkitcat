@@ -8,15 +8,21 @@
   - [X] killed, moved to csvviz library
   
 
-ONGOING:
-
 - rename to csvmedkit
-  - less mental and visual confusion with csvkitcat/csvkitkat
-  - 'med' is short for medium data tasks, to emphasize the limits of these tools
-  - 'medkit' also refers to quick fix-its for data
-  - csvmk works as an abbreviation
-  - cange csvkitcat.kitcat to csvmedkit.cmk
-  - CSVKitcatUtil is now CSVMedkitUtil, in cmk/cmkutil.py
+  - [ ] rename Github project
+  - [ ] change all file/folder references
+  - [ ] add to pypi
+  - [ ] check readthedocs config
+  
+  notes:
+    - less mental and visual confusion with csvkitcat/csvkitkat
+    - 'med' is short for medium data tasks, to emphasize the limits of these tools
+    - 'medkit' also refers to quick fix-its for data
+    - csvmk works as an abbreviation
+    - cange csvkitcat.kitcat to csvmedkit.cmk
+    - CSVKitcatUtil is now CSVMedkitUtil, in cmk/cmkutil.py
+
+ONGOING:
 
 - csvsed/csvrgrep:
   - revamp to act more like csvwhere: only use -E when doing additional expressions

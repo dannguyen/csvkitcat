@@ -3,6 +3,13 @@
 # csvkit documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr 15 21:52:09 2011.
 #
+import os
+HERE_PATH = os.path.abspath(os.path.dirname(__file__))
+ABOUT = {}
+with open(os.path.join(HERE_PATH, "../csvkitcat", "__about__.py"), "r") as f:
+    exec(f.read(), ABOUT)
+
+
 
 import os
 import sys
@@ -43,9 +50,9 @@ copyright = u'2020, Dan Nguyen'
 # built documents.
 #
 # The short X.Y version.
-version = '1.1.0'
+version = ABOUT["__short_version__"]
 # The full version, including alpha/beta/rc tags.
-release = '1.1.0-alpha'
+release = ABOUT["__version__"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
