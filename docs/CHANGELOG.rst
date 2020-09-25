@@ -4,8 +4,10 @@ CHANGELOG
 
 .. contents:: :local:
 
-1.6.0-alpha (inprogress)
+1.6.1-alpha (inprogress)
 ========================
+
+Likely the last update as "csvkitcat" before moving to csvmedkit
 
 - csvwhere
 
@@ -16,6 +18,8 @@ CHANGELOG
 
     + --like-grep now only filters by the first (required) expression, as chaining additional expressions likely results in a too-small result set for most use cases
 
+
+- csvchart: killed, moved to csvviz library
 
 1.5.6-alpha
 ===========

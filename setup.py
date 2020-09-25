@@ -66,7 +66,6 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'csvchart = csvkitcat.moreutils.csvchart:launch_new_instance',
             'csvcount = csvkitcat.moreutils.csvcount:launch_new_instance',
             'csvflatten = csvkitcat.moreutils.csvflatten:launch_new_instance',
             'csvgroupby = csvkitcat.moreutils.csvgroupby:launch_new_instance',

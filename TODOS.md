@@ -3,7 +3,20 @@
 
 ## Priority
 
+
+- csvchart
+  - [X] killed, moved to csvviz library
+  
+
 ONGOING:
+
+- rename to csvmedkit
+  - less mental and visual confusion with csvkitcat/csvkitkat
+  - 'med' is short for medium data tasks, to emphasize the limits of these tools
+  - 'medkit' also refers to quick fix-its for data
+  - csvmk works as an abbreviation
+  - cange csvkitcat.kitcat to csvmedkit.cmk
+  - CSVKitcatUtil is now CSVMedkitUtil, in cmk/cmkutil.py
 
 - csvsed/csvrgrep:
   - revamp to act more like csvwhere: only use -E when doing additional expressions
@@ -184,40 +197,6 @@ In general:
 
 - csvgroupby 
   - needs more documentation
-
-- csvchart
-  - [ ] assume -X/Y/C are column names. Unless `--alt` is passed in
-  - [x] with no parameters, create a bar chart, with the x-column being the first Text column, and the y-column being the first Number column
-  - [ ] decide whether -X, -Y, -C should take in existing column names for simplicity sake. Or should allow full altair syntax
-  - [ ] -X,-Y,-C should accept things in 'Custom Axis Name|col_name:args1,args2'
-  - [ ] maybe write my own extract_column_identifier function
-  - [ ] labels parameter https://altair-viz.github.io/gallery/bar_chart_with_labels.html
-  - [ ] add default tooltip https://altair-viz.github.io/gallery/scatter_href.html
-  - use altair (since leather is in maintenance mode)
-    - by default, we use altair_viewer to open the chart -- user has choice to interactively save as png
-      - https://github.com/altair-viz/altair_viewer
-      - import altair_viewer; altair_viewer.show(chart)
-      - make option to export altair JSON, e.g. `chart.save('something.json', format="json")`
-      - can't use altair_saver because of `ValueError: No enabled saver found that supports format='svg'`
-
-    - charts
-      - bar_chart: https://altair-viz.github.io/gallery/bar_chart_horizontal.html
-      - column_chart: https://altair-viz.github.io/gallery/simple_bar_chart.html
-      - histogram: https://altair-viz.github.io/gallery/simple_histogram.html (or do binning as csvbin?)
-      - line_chart: https://altair-viz.github.io/gallery/simple_line_chart.html
-        - https://altair-viz.github.io/gallery/multi_series_line.html
-      - scatterplot: 
-
-
-    - chartDEPRECATE
-      - default: terminal bar chart
-        - takes x-col and y-col
-        - prints to terminal
-      - SVG mode
-        - [ ] by default, write to temp file and open immediately
-        - [ ] if `-o` provided, write SVG to it and open immediately
-        - [ ] if `-O` write to stdout, no browser
-        - [ ] if `-q` be quiet, no browser
 
 - csvslice
   - wtf is this terrible and inefficient code? `rowslice = list(myio.rows)[slice_start:slice_end]`
