@@ -3,6 +3,14 @@
 
 ## Priority
 
+- csvheader
+  - default behavior is to return csv of index,column_name, but column_name is quoted so that user can see leading/trailing whitespace
+  - `--slug` renames all headers to snakecase
+  - `--rename` takes in a string argument of fields separated by commas and pipes, e.g.
+      `"field1|New Name 1","field2|A different, better field",3|heyyo`
+
+- csvflatten
+  - [ ] built-in option to do csvlook with tabulate
 
 - csvchart
   - [X] killed, moved to csvviz library
